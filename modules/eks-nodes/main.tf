@@ -13,40 +13,34 @@ locals {
   ]
 }
 
-# discover the ami
-data "aws_ami" "eks" {
-  most_recent = true
-  owners      = ["602401143452"]
+data "duplocloud_native_host_image" "this" {
+  tenant_id     = var.tenant_id
+  is_kubernetes = true
+}
 
-  filter {
-    name   = "name"
-    values = ["${var.base_ami_name}-${var.eks_version}-*"]
-  }
+data "duplocloud_infrastructure" "this" {
+  tenant_id = var.tenant_id
+}
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+data "duplocloud_plan" "this" {
+  # DuploCloud plan names always match the infrastructure they're associated with.
+  plan_id = data.duplocloud_infrastructure.this.infra_name
 }
 
 resource "duplocloud_asg_profile" "nodes" {
-  count         = length(var.az_list)
-  zone          = count.index
-  friendly_name = "${var.prefix}${var.az_list[count.index]}"
-  image_id      = data.aws_ami.eks.id
+  for_each = toset(data.duplocloud_plan.this.availability_zones)
+
+  zone          = index(data.duplocloud_plan.this.availability_zones, each.key)
+  friendly_name = join("-", compact([var.prefix, each.key]))
+  image_id      = data.duplocloud_native_host_image.this.image_id
 
   tenant_id          = var.tenant_id
-  instance_count     = var.instance_count
-  min_instance_count = var.min_instance_count
-  max_instance_count = var.max_instance_count
+  instance_count     = var.instance_count_per_zone
+  min_instance_count = var.min_instance_count_per_zone
+  max_instance_count = var.max_instance_count_per_zone
   capacity           = var.capacity
   is_ebs_optimized   = var.is_ebs_optimized
-  encrypt_disk       = var.encrypt_disk
+  encrypt_disk       = true
 
   # these stay the same for autoscaling eks nodes
   agent_platform        = 7
@@ -76,5 +70,8 @@ resource "duplocloud_asg_profile" "nodes" {
   }
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      instance_count # Don't undo changes made by cluster autoscaler.
+    ]
   }
 }

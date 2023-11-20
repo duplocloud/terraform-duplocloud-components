@@ -1,10 +1,12 @@
-# EKS HA Nodes  
+# EKS HA Nodes
 
-Creates duplocloud EKS hosts for a tenant. This creates an HA setup on at least two zones. The min/max/count is actually multiplied by the amount of zones. So if you have 3 zones and you set min=1, max=3, count=2, you will get 6 hosts. 
+Creates duplocloud EKS hosts for a tenant. This is an opinionated module that enforces good practices for DuploCloud environments. If you need to accommodate an edge case, you can implement custom ASGs with the [`duplocloud_asg_profile` resource](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/asg_profile).
 
-## Example  
+The min/max/count is actually multiplied by the amount of zones. So if you have 3 zones and you set min=1, max=3, count=2, you will get 6 hosts.
 
-Here is a simple example used often. 
+## Example
+
+Here is a simple example used often.
 
 ```hcl
 module "nodegroup" {
@@ -12,7 +14,6 @@ module "nodegroup" {
   version            = "0.0.5"
   tenant_id          = local.tenant_id
   capacity           = var.asg_capacity
-  eks_version        = local.eks_version
   instance_count     = var.asg_instance_count
   min_instance_count = var.asg_min_instance_count
   max_instance_count = var.asg_max_instance_count
@@ -20,18 +21,25 @@ module "nodegroup" {
 }
 ```
 
-## Testing  
+## Deprecated Variables
 
-Run the unit tests with: 
+* `az_list`. One ASG is created for each AZ configured in the [DuploCloud plan](https://docs.duplocloud.com/docs/getting-started/application-focussed-interface/plan).
+* `base_ami_name`.  The EKS AMI is found internally by the `duplocloud_native_host_image` resource.
+* `eks_version`. The EKS version is determined internally by the `duplocloud_native_host_image` resource.
+* `encrypt_disk`. All ASGs are created with encrypted disks.
+
+## Testing
+
+Run the unit tests with:
 ```sh
 terraform test -filter=tests/unit.tftests.hcl
 ```
 
-Run the integration tests with: 
+Run the integration tests with:
 ```sh
 terraform test -filter=tests/integration.tftests.hcl
 ```
 
-## References  
+## References
   - [Duploclud Hosts](https://docs.duplocloud.com/docs/azure/use-cases/hosts-vms)
   - [Duplocloud ASG](https://docs.duplocloud.com/docs/aws/use-cases/auto-scaling/auto-scaling-groups)
