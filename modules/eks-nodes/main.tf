@@ -100,3 +100,28 @@ resource "random_integer" "identifier" {
     prefix              = var.prefix
   }
 }
+
+resource "null_resource" "destroy_script" {
+  count = var.pod_rollover ? length(var.az_list) : 0
+  triggers = {
+    fullname = duplocloud_asg_profile.nodes[count.index].fullname
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/kubectl-1.sh ${self.triggers.fullname} ${terraform.workspace} ${count.index}"
+  }
+}
+
+resource "null_resource" "create_script" {
+  count = var.pod_rollover ? length(var.az_list) : 0
+  triggers = {
+    fullname = duplocloud_asg_profile.nodes[count.index].fullname
+  }
+
+  provisioner "local-exec" {
+    when       = create
+    command    = "${path.module}/kubectl.sh ${count.index} ${terraform.workspace} ${var.rollover_timeout}"
+    on_failure = continue
+  }
+}
