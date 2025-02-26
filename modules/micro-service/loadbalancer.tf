@@ -14,6 +14,17 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
   }
 }
 
+resource "duplocloud_duplo_service_params" "this" {
+  count                       = var.lb.enabled ? 1 : 0
+  tenant_id                   = local.tenant.id
+  replication_controller_name = local.service.name
+  dns_prfx                    = local.dns_prfx
+  enable_access_logs          = false
+  drop_invalid_headers        = false
+  http_to_https_redirect      = local.cert_arn != "" ? true : false
+  idle_timeout                = 60
+}
+
 resource "duplocloud_aws_lb_listener_rule" "this" {
   count        = var.lb.enabled && var.lb.type == "target-group" ? 1 : 0
   tenant_id    = local.tenant.id

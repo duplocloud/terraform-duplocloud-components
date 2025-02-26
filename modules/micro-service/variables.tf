@@ -196,6 +196,7 @@ EOT
     protocol     = optional(string, "http")
     certificate  = optional(string, "")
     listener     = optional(string, null)
+    dns_prfx     = optional(string, null)
   })
   default = {}
   validation {

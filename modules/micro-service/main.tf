@@ -7,6 +7,7 @@ locals {
   cert_arn       = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.lb.certificate
   # if the cert_arn is not null and the external port is null, set it to 443, else set it to 80
   external_port = var.lb.port != null ? var.lb.port : local.cert_arn != "" ? 443 : var.lb.type == "service" ? var.port : 80
+  dns_prfx      = var.lb.dns_prfx != null ? var.lb.dns_prfx : "${local.service.name}-${local.tenant.name}"
   alb_types = {
     "elb"                  = 0
     "alb"                  = 1
