@@ -50,5 +50,6 @@ output "volumeMount" {
     name      = local.id
     mountPath = local.mountPath
     readOnly  = true
+    subPath   = null
   } : null
 }
