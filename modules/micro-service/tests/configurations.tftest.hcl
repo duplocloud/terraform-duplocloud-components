@@ -19,7 +19,7 @@ run "building_configurations" {
       class       = "aws-secret"
       csi         = true
       managed     = false
-      description = "This would build an aws secret with a k8s secret using a the csi driver. This then is mounted as a colume and envFrom"
+      description = "This would build an aws secret with a k8s secret using a the csi driver. This then is mounted as a volume and envFrom"
       data = {
         BUBBLES = "are cool"
       }

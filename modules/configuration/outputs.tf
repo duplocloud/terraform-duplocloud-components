@@ -33,17 +33,6 @@ output "class" {
 output "envFrom" {
   description = "The envFrom configuration if the configuration is of type environment and enabled."
   value       = length(local.envFrom) > 0 ? local.envFrom[0] : null
-  # value = (
-  #   var.enabled && var.type == "environment"
-  # ) ? var.class == "configmap" ? {
-  #   configMapRef = {
-  #     name = local.realName
-  #   }
-  # } : {
-  #   secretRef = {
-  #     name = local.realName
-  #   }
-  # } : null
 }
 
 output "volume" {

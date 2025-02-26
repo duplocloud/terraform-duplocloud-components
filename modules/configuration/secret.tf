@@ -13,7 +13,7 @@ resource "duplocloud_k8_secret" "managed" {
 }
 
 resource "duplocloud_k8_secret" "unmanaged" {
-  count              = var.managed && var.class == "secret" ? 1 : 0
+  count              = !var.managed && var.class == "secret" ? 1 : 0
   tenant_id          = var.tenant_id
   secret_name        = local.name
   secret_type        = "Opaque"

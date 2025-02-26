@@ -35,7 +35,6 @@ locals {
     command          = jsonencode(var.command)
     args             = jsonencode(var.args)
     env              = jsonencode(local.container_env)
-    # volumes = jsonencode(local.volumes)
   }
   volumes = concat([
     for config in module.configurations : config.volume if config.volume != null

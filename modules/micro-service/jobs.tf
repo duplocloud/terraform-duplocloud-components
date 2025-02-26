@@ -65,6 +65,7 @@ resource "duplocloud_k8s_job" "before_update" {
               name       = volume_mount.value.name
               mount_path = volume_mount.value.mountPath
               read_only  = volume_mount.value.readOnly
+              sub_path   = volume_mount.value.subPath
             }
           }
         }

@@ -11,7 +11,7 @@ variable "name" {
 }
 
 variable "prefix" {
-  description = "An optional prefix for the name with a dash. This is ideal if the name "
+  description = "An optional prefix for the name with a dash. This is ideal if the name comes from the higher level resource/module, e.g. the app name."
   type        = string
   default     = null
   nullable    = true
@@ -53,19 +53,19 @@ variable "class" {
 }
 
 variable "csi" {
-  description = "Wether to use the csi driver and bind to a kubernetes secret. Only available for aws-secret and aws-ssm."
+  description = "Whether to use the csi driver and bind to a kubernetes secret. Only available for aws-secret and aws-ssm."
   type        = bool
   default     = false
 }
 
 variable "managed" {
-  description = "Wether terraform should manage the value of the data. If false, the data will be ignored."
+  description = "Whether terraform should manage the value of the data. If false, the data will be ignored."
   type        = bool
   default     = true
 }
 
 variable "enabled" {
-  description = "Wether the configuration is enabled on a service."
+  description = "Whether the configuration is enabled on a service."
   type        = bool
   default     = true
 }

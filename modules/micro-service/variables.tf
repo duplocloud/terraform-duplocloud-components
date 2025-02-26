@@ -286,6 +286,7 @@ variable "volume_mounts" {
   type = list(object({
     name      = string
     mountPath = string
+    readOnly  = optional(bool, false)
     subPath   = optional(string, null)
   }))
   default = []

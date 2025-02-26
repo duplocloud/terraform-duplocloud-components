@@ -6,9 +6,10 @@ output "configurations" {
 
 output "release_id" {
   value       = local.release_id
-  description = "The job id."
+  description = "The random release id for this deployment."
 }
 
 output "volumes" {
   value = local.volumes
+  description = "The list of volumes mounted to the service."
 }
