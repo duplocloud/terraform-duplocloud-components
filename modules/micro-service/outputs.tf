@@ -10,6 +10,6 @@ output "release_id" {
 }
 
 output "volumes" {
-  value = local.volumes
+  value       = local.volumes
   description = "The list of volumes mounted to the service."
 }
