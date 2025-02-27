@@ -37,3 +37,74 @@ Also see the [retool-bastion example](examples/retool-bastion) directory to see 
 ## References
 
  - [Configure SSH tunneling for resources](https://docs.retool.com/data-sources/guides/ssh-tunnels)
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.4.4)
+
+- <a name="requirement_duplocloud"></a> [duplocloud](#requirement\_duplocloud) (>= 0.9.40)
+
+## Providers
+
+The following providers are used by this module:
+
+- <a name="provider_duplocloud"></a> [duplocloud](#provider\_duplocloud) (>= 0.9.40)
+
+## Modules
+
+No modules.
+
+## Resources
+
+The following resources are used by this module:
+
+- [duplocloud_aws_host.bastion](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/aws_host) (resource)
+- [duplocloud_native_host_images.current](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/data-sources/native_host_images) (data source)
+
+## Required Inputs
+
+The following input variables are required:
+
+### <a name="input_retool_public_key"></a> [retool\_public\_key](#input\_retool\_public\_key)
+
+Description: The public key for the retool user
+
+Type: `string`
+
+### <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id)
+
+Description: n/a
+
+Type: `string`
+
+## Optional Inputs
+
+The following input variables are optional (have default values):
+
+### <a name="input_capacity"></a> [capacity](#input\_capacity)
+
+Description: The size of the instance
+
+Type: `string`
+
+Default: `"t3.small"`
+
+### <a name="input_name"></a> [name](#input\_name)
+
+Description: The name of the instance
+
+Type: `string`
+
+Default: `"retool-bastion"`
+
+## Outputs
+
+The following outputs are exported:
+
+### <a name="output_host"></a> [host](#output\_host)
+
+Description: n/a
+<!-- END_TF_DOCS -->

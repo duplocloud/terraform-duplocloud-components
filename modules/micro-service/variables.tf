@@ -4,6 +4,7 @@ variable "tenant" {
 }
 
 variable "name" {
+  description = "The name of the service and the prefix for the resources."
   type = string
 }
 
@@ -17,11 +18,13 @@ variable "release_id" {
 }
 
 variable "command" {
+  description = "The command to run in the container. This is using kubernetes command syntax."
   type    = list(string)
   default = []
 }
 
 variable "args" {
+  description = "The arguments to pass to the command. This is using kubernetes command syntax."
   type    = list(string)
   default = []
 }

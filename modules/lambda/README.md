@@ -37,3 +37,119 @@ Also see the [retool-bastion example](examples/retool-bastion) directory to see 
 ## References
 
  - [Configure SSH tunneling for resources](https://docs.retool.com/data-sources/guides/ssh-tunnels)
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.4.4)
+
+- <a name="requirement_duplocloud"></a> [duplocloud](#requirement\_duplocloud) (>= 0.10.34)
+
+## Providers
+
+The following providers are used by this module:
+
+- <a name="provider_duplocloud"></a> [duplocloud](#provider\_duplocloud) (>= 0.10.34)
+
+## Modules
+
+No modules.
+
+## Resources
+
+The following resources are used by this module:
+
+- [duplocloud_aws_lambda_function.this](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/aws_lambda_function) (resource)
+- [duplocloud_tenant.this](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/data-sources/tenant) (data source)
+
+## Required Inputs
+
+The following input variables are required:
+
+### <a name="input_handler"></a> [handler](#input\_handler)
+
+Description: The handler for the lambda
+
+Type: `string`
+
+### <a name="input_image"></a> [image](#input\_image)
+
+Description: n/a
+
+Type:
+
+```hcl
+object({
+    uri               = string
+    entry_point       = optional(list(string))
+    working_directory = optional(string)
+  })
+```
+
+### <a name="input_name"></a> [name](#input\_name)
+
+Description: The name of the lambda
+
+Type: `string`
+
+### <a name="input_package_type"></a> [package\_type](#input\_package\_type)
+
+Description: The type of package to deploy
+
+Type: `string`
+
+### <a name="input_tenant_name"></a> [tenant\_name](#input\_tenant\_name)
+
+Description: n/a
+
+Type: `string`
+
+## Optional Inputs
+
+The following input variables are optional (have default values):
+
+### <a name="input_description"></a> [description](#input\_description)
+
+Description: n/a
+
+Type: `string`
+
+Default: `"Duplocloud Rocks"`
+
+### <a name="input_environment"></a> [environment](#input\_environment)
+
+Description: The environment variables for the lambda
+
+Type: `map(string)`
+
+Default: `{}`
+
+### <a name="input_memory_size"></a> [memory\_size](#input\_memory\_size)
+
+Description: The memory size for the lambda
+
+Type: `number`
+
+Default: `2048`
+
+### <a name="input_timeout"></a> [timeout](#input\_timeout)
+
+Description: The timeout for the lambda
+
+Type: `number`
+
+Default: `600`
+
+### <a name="input_tracing_mode"></a> [tracing\_mode](#input\_tracing\_mode)
+
+Description: The tracing mode for the lambda
+
+Type: `string`
+
+Default: `"PassThrough"`
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
