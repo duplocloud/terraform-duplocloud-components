@@ -16,13 +16,18 @@ resource "duplocloud_k8s_job" "before_update" {
         labels      = var.pod_labels
       }
       spec {
-        node_selector  = var.nodes.selector
+        node_selector  = var.nodes.selector != null ? var.nodes.selector : {
+          "kubernetes.io/os" = "linux"
+        }
         restart_policy = "OnFailure"
         service_account_name = "duploservices-${local.tenant.name}-readonly-user"
-        security_context {
-          fs_group     = var.security_context.fs_group
-          run_as_group = var.security_context.run_as_group
-          run_as_user  = var.security_context.run_as_user
+        dynamic "security_context" {
+          for_each = var.security_context == null ? [] : [var.security_context]
+          content {
+            run_as_user = security_context.value.run_as_user
+            run_as_group = security_context.value.run_as_group
+            fs_group = security_context.value.fs_group
+          }
         }
         container {
           name    = "before-update"
@@ -98,5 +103,13 @@ resource "duplocloud_k8s_job" "before_update" {
         }
       }
     }
+  }
+  lifecycle {
+    ignore_changes = [
+      spec[0].template[0].metadata[0].labels["app"],
+      spec[0].template[0].metadata[0].labels["owner"],
+      spec[0].template[0].metadata[0].labels["tenantid"],
+      spec[0].template[0].metadata[0].labels["tenantname"]
+    ]
   }
 }

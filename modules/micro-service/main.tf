@@ -23,14 +23,14 @@ locals {
     image            = var.image
     port             = var.port
     health_check     = var.health_check
-    nodeSelector     = jsonencode(var.nodes.selector)
+    nodeSelector     = jsonencode(var.nodes.selector != null ? var.nodes.selector : {})
     restart_policy   = var.restart_policy
     annotations      = jsonencode(var.annotations)
     labels           = jsonencode(var.labels)
     pod_labels       = jsonencode(var.pod_labels)
     pod_annotations  = jsonencode(var.pod_annotations)
     resources        = jsonencode(var.resources)
-    security_context = jsonencode(var.security_context)
+    security_context = jsonencode(var.security_context != null ? var.security_context : {})
     volume_mounts    = jsonencode(local.volume_mounts)
     volumes          = jsonencode(local.volumes)
     command          = jsonencode(var.command)

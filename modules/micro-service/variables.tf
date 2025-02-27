@@ -147,7 +147,8 @@ variable "security_context" {
     run_as_group = optional(number, null)
     fs_group     = optional(number, null)
   })
-  default = {}
+  default = null 
+  nullable = true
 }
 
 variable "nodes" {
