@@ -158,7 +158,7 @@ variable "nodes" {
   type = object({
     allocation_tags = optional(string, null)
     shared          = optional(bool, false)
-    selector        = optional(map(string), {})
+    selector        = optional(map(string), null)
   })
   default = {}
 }
