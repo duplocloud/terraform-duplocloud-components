@@ -18,6 +18,7 @@ resource "duplocloud_k8s_job" "before_update" {
       spec {
         node_selector  = var.nodes.selector
         restart_policy = "OnFailure"
+        service_account_name = "duploservices-${local.tenant.name}-readonly-user"
         security_context {
           fs_group     = var.security_context.fs_group
           run_as_group = var.security_context.run_as_group
