@@ -23,6 +23,9 @@ resource "duplocloud_duplo_service_params" "this" {
   drop_invalid_headers        = false
   http_to_https_redirect      = local.cert_arn != "" ? true : false
   idle_timeout                = 60
+  depends_on = [ 
+    duplocloud_duplo_service_lbconfigs.this[0]
+  ]
 }
 
 resource "duplocloud_aws_lb_listener_rule" "this" {
