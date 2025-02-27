@@ -147,7 +147,7 @@ variable "security_context" {
     run_as_group = optional(number, null)
     fs_group     = optional(number, null)
   })
-  default = null 
+  default  = null
   nullable = true
 }
 

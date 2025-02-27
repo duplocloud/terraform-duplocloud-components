@@ -16,17 +16,17 @@ resource "duplocloud_k8s_job" "before_update" {
         labels      = var.pod_labels
       }
       spec {
-        node_selector  = var.nodes.selector != null ? var.nodes.selector : {
+        node_selector = var.nodes.selector != null ? var.nodes.selector : {
           "kubernetes.io/os" = "linux"
         }
-        restart_policy = "OnFailure"
+        restart_policy       = "OnFailure"
         service_account_name = "duploservices-${local.tenant.name}-readonly-user"
         dynamic "security_context" {
           for_each = var.security_context == null ? [] : [var.security_context]
           content {
-            run_as_user = security_context.value.run_as_user
+            run_as_user  = security_context.value.run_as_user
             run_as_group = security_context.value.run_as_group
-            fs_group = security_context.value.fs_group
+            fs_group     = security_context.value.fs_group
           }
         }
         container {
