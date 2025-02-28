@@ -5,7 +5,7 @@ variable "tenant" {
 
 variable "name" {
   description = "The name of the service and the prefix for the resources."
-  type = string
+  type        = string
 }
 
 variable "release_id" {
@@ -19,14 +19,14 @@ variable "release_id" {
 
 variable "command" {
   description = "The command to run in the container. This is using kubernetes command syntax."
-  type    = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "args" {
   description = "The arguments to pass to the command. This is using kubernetes command syntax."
-  type    = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "port" {
@@ -172,7 +172,7 @@ Expose the service via a load balancer.
 
 Use the `enabled` field to enable or disable the load balancer.
 
-The type of load balancer can be one of the following: 
+The `class` of load balancer can be one of the following: 
 - elb
 - alb
 - health-only
@@ -187,13 +187,15 @@ The value can be an ARN or a string that matches the certificate name in the AWS
 
 The `external_port` field will determine the port that the load balancer will listen on. If the field is not set, the port will be 80 for HTTP and 443 for HTTPS depending on weether or not the `certificate` field is set.
 
-If the type is `target-group`, the `listener` field must be set to the ARN of the listener that the target group will be attached to.
+If the class is `target-group`, the `listener` field must be set to the ARN of the listener that the target group will be attached to.
+
+The `dns_prfx` field will determine the subdomain for the base host tenant. If the field is not set, the prefix will be the service name and tenant name.
 
 See more docs here: https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/duplo_service_lbconfigs
 EOT
   type = object({
     enabled      = optional(bool, false)
-    type         = optional(string, "service")
+    class        = optional(string, "service")
     priority     = optional(number, 0)
     path_pattern = optional(string, "/*")
     port         = optional(number, null)
@@ -204,7 +206,16 @@ EOT
   })
   default = {}
   validation {
-    condition     = can(regex("^(elb|alb|health-only|service|node-port|azure-shared-gateway|nlb|target-group)$", var.lb.type))
+    condition = contains([
+      "elb",
+      "alb",
+      "health-only",
+      "service",
+      "node-port",
+      "azure-shared-gateway",
+      "nlb",
+      "target-group"
+    ], var.lb.class)
     error_message = "The load balancer type must be one of 'elb', 'alb', 'health-only', 'service', 'node-port', 'azure-shared-gateway', 'nlb', or 'target-group'"
   }
   validation {
@@ -212,7 +223,7 @@ EOT
     error_message = "The protocol must be one of 'http', 'https', or 'tcp'"
   }
   validation {
-    condition     = var.lb.type == "target-group" ? var.lb.listener != null : true
+    condition     = var.lb.class == "target-group" ? var.lb.listener != null : true
     error_message = "The listener must be set when the load balancer type is 'target-group'"
   }
 }
@@ -264,6 +275,7 @@ variable "configurations" {
   EOT
   type = list(object({
     enabled     = optional(bool, true)
+    class       = optional(string, "configmap")
     external    = optional(bool, false)
     name        = optional(string, null)
     description = optional(string, null)
@@ -271,7 +283,6 @@ variable "configurations" {
     data        = optional(map(string), {})
     value       = optional(string, null)
     managed     = optional(bool, true)
-    class       = optional(string, "configmap")
     csi         = optional(bool, false)
     mountPath   = optional(string, null)
   }))
@@ -351,7 +362,12 @@ variable "jobs" {
   default = []
 
   validation {
-    condition     = alltrue([for job in var.jobs : can(regex("^(before-update|after-update|before-delete|after-delete)$", job.event))])
+    # redo the condition uses contains instead of regex
+    condition = alltrue([for job in var.jobs : contains([
+      "before-update", "after-update",
+      "before-delete", "after-delete",
+      "cron"
+    ], job.event)])
     error_message = "The event must be one of 'before-update', 'after-update', 'before-delete', or 'after-delete'"
   }
 }

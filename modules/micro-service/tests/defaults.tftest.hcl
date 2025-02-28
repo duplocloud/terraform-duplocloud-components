@@ -45,4 +45,13 @@ run "validate_defaults" {
     condition     = length(local.env_from) == 0
     error_message = "The env_from should be an empty array by default."
   }
+
+  # make sure there are no lb objects created
+  assert {
+    condition = (
+      length(duplocloud_duplo_service_lbconfigs.this) == 0 &&
+      length(duplocloud_duplo_service_params.this) == 0
+    )
+    error_message = "There should be only one lbconfig object."
+  }
 }

@@ -3,7 +3,7 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
   tenant_id                   = local.tenant.id
   replication_controller_name = local.service.name
   lbconfigs {
-    lb_type          = local.alb_types[var.lb.type]
+    lb_type          = local.alb_types[var.lb.class]
     is_native        = false
     is_internal      = false
     port             = var.port
@@ -29,7 +29,7 @@ resource "duplocloud_duplo_service_params" "this" {
 }
 
 resource "duplocloud_aws_lb_listener_rule" "this" {
-  count        = var.lb.enabled && var.lb.type == "target-group" ? 1 : 0
+  count        = var.lb.enabled && var.lb.class == "target-group" ? 1 : 0
   tenant_id    = local.tenant.id
   listener_arn = var.lb.listener
   priority     = var.lb.priority
