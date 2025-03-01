@@ -1,7 +1,24 @@
 locals {
   service = var.image.managed ? duplocloud_duplo_service.managed[0] : duplocloud_duplo_service.unmanaged[0]
-  # build this here so we can decode the generated json first before re-encoding it later in the service
-  other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", local.container_context))
+  other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", {
+    env_from         = jsonencode(local.env_from)
+    image            = var.image
+    port             = var.port
+    health_check     = var.health_check
+    nodeSelector     = jsonencode(var.nodes.selector != null ? var.nodes.selector : {})
+    restart_policy   = var.restart_policy
+    annotations      = jsonencode(var.annotations)
+    labels           = jsonencode(var.labels)
+    pod_labels       = jsonencode(var.pod_labels)
+    pod_annotations  = jsonencode(var.pod_annotations)
+    resources        = jsonencode(var.resources)
+    security_context = jsonencode(var.security_context != null ? var.security_context : {})
+    volume_mounts    = jsonencode(local.volume_mounts)
+    volumes          = jsonencode(local.volumes)
+    command          = jsonencode(var.command)
+    args             = jsonencode(var.args)
+    env              = jsonencode(local.container_env)
+  }))
 }
 
 # the tf managed resource block

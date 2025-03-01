@@ -203,6 +203,7 @@ EOT
     certificate  = optional(string, "")
     listener     = optional(string, null)
     dns_prfx     = optional(string, null)
+    internal     = optional(bool, false)
   })
   default = {}
   validation {
