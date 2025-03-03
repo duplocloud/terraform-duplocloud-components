@@ -50,4 +50,10 @@ run "validate_defaults" {
     condition = length(data.duplocloud_plan_certificate.this) == 0
     error_message = "Expected length(duplocloud_plan_certificate.this) to be 0 but got '${length(data.duplocloud_plan_certificate.this)}'"
   }
+
+  # the ingress annotations should be null
+  assert {
+    condition = local.ingress_annotations == null
+    error_message = "Expected local.ingress_annotations to be null"
+  }
 }

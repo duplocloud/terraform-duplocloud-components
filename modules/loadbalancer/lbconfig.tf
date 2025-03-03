@@ -22,7 +22,7 @@ resource "duplocloud_duplo_service_params" "this" {
   dns_prfx                    = local.dns_prfx
   enable_access_logs          = false
   drop_invalid_headers        = false
-  http_to_https_redirect      = var.certificate != null ? true : false
+  http_to_https_redirect      = local.https_redirect
   idle_timeout                = 60
   depends_on = [
     duplocloud_duplo_service_lbconfigs.this[0]

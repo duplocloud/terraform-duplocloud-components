@@ -21,7 +21,7 @@ mock_provider "duplocloud" {
   }
 }
 
-run "no_cert_lookup_when_arn" {
+run "alb_with_cert_arn" {
   command = plan
   variables {
     tenant = var.tenant
@@ -40,6 +40,15 @@ run "no_cert_lookup_when_arn" {
   assert {
     condition = local.cert_is_arn == true
     error_message = "Expected local.cert_is_arn to be true but got '${local.cert_is_arn}'"
+  }
+
+  # the https redirect here should be true
+  assert {
+    condition = (
+      local.https_redirect == true &&
+      duplocloud_duplo_service_params.this[0].http_to_https_redirect == true
+    )
+    error_message = "Expected local.https_redirect to be false but got '${local.https_redirect}'"
   }
 }
 
@@ -62,5 +71,35 @@ run "lookup_named_cert" {
   assert {
     condition = local.cert_is_arn == false
     error_message = "Expected local.cert_is_arn to be true but got '${local.cert_is_arn}'"
+  }
+}
+
+run "basic_alb" {
+  command = plan
+  variables {
+    tenant = var.tenant
+    name      = var.name
+    class    = var.class
+  }
+
+  # there should be one lb config
+  assert {
+    condition = length(duplocloud_duplo_service_lbconfigs.this) == 1
+    error_message = "Expected length(duplocloud_duplo_service_lbconfigs.this) to be 1 but got '${length(duplocloud_duplo_service_lbconfigs.this)}'"
+  }
+
+  # there should be one lb params
+  assert {
+    condition = length(duplocloud_duplo_service_params.this) == 1
+    error_message = "Expected length(duplocloud_duplo_service_params.this) to be 1 but got '${length(duplocloud_duplo_service_params.this)}'"
+  }
+
+  # the https redirect here should be false
+  assert {
+    condition = (
+      local.https_redirect == false &&
+      duplocloud_duplo_service_params.this[0].http_to_https_redirect == false
+    )
+    error_message = "Expected local.https_redirect to be false but got '${local.https_redirect}'"
   }
 }

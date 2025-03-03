@@ -30,4 +30,13 @@ run "ingress_alb" {
     )
     error_message = "Expected count(duplocloud_aws_lb_listener_rule.this) to be 1 but got something else"
   }
+
+  # the annotations should be set
+  assert {
+    condition = (
+      local.ingress_annotations != null &&
+      local.ingress_annotations["kubernetes.io/ingress.class"] == "alb"
+    )
+    error_message = "Expected local.ingress_annotations to be null"
+  }
 }

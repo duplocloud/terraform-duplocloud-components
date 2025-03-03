@@ -14,25 +14,19 @@ terraform {
 }
 provider "duplocloud" {}
 
-variable "tenant" {
-  type    = string
-  default = "tf-tests"
-}
-
 module "some_service" {
   source = "../../modules/micro-service"
-  tenant = var.tenant
+  tenant = terraform.workspace
   name   = "myapp"
   image = {
     uri = "nginx:latest"
   }
   port = 80
   lb = {
-    enabled = false
+    enabled     = true
+    certificate = "demo-cert"
+    class       = "alb"
   }
-  secrets = [
-    "some-other-secret"
-  ]
   configurations = [{
     data = {
       BAZ = "buzz"
@@ -40,8 +34,9 @@ module "some_service" {
     }, {
     name        = "bubbles"
     class       = "aws-secret"
-    csi         = true
+    csi         = false
     managed     = false
+    enabled     = false
     description = "This would build an aws secret with a k8s secret using a the csi driver. This then is mounted as a colume and envFrom"
     data = {
       BUBBLES = "are cool"

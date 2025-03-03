@@ -12,6 +12,19 @@ locals {
   cert_arn          = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.certificate
   external_port     = var.external_port != null ? var.external_port : var.certificate != null ? 443 : local.class == "service" ? var.port : 80
   dns_prfx          = coalesce(var.dns_prfx, "${var.name}-${var.tenant}")
+  https_redirect    = var.certificate != null ? true : false
+  ingress_annotations = local.is_ingress ? {
+    for key, value in merge(
+      var.annotations,
+      {
+        "kubernetes.io/ingress.class"                = local.ingress_class
+        "alb.ingress.kubernetes.io/ssl-redirect"     = local.https_redirect ? tostring(local.external_port) : null
+        "alb.ingress.kubernetes.io/target-type"      = "ip"
+        "alb.ingress.kubernetes.io/healthcheck-path" = var.health_check_url
+      }
+    ) : key => value
+    if value != null
+  } : null
   duplo_types = {
     "elb"                  = 0
     "alb"                  = 1

@@ -31,6 +31,18 @@ variable "name" {
   type        = string
 }
 
+variable "labels" {
+  description = "The labels to use for the load balancer."
+  type        = map(string)
+  default     = {}
+}
+
+variable "annotations" {
+  description = "The annotations to use for the load balancer."
+  type        = map(string)
+  default     = {}
+}
+
 variable "port" {
   description = "The port the application is listening on."
   type        = number
