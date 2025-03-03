@@ -14,9 +14,14 @@ terraform {
 }
 provider "duplocloud" {}
 
+variable "tenant" {
+  description = "The tenant to deploy the service to."
+  default     = "tf-tests"
+}
+
 module "some_service" {
   source = "../../modules/micro-service"
-  tenant = terraform.workspace
+  tenant = var.tenant
   name   = "myapp"
   image = {
     uri = "nginx:latest"

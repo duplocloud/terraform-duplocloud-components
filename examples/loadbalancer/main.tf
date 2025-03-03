@@ -14,9 +14,14 @@ terraform {
 }
 provider "duplocloud" {}
 
-module "tenant" {
+variable "tenant" {
+  description = "The tenant to deploy the service to."
+  default     = "tf-tests"
+}
+
+module "loadbalancer" {
   source = "../../modules/loadbalancer"
   name   = "mylb"
-  tenant = terraform.workspace
+  tenant = var.tenant
   class  = "standalone-alb"
 }
