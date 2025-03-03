@@ -17,6 +17,7 @@ provider "duplocloud" {}
 variable "tenant" {
   description = "The tenant to deploy the service to."
   default     = "tf-tests"
+  type        = string
 }
 
 module "some_service" {
