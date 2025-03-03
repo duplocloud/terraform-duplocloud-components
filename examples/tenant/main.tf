@@ -15,9 +15,9 @@ terraform {
 provider "duplocloud" {}
 
 module "tenant" {
-  source = "../../modules/tenant"
+  source     = "../../modules/tenant"
   infra_name = "oteltest"
-  name   = "myapp"
+  name       = "myapp"
   settings = {
     enable_host_other_tenants = "true"
   }

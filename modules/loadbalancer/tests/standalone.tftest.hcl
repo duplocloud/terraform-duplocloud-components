@@ -2,13 +2,13 @@ run "standalone_alb" {
   command = plan
   variables {
     tenant = "tf-tests"
-    name      = "myapp"
-    class    = "standalone-alb"
+    name   = "myapp"
+    class  = "standalone-alb"
   }
 
   # assert the local.is_standalone is true
   assert {
-    condition = local.is_standalone == true
+    condition     = local.is_standalone == true
     error_message = "Expected local.is_standalone to be true but got false"
   }
 

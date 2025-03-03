@@ -1,7 +1,7 @@
 variables {
   tenant = "tf-tests"
-  name      = "myapp"
-  class    = "alb"
+  name   = "myapp"
+  class  = "alb"
 }
 
 mock_provider "duplocloud" {

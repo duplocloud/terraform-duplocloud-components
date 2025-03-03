@@ -2,8 +2,8 @@ run "ingress_alb" {
   command = plan
   variables {
     tenant = "tf-tests"
-    name      = "myapp"
-    class    = "ingress-alb"
+    name   = "myapp"
+    class  = "ingress-alb"
   }
 
   # assert the local.is_standalone is true
@@ -18,7 +18,7 @@ run "ingress_alb" {
   # assert that the local.ingress_class is set to "alb"
   assert {
     condition = (
-      local.ingress_class == "alb" && 
+      local.ingress_class == "alb" &&
       local.class == "service"
     )
     error_message = "Expected local.ingress_class to be alb but got something else"

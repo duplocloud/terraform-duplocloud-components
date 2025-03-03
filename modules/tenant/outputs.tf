@@ -8,5 +8,5 @@ output "vpc" {
 
 output "region" {
   description = "The region where the tenant is created."
-  value = local.infra.region
+  value       = local.infra.region
 }
