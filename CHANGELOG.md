@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.26] - 2025-03-05
+
 ### Added
 
 - micro-service module
