@@ -28,7 +28,7 @@ variable "environment" {
 
 variable "region_configs" {
   description = "value of the region_configs"
-  type        = map(object({
+  type = map(object({
     electable_specs = map(object({
       instance_size = string
       node_count    = number
@@ -42,12 +42,24 @@ variable "region_configs" {
 
 variable "mongo_user_details" {
   description = "value of the mongo_user_details"
-  type        = map(object({
+  type = map(object({
     username = string
-    roles    = map(object({
+    roles = map(object({
       database_name = string
       role_name     = string
     }))
     auth_database_name = string
   }))
+}
+
+variable "mongodb_atlas_public_key" {
+  description = "The public key for the MongoDB Atlas provider"
+  type        = string
+
+}
+
+variable "mongodb_atlas_private_key" {
+  description = "The private key for the MongoDB Atlas provider"
+  type        = string
+
 }
