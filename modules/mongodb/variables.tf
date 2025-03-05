@@ -52,14 +52,3 @@ variable "mongo_user_details" {
   })
 }
 
-variable "mongodb_atlas_public_key" {
-  description = "The public key for the MongoDB Atlas provider"
-  type        = string
-
-}
-
-variable "mongodb_atlas_private_key" {
-  description = "The private key for the MongoDB Atlas provider"
-  type        = string
-
-}

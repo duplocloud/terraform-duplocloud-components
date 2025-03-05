@@ -18,10 +18,7 @@ terraform {
 
 
 # Use the secrets in the MongoDB Atlas provider
-provider "mongodbatlas" {
-  public_key  = "mongodb_atlas_public_key"
-  private_key = "mongodb_atlas_private_key"
-}
+
 
 provider "random" {}
 
@@ -50,7 +47,5 @@ module "mongo_atlas" {
     }
     auth_database_name = "admin"
   }
-  mongodb_atlas_public_key  = "my-public-key"
-  mongodb_atlas_private_key = "my-private-key"
 
 }
