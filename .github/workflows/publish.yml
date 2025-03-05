@@ -19,8 +19,16 @@ on:
         default: false
         type: boolean
 jobs:
-  publish:
+  bump:
+    name: Publish
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      previous-version: ${{ steps.bump.outputs.previous-version }}
+      tag: ${{ steps.bump.outputs.tag }}
+      release-notes: ${{ steps.bump.outputs.release-notes }}
+      url: ${{ steps.registry.outputs.url }}
+      badge: ${{ steps.registry.outputs.badge }}
     steps:
 
     - name: Create GitHub App Token
@@ -37,32 +45,56 @@ jobs:
     
     - name: Bump Version
       id: bump
-      uses: duplocloud/version-action@main
+      uses: duplocloud/version-bump@main
       with:
         token:  ${{ steps.app-token.outputs.token }}
         version: ${{ inputs.action }}
         push: ${{ inputs.push }}
+
+    - name: Registry URL
+      id: registry
+      env:
+        URL: https://registry.terraform.io/modules/duplocloud/components/duplocloud
+        VERSION: ${{ steps.bump.outputs.version }}
+      run: |
+        URL="${URL}/${VERSION}"
+        BADGE="[![TF Registry](https://img.shields.io/badge/TF-Registry-%23844FBA?style=flat-square&logo=terraform)](${URL})"
+        echo "url=${URL}" >> $GITHUB_OUTPUT
+        echo "badge=${BADGE}" >> $GITHUB_OUTPUT
+
+      
+    - name: Summary 
+      run: |
+        cat <<EOF > $GITHUB_STEP_SUMMARY
+        ${{ steps.registry.outputs.badge }}
+        New Version: ${{ steps.bump.outputs.version }}
+        Previous Version: ${{ steps.bump.outputs.previous-version }}
+        
+
+        Release Notes: 
+        --------------
+        ${{ steps.bump.outputs.release-notes }}
+        EOF
+        
+
+  release:
+    name: Publish
+    needs: bump
+    runs-on: ubuntu-latest
+    environment: 
+      name: terraform-registry
+      url: ${{ needs.bump.outputs.url }}
+    steps:
 
     - name: Create Release
       id: release
       uses: softprops/action-gh-release@v2
       if: inputs.push == true
       with:
-        name: ${{ steps.bump.outputs.tag }}
-        tag_name: ${{ steps.bump.outputs.tag }}
+        name: ${{ needs.bump.outputs.tag }}
+        tag_name: ${{ needs.bump.outputs.tag }}
         prerelease: false
         body: |
-          [![Publish](${{ github.server_url }}/${{ github.repository }}/actions/workflows/publish.yml/badge.svg)](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          [![Publish](${{ github.server_url }}/${{ github.repository }}/actions/workflows/publish.yml/badge.svg)](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) ${{ needs.bump.outputs.badge }}
 
-          ${{ steps.bump.outputs.release-notes }}
-
-    - name: Summary 
-      run: |
-        cat <<EOF > $GITHUB_STEP_SUMMARY
-        New Version: ${{ steps.bump.outputs.version }}
-        Previous Version: ${{ steps.bump.outputs.previous-version }}
-
-        Release Notes: 
-        --------------
-        ${{ steps.bump.outputs.release-notes }}
-        EOF
+          ${{ needs.bump.outputs.release-notes }}

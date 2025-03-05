@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added 
+
+- badges to readme and release notes
+
 ## [0.0.26] - 2025-03-05
 
 ### Added
