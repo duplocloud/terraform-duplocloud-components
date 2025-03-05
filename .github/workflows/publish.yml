@@ -20,7 +20,7 @@ on:
         type: boolean
 jobs:
   bump:
-    name: Publish
+    name: Bump Version
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
@@ -78,7 +78,7 @@ jobs:
         
 
   release:
-    name: Publish
+    name: Publish Release
     needs: bump
     runs-on: ubuntu-latest
     environment: 
