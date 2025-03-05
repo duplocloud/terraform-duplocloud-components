@@ -28,7 +28,7 @@ resource "random_password" "mongodb_password" {
 }
 resource "mongodbatlas_database_user" "user" {
   username   = var.monggo_user_details.username
-  password   = random_password.mongodb_password[0].result
+  password   = random_password.mongodb_password.result
   project_id = var.mongo_project_id
   roles {
     database_name = var.monggo_user_details.roles.database_name
