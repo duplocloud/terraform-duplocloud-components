@@ -19,6 +19,7 @@ on:
         default: false
         type: boolean
 jobs:
+
   bump:
     name: Bump Version
     runs-on: ubuntu-latest
@@ -69,27 +70,24 @@ jobs:
         ${{ steps.registry.outputs.badge }}
         New Version: ${{ steps.bump.outputs.version }}
         Previous Version: ${{ steps.bump.outputs.previous-version }}
-        
 
-        Release Notes: 
+        ## Release Notes: 
         --------------
         ${{ steps.bump.outputs.release-notes }}
         EOF
-        
 
   release:
     name: Publish Release
+    if: inputs.push
     needs: bump
     runs-on: ubuntu-latest
     environment: 
       name: terraform-registry
       url: ${{ needs.bump.outputs.url }}
     steps:
-
     - name: Create Release
       id: release
       uses: softprops/action-gh-release@v2
-      if: inputs.push == true
       with:
         name: ${{ needs.bump.outputs.tag }}
         tag_name: ${{ needs.bump.outputs.tag }}
