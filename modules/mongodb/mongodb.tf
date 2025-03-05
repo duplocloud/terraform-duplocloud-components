@@ -27,12 +27,12 @@ resource "random_password" "mongodb_password" {
   override_special = ""
 }
 resource "mongodbatlas_database_user" "user" {
-  username   = var.monggo_user_details.username
+  username   = var.mongo_user_details.username
   password   = random_password.mongodb_password.result
   project_id = var.mongo_project_id
   roles {
-    database_name = var.monggo_user_details.roles.database_name
-    role_name     = var.monggo_user_details.roles.role_name
+    database_name = var.mongo_user_details.roles.database_name
+    role_name     = var.mongo_user_details.roles.role_name
   }
-  auth_database_name = var.monggo_user_details.auth_database_name
+  auth_database_name = var.mongo_user_details.auth_database_name
 }
