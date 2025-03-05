@@ -63,6 +63,7 @@ jobs:
       if: inputs.push
       uses: softprops/action-gh-release@v2
       with:
+        token: ${{ steps.app-token.outputs.token }}
         name: ${{ steps.bump.outputs.tag }}
         tag_name: ${{ steps.bump.outputs.tag }}
         prerelease: false
