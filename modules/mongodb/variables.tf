@@ -40,8 +40,8 @@ variable "region_configs" {
   }))
 }
 
-variable "monggo_user_details" {
-  description = "value of the monggo_user_details"
+variable "mongo_user_details" {
+  description = "value of the mongo_user_details"
   type        = map(object({
     username = string
     roles    = map(object({
