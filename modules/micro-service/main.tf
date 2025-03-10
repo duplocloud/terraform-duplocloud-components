@@ -44,3 +44,28 @@ resource "random_string" "release_id" {
   special = false
   upper   = false
 }
+
+check "hpa-with-resources" {
+  assert {
+    condition = !(
+      var.scale.metrics != null &&
+      var.resources.limits == null
+    )
+    error_message = <<EOT
+When using autoscaling, it is highly recommended to set resources.
+If the HPA is configured to scale on 80% CPU utilization but there
+are no limits set, then the autoscaler will not actually work. 
+
+Example: 
+resources = {
+  limits = {
+    cpu    = "200m"
+    memory = "512Mi"
+  }
+}
+
+Learn how to set resources at:
+https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+EOT
+  }
+}
