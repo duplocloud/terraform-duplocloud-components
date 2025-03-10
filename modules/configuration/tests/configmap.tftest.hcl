@@ -5,7 +5,7 @@ run "unmanaged_configmap" {
     name      = "conf"
     prefix    = "myapp"
     managed   = false
-    value     = jsonencode({
+    value = jsonencode({
       FOO = "bar"
     })
   }

@@ -3,7 +3,7 @@ variables {
   class     = "secret"
   prefix    = "myapp"
   name      = "conf"
-  data      = {
+  data = {
     FOO = "bar"
   }
 }

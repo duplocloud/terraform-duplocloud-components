@@ -3,7 +3,7 @@ run "validate_defaults" {
   command = plan
   variables {
     tenant_id = "2cf9a5bd-311c-47d3-93be-df812e98e775"
-    data = {}
+    data      = {}
   }
 
   # make sure the managed configmap resource has a count of 1
@@ -14,10 +14,10 @@ run "validate_defaults" {
 
   # make sure the configuration var looks right
   assert {
-    condition     = (
-      local.configurations.configmap != null && 
-      local.configurations.secret == null && 
-      local.configurations.aws-secret == null && 
+    condition = (
+      local.configurations.configmap != null &&
+      local.configurations.secret == null &&
+      local.configurations.aws-secret == null &&
       local.configurations.aws-ssm == null
     )
     error_message = "The configuration var should be set to myapp."

@@ -19,7 +19,7 @@ run "files_with_no_csi" {
     value     = <<EOF
     self_destruct = heck yeah
     EOF
-    
+
   }
   # the volume output should be null with this configuration
   assert {
@@ -36,7 +36,7 @@ run "files_with_csi_environment" {
     type      = var.type
     csi       = true
     class     = "aws-secret"
-    data      = {
+    data = {
       "myapp.conf" = <<EOF
       a_setting="never set this"
       EOF
