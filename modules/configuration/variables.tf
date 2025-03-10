@@ -81,7 +81,15 @@ variable "mountPath" {
 variable "data" {
   description = "The map of key/values for the configuration."
   type        = map(string)
-  default     = {}
+  default     = null
+  nullable    = true
+  validation {
+    condition = (
+      (var.data != null || var.value != null) &&
+      !(var.data != null && var.value != null)
+    )
+    error_message = "Either data or value must be set, but not both."
+  }
 }
 
 variable "value" {

@@ -5,6 +5,7 @@ run "ssm_string" {
     name      = "conf"
     prefix    = "myapp"
     class     = "aws-ssm"
+    data      = {}
   }
 
   # make sure we have a unmanaged secret
@@ -13,7 +14,7 @@ run "ssm_string" {
     error_message = "There should be no managed secret resource."
   }
   assert {
-    condition = duplocloud_aws_ssm_parameter.managed[0].type == "String"
+    condition     = duplocloud_aws_ssm_parameter.managed[0].type == "String"
     error_message = "The type of the managed secret should be String."
   }
 }
@@ -26,6 +27,7 @@ run "ssm_secure" {
     prefix    = "myapp"
     managed   = false
     class     = "aws-ssm-secure"
+    value     = "somethingsecret"
   }
 
   # make sure we have a unmanaged secret
@@ -34,7 +36,7 @@ run "ssm_secure" {
     error_message = "There should be an unmanaged ssm resource."
   }
   assert {
-    condition = duplocloud_aws_ssm_parameter.unmanaged[0].type == "SecureString"
+    condition     = duplocloud_aws_ssm_parameter.unmanaged[0].type == "SecureString"
     error_message = "The type of the managed secret should be String."
   }
 }

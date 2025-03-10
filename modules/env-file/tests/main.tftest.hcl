@@ -13,5 +13,18 @@ run "parsing_env_files" {
     }
     error_message = "The parsed data is incorrect, got ${jsonencode(local.data)}"
   }
+}
 
+run "env_from_content" {
+  command = plan
+  variables {
+    content = "ICE_CREAM=chocolate"
+  }
+
+  assert {
+    condition = local.data == {
+      ICE_CREAM = "chocolate"
+    }
+    error_message = "The parsed data is incorrect, got ${jsonencode(local.data)}"
+  }
 }
