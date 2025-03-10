@@ -33,6 +33,21 @@ module "some_service" {
     certificate = "demo-cert"
     class       = "alb"
   }
+  scale = {
+    replicas = 2
+    min      = 1
+    max      = 5
+    metrics = [{
+      type = "Resource"
+      resource = {
+        name = "cpu"
+        target = {
+          type               = "Utilization"
+          averageUtilization = 50
+        }
+      }
+    }]
+  }
   configurations = [{
     data = {
       BAZ = "buzz"
