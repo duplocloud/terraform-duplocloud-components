@@ -70,21 +70,55 @@ variable "image" {
 variable "scale" {
   description = <<EOT
   The configuration for how to scale the service.
-  This includes the replicas, min, and max.
+  This includes the replicas, min, max, and the metrics for determining how to auto scale.
 
-  The `auto` field determines if the service should be autoscaled. If it is not autoscaled, the replicas field will be used.
-
-  The metrics field is a list of metrics to use for autoscaling. This includes the type and target.
+  The metrics field is a list of metrics to use for autoscaling. Auto scaling is considered `enabled` when there are metrics, if there are none then the service will only use the replica count. See [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) for more information.
   EOT
   type = object({
-    auto     = optional(bool, false)
     replicas = optional(number, 1)
     min      = optional(number, 1)
     max      = optional(number, 3)
     metrics = optional(list(object({
-      type   = string
-      target = number
-    })), [])
+      type = string
+      resource = optional(object({
+        name = string
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+      pods = optional(object({
+        metric = object({
+          name     = string
+          selector = optional(map(string))
+        })
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+      object = optional(object({
+        metric = object({
+          name     = string
+          selector = optional(map(string))
+        })
+        describedObject = object({
+          apiVersion = string
+          kind       = string
+          name       = string
+        })
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+    })))
   })
   default = {}
 
@@ -203,6 +237,7 @@ EOT
     certificate  = optional(string, "")
     listener     = optional(string, null)
     dns_prfx     = optional(string, null)
+    internal     = optional(bool, false)
   })
   default = {}
   validation {
@@ -214,7 +249,8 @@ EOT
       "node-port",
       "azure-shared-gateway",
       "nlb",
-      "target-group"
+      "target-group",
+      "ingress-alb"
     ], var.lb.class)
     error_message = "The load balancer type must be one of 'elb', 'alb', 'health-only', 'service', 'node-port', 'azure-shared-gateway', 'nlb', or 'target-group'"
   }
