@@ -44,3 +44,10 @@ resource "random_string" "release_id" {
   special = false
   upper   = false
 }
+
+check "tenant" {
+  assert {
+    condition     = local.tenant.id != null
+    error_message = "The tenant id should not be null."
+  }
+}

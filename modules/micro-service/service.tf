@@ -19,6 +19,12 @@ locals {
     args             = jsonencode(var.args)
     env              = jsonencode(local.container_env)
   }))
+  hpa_metrics = lookup(var.scale, "metrics", null)
+  hpa_specs = local.hpa_metrics != null ? {
+    minReplicas = var.scale.min
+    maxReplicas = var.scale.max
+    metrics     = local.hpa_metrics
+  } : null
 }
 
 # the tf managed resource block
@@ -35,6 +41,7 @@ resource "duplocloud_duplo_service" "managed" {
   agent_platform                       = 7
   cloud                                = 0
   other_docker_config                  = jsonencode(local.other_docker_config)
+  hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
 }
@@ -54,6 +61,7 @@ resource "duplocloud_duplo_service" "unmanaged" {
   agent_platform                       = 7
   cloud                                = 0
   other_docker_config                  = jsonencode(local.other_docker_config)
+  hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
   lifecycle {
