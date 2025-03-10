@@ -8,6 +8,12 @@ variable "name" {
   type        = string
 }
 
+variable "description" {
+  description = "The description of the service."
+  type        = string
+  default     = "Duplocloud Rocks"
+}
+
 variable "release_id" {
   description = <<EOT
   The `release_id` field is the id of the current build. If the field is not set, a random id will be generated. When running in a CI/CD pipeline, it's recommended to set this field to the Job ID in the pipeline so the k8s job and the job id from the pipeline match up. 
@@ -33,6 +39,11 @@ variable "port" {
   description = "The port number the app listens on. This is used for healthchecks on the lb and pod."
   type        = number
   default     = 80
+  # validate that null is not passed in
+  validation {
+    condition     = var.port != null
+    error_message = "The port must be set."
+  }
 }
 
 variable "env" {

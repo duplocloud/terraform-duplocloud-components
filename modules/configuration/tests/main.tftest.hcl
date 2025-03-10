@@ -13,7 +13,12 @@ run "validate_defaults" {
 
   # make sure the configuration var looks right
   assert {
-    condition     = local.configurations.configmap.value != null && local.configurations.secret.value == null && local.configurations.aws-secret.value == null && local.configurations.aws-ssm.value == null
+    condition     = (
+      local.configurations.configmap != null && 
+      local.configurations.secret == null && 
+      local.configurations.aws-secret == null && 
+      local.configurations.aws-ssm == null
+    )
     error_message = "The configuration var should be set to myapp."
   }
 

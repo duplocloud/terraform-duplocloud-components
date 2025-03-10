@@ -1,15 +1,17 @@
 locals {
   id        = var.name != null ? var.name : var.type == "environment" ? "env" : "configs"
   name      = nonsensitive(var.prefix != null ? "${var.prefix}-${local.id}" : local.id)
-  realName  = nonsensitive(local.resource != null ? local.resource[local.config.name_key] : local.name)
+  realName  = nonsensitive(local.resource != null ? local.resource[local.schema.name_key] : local.name)
   data      = var.value != null ? var.value : jsonencode(var.data)
   keys      = keys(var.data)
+  schema    = local.definitions[var.class]
   config    = local.configurations[var.class]
-  resource  = length(local.config.value) > 0 ? local.config.value[0] : null
+  resource  = length(local.config) > 0 ? local.config[0] : null
   volume    = [for k, v in local.volumes : v if v != null]
   envFrom   = [for k, v in local.envFromMap : v if v != null]
   mountPath = var.mountPath != null ? var.mountPath : "/mnt/${local.id}"
   csi       = contains(["aws-secret", "aws-ssm"], var.class) ? var.csi : false
+  is_ssm    = startswith(var.class, "aws-ssm")
   annotations = {
     "kubernetes.io/description" = var.description
   }
@@ -49,22 +51,39 @@ locals {
       }
     } : null
   }
-  configurations = {
+  definitions = {
     secret = {
       name_key = "secret_name"
-      value    = var.class == "secret" ? var.managed ? duplocloud_k8_secret.managed : duplocloud_k8_secret.unmanaged : null
     }
     configmap = {
       name_key = "name"
-      value    = var.class == "configmap" ? var.managed ? duplocloud_k8_config_map.managed : duplocloud_k8_config_map.unmanaged : null
     }
     aws-secret = {
       name_key = "name"
-      value    = var.class == "aws-secret" ? var.managed ? duplocloud_tenant_secret.managed : duplocloud_tenant_secret.unmanaged : null
+      csiType  = "secretsmanager"
     }
     aws-ssm = {
       name_key = "name"
-      value    = var.class == "aws-ssm" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
+      type     = "String"
+      csiType  = "ssmparameter"
     }
+    aws-ssm-secure = {
+      name_key = "name"
+      type     = "SecureString"
+      csiType  = "ssmparameter"
+    }
+    aws-ssm-list = {
+      name_key = "name"
+      type     = "StringList"
+      csiType  = "ssmparameter"
+    }
+  }
+  configurations = {
+    secret = var.class == "secret" ? var.managed ? duplocloud_k8_secret.managed : duplocloud_k8_secret.unmanaged : null
+    configmap = var.class == "configmap" ? var.managed ? duplocloud_k8_config_map.managed : duplocloud_k8_config_map.unmanaged : null
+    aws-secret = var.class == "aws-secret" ? var.managed ? duplocloud_tenant_secret.managed : duplocloud_tenant_secret.unmanaged : null
+    aws-ssm = var.class == "aws-ssm" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
+    aws-ssm-secure = var.class == "aws-ssm-secure" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
+    aws-ssm-list = var.class == "aws-ssm-list" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
   }
 }
