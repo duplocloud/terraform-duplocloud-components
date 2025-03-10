@@ -70,15 +70,9 @@ variable "image" {
 variable "scale" {
   description = <<EOT
   The configuration for how to scale the service.
-  This includes the replicas, min, and max.
+  This includes the replicas, min, max, and the metrics for determining how to auto scale.
 
-  The `auto` field determines if the service should be autoscaled. If it is not autoscaled, the replicas field will be used.
-
-  The metrics field is a list of metrics to use for autoscaling. This includes the type and target.
-
-  The metric type can be Resource, Pod, Object
-
-  [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
+  The metrics field is a list of metrics to use for autoscaling. Auto scaling is considered `enabled` when there are metrics, if there are none then the service will only use the replica count. See [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) for more information.
   EOT
   type = object({
     replicas = optional(number, 1)

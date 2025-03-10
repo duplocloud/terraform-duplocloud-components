@@ -45,9 +45,27 @@ resource "random_string" "release_id" {
   upper   = false
 }
 
-check "tenant" {
+check "hpa-with-resources" {
   assert {
-    condition     = local.tenant.id != null
-    error_message = "The tenant id should not be null."
+    condition     = (
+      local.hpa_metrics != null &&
+      var.resources == {}
+    )
+    error_message = <<EOT
+When using autoscaling, it is highly recommended to set resources.
+If the HPA is configured to scale on 80% CPU utilization but there
+are no limits set, then the autoscaler will not actually work. 
+
+Example: 
+resources = {
+  limits = {
+    cpu    = "200m"
+    memory = "512Mi"
+  }
+}
+
+Learn how to set resources at:
+https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+EOT
   }
 }
