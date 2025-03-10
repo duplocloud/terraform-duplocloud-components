@@ -75,16 +75,56 @@ variable "scale" {
   The `auto` field determines if the service should be autoscaled. If it is not autoscaled, the replicas field will be used.
 
   The metrics field is a list of metrics to use for autoscaling. This includes the type and target.
+
+  The metric type can be Resource, Pod, Object
+
+  [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
   EOT
   type = object({
-    auto     = optional(bool, false)
     replicas = optional(number, 1)
     min      = optional(number, 1)
     max      = optional(number, 3)
     metrics = optional(list(object({
-      type   = string
-      target = number
-    })), [])
+      type = string
+      resource = optional(object({
+        name = string
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+      pods = optional(object({
+        metric = object({
+          name     = string
+          selector = optional(map(string))
+        })
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+      object = optional(object({
+        metric = object({
+          name     = string
+          selector = optional(map(string))
+        })
+        describedObject = object({
+          apiVersion = string
+          kind       = string
+          name       = string
+        })
+        target = object({
+          type               = string
+          averageUtilization = optional(number)
+          averageValue       = optional(string)
+          value              = optional(string)
+        })
+      }))
+    })))
   })
   default = {}
 
