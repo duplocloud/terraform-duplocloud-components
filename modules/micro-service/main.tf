@@ -47,9 +47,9 @@ resource "random_string" "release_id" {
 
 check "hpa-with-resources" {
   assert {
-    condition     = (
-      local.hpa_metrics != null &&
-      var.resources == {}
+    condition = !(
+      var.scale.metrics != null &&
+      var.resources.limits == null
     )
     error_message = <<EOT
 When using autoscaling, it is highly recommended to set resources.
