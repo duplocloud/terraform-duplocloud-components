@@ -46,7 +46,8 @@ variable "class" {
   validation {
     condition = contains([
       "configmap", "secret",
-      "aws-secret", "aws-ssm"
+      "aws-secret", "aws-ssm",
+      "aws-ssm-secure", "aws-ssm-list"
     ], var.class)
     error_message = "The class must be one of the following: configmap, secret."
   }

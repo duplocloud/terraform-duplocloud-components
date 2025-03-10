@@ -11,8 +11,8 @@ resource "duplocloud_k8_secret_provider_class" "aws" {
   parameters = yamlencode(
     [
       {
-        objectName = local.realName,
-        objectType = var.class == "aws-secret" ? "secretsmanager" : "ssmparameter",
+        objectName = local.realName
+        objectType = local.schema.csiType
         jmesPath = [
           for key in local.keys : {
             path        = key
