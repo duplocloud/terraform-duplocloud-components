@@ -15,7 +15,7 @@ terraform {
 provider "duplocloud" {}
 
 module "env" {
-  source      = "../../modules/env-file"
+  source  = "../../modules/env-file"
   content = <<EOF
 FOO=baz
 MESSAGE="Hello, world!"
