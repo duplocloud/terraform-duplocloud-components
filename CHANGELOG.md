@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.31] - 2025-03-10
+
 ## [0.0.30] - 2025-03-05
 
 - cleaned up the publish flow
