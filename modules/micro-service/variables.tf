@@ -203,6 +203,7 @@ EOT
     certificate  = optional(string, "")
     listener     = optional(string, null)
     dns_prfx     = optional(string, null)
+    internal     = optional(bool, false)
   })
   default = {}
   validation {
@@ -214,7 +215,8 @@ EOT
       "node-port",
       "azure-shared-gateway",
       "nlb",
-      "target-group"
+      "target-group",
+      "ingress-alb"
     ], var.lb.class)
     error_message = "The load balancer type must be one of 'elb', 'alb', 'health-only', 'service', 'node-port', 'azure-shared-gateway', 'nlb', or 'target-group'"
   }
