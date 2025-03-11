@@ -1,0 +1,45 @@
+
+minReplicas: ${minReplicas}
+maxReplicas: ${maxReplicas}
+%{ if metrics != null }
+metrics:
+%{ for metric in metrics }
+- type: ${metric.type}
+%{ if metric.type == "Resource" }
+  resource: 
+    name: ${metric.resource.name}
+    target:
+      %{ for key, value in metric.resource.target }
+      %{ if value != null }
+      ${key}: ${value}
+      %{ endif ~}
+      %{ endfor ~}
+%{ endif }
+%{ if metric.type == "Pods" }
+  pods:
+    metric: 
+      name: ${metric.pods.metric.name}
+    target:
+      %{ for key, value in metric.pods.target }
+      %{ if value != null }
+      ${key}: ${value}
+      %{ endif ~}
+      %{ endfor ~}
+%{ endif }
+%{ if metric.type == "Object" }
+  object:
+    metric: 
+      name: ${metric.object.metric.name}
+    target:
+      %{ for key, value in metric.object.target }
+      %{ if value != null }
+      ${key}: ${value}
+      %{ endif ~}
+      %{ endfor ~}
+    describedObject:
+      apiVersion: ${metric.object.describedObject.apiVersion}
+      kind: ${metric.object.describedObject.kind}
+      name: ${metric.object.describedObject.name}
+%{ endif }
+%{ endfor ~}
+%{ endif }
