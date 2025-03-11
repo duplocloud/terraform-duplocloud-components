@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.33] - 2025-03-11
+
 ### Added  
 - a parser for env files in a new module
 - added aws-ssm-secure and aws-ssm-list as classes to use
