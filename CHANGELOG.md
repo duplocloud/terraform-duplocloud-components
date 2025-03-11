@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.32] - 2025-03-11
+
 ### Added  
 - new hpa specs feature and resources on micro-service module. Warning is given when hpa is given without resources. 
 
