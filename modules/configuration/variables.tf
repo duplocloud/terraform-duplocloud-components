@@ -46,7 +46,8 @@ variable "class" {
   validation {
     condition = contains([
       "configmap", "secret",
-      "aws-secret", "aws-ssm"
+      "aws-secret", "aws-ssm",
+      "aws-ssm-secure", "aws-ssm-list"
     ], var.class)
     error_message = "The class must be one of the following: configmap, secret."
   }
@@ -80,7 +81,15 @@ variable "mountPath" {
 variable "data" {
   description = "The map of key/values for the configuration."
   type        = map(string)
-  default     = {}
+  default     = null
+  nullable    = true
+  validation {
+    condition = (
+      (var.data != null || var.value != null) &&
+      !(var.data != null && var.value != null)
+    )
+    error_message = "Either data or value must be set, but not both."
+  }
 }
 
 variable "value" {

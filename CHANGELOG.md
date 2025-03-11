@@ -8,7 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [0.0.31] - 2025-03-10
+### Added  
+- a parser for env files in a new module
+- added aws-ssm-secure and aws-ssm-list as classes to use
+
+## [0.0.32] - 2025-03-11
+
+### Added  
+- new hpa specs feature and resources on micro-service module. Warning is given when hpa is given without resources. 
+
+### Fixed  
+- in the loadbalancer module on the lbconfig the `backend_protocol_version` is now ignored to prevent getting recreated.  
 
 ## [0.0.30] - 2025-03-05
 

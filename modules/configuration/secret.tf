@@ -3,7 +3,7 @@ resource "duplocloud_k8_secret" "managed" {
   tenant_id          = var.tenant_id
   secret_name        = local.name
   secret_type        = "Opaque"
-  secret_data        = local.data
+  secret_data        = local.value
   secret_annotations = local.annotations
   timeouts {
     create = "3m"
@@ -17,7 +17,7 @@ resource "duplocloud_k8_secret" "unmanaged" {
   tenant_id          = var.tenant_id
   secret_name        = local.name
   secret_type        = "Opaque"
-  secret_data        = local.data
+  secret_data        = local.value
   secret_annotations = local.annotations
   timeouts {
     create = "3m"
