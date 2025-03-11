@@ -1,4 +1,4 @@
-name: Publish Version
+name: 🧁 Publish Version
 description: Publishes a new version and tag. 
 on: 
   workflow_dispatch: 
