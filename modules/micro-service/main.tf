@@ -2,41 +2,6 @@ locals {
   tenant     = data.duplocloud_tenant.this
   release_id = random_string.release_id.id
   image_uri  = var.image.uri != null ? var.image.uri : "${var.image.registry}/${coalesce(var.image.repo, var.name)}:${var.image.tag}"
-  # Check if we need to look up the cert arn
-  do_cert_lookup = var.lb.enabled && var.lb.certificate != "" && !startswith(var.lb.certificate, "arn:aws:acm:")
-  cert_arn       = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.lb.certificate
-  # if the cert_arn is not null and the external port is null, set it to 443, else set it to 80
-  external_port = var.lb.port != null ? var.lb.port : local.cert_arn != "" ? 443 : var.lb.class == "service" ? var.port : 80
-  dns_prfx      = var.lb.dns_prfx != null ? var.lb.dns_prfx : "${local.service.name}-${local.tenant.name}"
-  alb_types = {
-    "elb"                  = 0
-    "alb"                  = 1
-    "health-only"          = 2
-    "service"              = 3
-    "node-port"            = 4
-    "azure-shared-gateway" = 5
-    "nlb"                  = 6
-    "target-group"         = 7
-  }
-  container_context = {
-    env_from         = jsonencode(local.env_from)
-    image            = var.image
-    port             = var.port
-    health_check     = var.health_check
-    nodeSelector     = jsonencode(var.nodes.selector != null ? var.nodes.selector : {})
-    restart_policy   = var.restart_policy
-    annotations      = jsonencode(var.annotations)
-    labels           = jsonencode(var.labels)
-    pod_labels       = jsonencode(var.pod_labels)
-    pod_annotations  = jsonencode(var.pod_annotations)
-    resources        = jsonencode(var.resources)
-    security_context = jsonencode(var.security_context != null ? var.security_context : {})
-    volume_mounts    = jsonencode(local.volume_mounts)
-    volumes          = jsonencode(local.volumes)
-    command          = jsonencode(var.command)
-    args             = jsonencode(var.args)
-    env              = jsonencode(local.container_env)
-  }
   volumes = concat([
     for config in module.configurations : config.volume if config.volume != null
     ], [
@@ -71,13 +36,6 @@ data "duplocloud_tenant" "this" {
   name = var.tenant
 }
 
-# now check for the cert arn when we need to do_cert_lookup
-data "duplocloud_plan_certificate" "this" {
-  count   = local.do_cert_lookup ? 1 : 0
-  name    = var.lb.certificate
-  plan_id = local.tenant.plan_id
-}
-
 resource "random_string" "release_id" {
   keepers = {
     strategy = var.release_id != null ? var.release_id : local.image_uri
@@ -85,4 +43,29 @@ resource "random_string" "release_id" {
   length  = 5
   special = false
   upper   = false
+}
+
+check "hpa-with-resources" {
+  assert {
+    condition = !(
+      var.scale.metrics != null &&
+      var.resources.limits == null
+    )
+    error_message = <<EOT
+When using autoscaling, it is highly recommended to set resources.
+If the HPA is configured to scale on 80% CPU utilization but there
+are no limits set, then the autoscaler will not actually work. 
+
+Example: 
+resources = {
+  limits = {
+    cpu    = "200m"
+    memory = "512Mi"
+  }
+}
+
+Learn how to set resources at:
+https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+EOT
+  }
 }

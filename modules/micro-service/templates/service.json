@@ -1,7 +1,9 @@
 {
   "RestartPolicy": "${restart_policy}",
   "ImagePullPolicy": "${image.pullPolicy}",
-  "Resources": ${resources},
+  %{if length(keys(resources)) > 0 }
+  "Resources": ${jsonencode(resources)},
+  %{ endif }
   %{if env_from != "[]" }
   "EnvFrom": ${env_from},
   %{ endif }
@@ -14,8 +16,8 @@
   %{if args != "[]" }
   "Args": ${args},
   %{ endif }
-  %{if nodeSelector != "{}" }
-  "NodeSelector": ${nodeSelector},
+  %{if nodeSelector != null }
+  "NodeSelector": ${jsonencode(nodeSelector)},
   %{ endif }
   %{if pod_annotations != "{}" }
   "PodAnnotations": ${pod_annotations},

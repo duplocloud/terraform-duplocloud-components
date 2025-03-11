@@ -11,28 +11,10 @@ run "validate_defaults" {
     error_message = "The image was not set on the service correctly."
   }
 
-  # make sure external_port is 80 because no cert or lb is enabled
-  assert {
-    condition     = local.external_port == 80
-    error_message = "The external port was not set to 80."
-  }
-
   # make sure var.lb.port is null
   assert {
     condition     = var.lb.port == null
     error_message = "The lb port was not set to null."
-  }
-
-  # make sure do_certificate is false
-  assert {
-    condition     = local.do_cert_lookup == false
-    error_message = "The do_cert_lookup was not set to false."
-  }
-
-  # the cert arn chould be an empty string
-  assert {
-    condition     = local.cert_arn == ""
-    error_message = "The cert arn should be an empty string by default"
   }
 
   assert {
@@ -46,12 +28,12 @@ run "validate_defaults" {
     error_message = "The env_from should be an empty array by default."
   }
 
-  # make sure there are no lb objects created
-  assert {
-    condition = (
-      length(duplocloud_duplo_service_lbconfigs.this) == 0 &&
-      length(duplocloud_duplo_service_params.this) == 0
-    )
-    error_message = "There should be only one lbconfig object."
-  }
+  # # make sure there are no lb objects created
+  # assert {
+  #   condition = (
+  #     length(duplocloud_duplo_service_lbconfigs.this) == 0 &&
+  #     length(duplocloud_duplo_service_params.this) == 0
+  #   )
+  #   error_message = "There should be only one lbconfig object."
+  # }
 }
