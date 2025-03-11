@@ -4,7 +4,7 @@ resource "duplocloud_aws_ssm_parameter" "managed" {
   name        = local.name
   description = var.description
   type        = local.schema.type
-  value       = local.data
+  value       = local.value
 }
 
 resource "duplocloud_aws_ssm_parameter" "unmanaged" {
@@ -13,7 +13,7 @@ resource "duplocloud_aws_ssm_parameter" "unmanaged" {
   name        = local.name
   description = var.description
   type        = local.schema.type
-  value       = local.data
+  value       = local.value
   lifecycle {
     ignore_changes = [
       value

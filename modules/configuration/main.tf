@@ -2,8 +2,9 @@ locals {
   id        = var.name != null ? var.name : var.type == "environment" ? "env" : "configs"
   name      = nonsensitive(var.prefix != null ? "${var.prefix}-${local.id}" : local.id)
   realName  = nonsensitive(local.resource != null ? local.resource[local.schema.name_key] : local.name)
-  data      = var.value != null ? var.value : jsonencode(var.data)
-  keys      = keys(var.data)
+  data      = var.data != null ? var.data : {}
+  value     = var.value != null ? var.value : jsonencode(local.data)
+  keys      = keys(local.data)
   schema    = local.definitions[var.class]
   config    = local.configurations[var.class]
   resource  = length(local.config) > 0 ? local.config[0] : null
@@ -79,11 +80,11 @@ locals {
     }
   }
   configurations = {
-    secret = var.class == "secret" ? var.managed ? duplocloud_k8_secret.managed : duplocloud_k8_secret.unmanaged : null
-    configmap = var.class == "configmap" ? var.managed ? duplocloud_k8_config_map.managed : duplocloud_k8_config_map.unmanaged : null
-    aws-secret = var.class == "aws-secret" ? var.managed ? duplocloud_tenant_secret.managed : duplocloud_tenant_secret.unmanaged : null
-    aws-ssm = var.class == "aws-ssm" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
+    secret         = var.class == "secret" ? var.managed ? duplocloud_k8_secret.managed : duplocloud_k8_secret.unmanaged : null
+    configmap      = var.class == "configmap" ? var.managed ? duplocloud_k8_config_map.managed : duplocloud_k8_config_map.unmanaged : null
+    aws-secret     = var.class == "aws-secret" ? var.managed ? duplocloud_tenant_secret.managed : duplocloud_tenant_secret.unmanaged : null
+    aws-ssm        = var.class == "aws-ssm" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
     aws-ssm-secure = var.class == "aws-ssm-secure" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
-    aws-ssm-list = var.class == "aws-ssm-list" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
+    aws-ssm-list   = var.class == "aws-ssm-list" ? var.managed ? duplocloud_aws_ssm_parameter.managed : duplocloud_aws_ssm_parameter.unmanaged : null
   }
 }

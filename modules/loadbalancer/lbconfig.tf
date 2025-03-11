@@ -13,6 +13,11 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
     health_check_url = var.health_check_url
     # backend_protocol_version = "HTTP1"
   }
+  lifecycle {
+    ignore_changes = [
+      lbconfigs[0].backend_protocol_version
+    ]
+  }
 }
 
 resource "duplocloud_duplo_service_params" "this" {

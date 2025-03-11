@@ -24,11 +24,11 @@ locals {
     }
   }))
   hpa_metrics = lookup(var.scale, "metrics", null)
-  hpa_specs = local.hpa_metrics != null ? {
+  hpa_specs = yamldecode(templatefile("${path.module}/templates/hpa-spec.yaml", {
     minReplicas = var.scale.min
     maxReplicas = var.scale.max
     metrics     = local.hpa_metrics
-  } : null
+  }))
 }
 
 # the tf managed resource block
