@@ -5,9 +5,5 @@ terraform {
       source  = "duplocloud/duplocloud"
       version = ">= 0.10.40"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = ">= 3.5.0"
-    }
   }
 }
