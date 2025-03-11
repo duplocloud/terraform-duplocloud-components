@@ -14,9 +14,9 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
     # backend_protocol_version = "HTTP1"
   }
   lifecycle {
-    ignore_changes = [ 
+    ignore_changes = [
       lbconfigs[0].backend_protocol_version
-     ]
+    ]
   }
 }
 
