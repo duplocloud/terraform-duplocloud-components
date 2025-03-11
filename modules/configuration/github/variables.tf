@@ -40,14 +40,14 @@ variable "type" {
 variable "class" {
   description = "The class of the config."
   type        = string
-  default     = "configmap"
+  default     = "gh-variable"
 
   # make sure the value is one of the accepted values
   validation {
     condition = contains([
       "gh-variable", "gh-secret"
     ], var.class)
-    error_message = "The class must be one of the following: configmap, secret."
+    error_message = "The class must be one of the following: gh-variable, gh-secret."
   }
 }
 
