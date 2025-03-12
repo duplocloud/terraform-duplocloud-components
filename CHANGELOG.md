@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added  
+
+- A new context module that can get jit credentials and information about the current portal, infra, and tenant. It can also make references to other workspaces very easily. 
+
 ## [0.0.33] - 2025-03-11
 
 ### Added  
