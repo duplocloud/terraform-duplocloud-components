@@ -9,12 +9,6 @@ mock_data "external" {
 
 mock_data "http" {
   defaults = {
-    url    = "https://someurl.com/v3/features/system"
-    method = "GET"
-    request_headers = {
-      Accept        = "application/json"
-      Authorization = "Bearer sometoken"
-    }
     response_body = <<EOT
 {
   "DefaultAwsAccount": "813590939111",
