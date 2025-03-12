@@ -1,3 +1,4 @@
+# tflint-ignore: terraform_required_providers
 data "external" "duplo_creds" {
   program = [
     "bash", "-c",

@@ -1,3 +1,4 @@
+# tflint-ignore: terraform_required_providers
 data "http" "duplo_system" {
   url    = "${local.host}/v3/features/system"
   method = "GET"
