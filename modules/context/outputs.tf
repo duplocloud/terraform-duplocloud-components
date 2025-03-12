@@ -43,7 +43,7 @@ output "refs" {
 
 output "creds" {
   description = "The map of enabled JIT login credentials for each provider."
-  sensitive = true
+  sensitive   = true
   value = {
     for key, cred in local.creds : key => cred
     if cred != null
