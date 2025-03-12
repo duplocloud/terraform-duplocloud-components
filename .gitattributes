@@ -1,0 +1,2 @@
+*.tf filter=tf-fmt
+*.hcl filter=tf-fmt
