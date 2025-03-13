@@ -57,7 +57,7 @@ module "ctx" {
 
 ## Workspace References  
 
-As there is a default s3 location for duplo terraform workspaces, this along with other context can make references to other workspaces ver easy. The variable `workspaces` is a map of reference objects to other workspaces in the s3 bucket. The outputs from these workspaces are applied to the `refs` output.  
+As there is a default s3 location for duplo terraform workspaces, this along with other context can make references to other workspaces very easy. The variable `workspaces` is a map of reference objects to other workspaces in the s3 bucket. The outputs from these workspaces are applied to the `refs` output.  
 
 ```terraform
 locals {
