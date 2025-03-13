@@ -35,15 +35,9 @@ variable "tenant" {
   default = "tf-tests"
 }
 
-variable "infra_name" {
-  description = "The name of the infrastructure to place the tenant in."
-  type        = string
-  default     = "oteltest"
-}
-
 module "ctx" {
   source = "../../modules/context"
-  infra  = var.infra_name
+  tenant = var.tenant
   admin  = true
   jit = {
     aws = true
