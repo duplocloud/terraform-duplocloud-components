@@ -8,3 +8,7 @@ output "name" {
   value       = module.tenant.name
 }
 
+output "infra_name" {
+  description = "The tenants infra_name."
+  value       = module.tenant.infra_name
+}
