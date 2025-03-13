@@ -1,18 +1,20 @@
 locals {
   system         = jsondecode(data.http.duplo_system.response_body)
-  infra          = var.tenant != null && var.admin ? data.duplocloud_infrastructure.this[0] : null
   infra_name     = var.infra != null ? var.infra : local.tenant != null ? local.tenant.plan_id : null
   tenant         = var.tenant != null ? data.duplocloud_tenant.this[0] : null
   host           = data.external.duplo_creds.result.host
   token          = sensitive(data.external.duplo_creds.result.token)
   account_id     = local.system.DefaultAwsAccount
   default_region = local.system.DefaultAwsRegion
+  tfstate_bucket = "duplo-tfstate-${local.account_id}"
+  infra = (
+    (var.tenant != null || var.infra != null) && var.admin
+  ) ? data.duplocloud_infrastructure.this[0] : null
   region = coalesce(
     local.infra != null ? local.infra.region : null,
     var.tenant != null && !var.admin ? data.duplocloud_tenant_aws_region.this[0].aws_region : null,
     local.default_region
   ) # find the region from either the infra, the tenant, or default region
-  tfstate_bucket = "duplo-tfstate-${local.account_id}"
   cloud = [
     for cloud, enabled in {
       aws   = local.system.IsAwsCloudEnabled

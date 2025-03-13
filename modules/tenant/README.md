@@ -4,6 +4,4 @@ Creates a tenant within an infrastructure. You can set some settings too. Try on
 
 ## Variants  
 
-### AWS Tenant  
-
-This tenant introduces a new `policy` variable which is a string containing a new AWS IAM Policy json. 
+- [AWS and Github Tenant](../tenant-gh-aws/)

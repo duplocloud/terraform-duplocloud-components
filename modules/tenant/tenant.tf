@@ -1,7 +1,13 @@
 resource "duplocloud_tenant" "this" {
   account_name   = var.name
-  plan_id        = var.infra_name
+  plan_id        = local.infra_name
   allow_deletion = false
+  lifecycle {
+    ignore_changes = [
+      account_name,
+      plan_id
+    ]
+  }
 }
 
 resource "duplocloud_tenant_config" "this" {

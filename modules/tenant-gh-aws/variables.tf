@@ -15,12 +15,6 @@ variable "parent" {
   type        = string
   nullable    = true
   default     = null
-  validation {
-    condition = !(
-      var.parent != null && var.infra_name != null
-    )
-    error_message = "parent and infra_name are mutually exclusive. Using parent will infer the infrastructure."
-  }
 }
 
 variable "sg_rules" {
@@ -38,19 +32,6 @@ EOT
     to_port        = number
   }))
   default = []
-  validation {
-    condition = !(var.parent == null && anytrue([
-      for rule in var.sg_rules : rule.type == "egress"
-    ]))
-    error_message = "Parent must be set if any egress rules are defined."
-  }
-  # if the type is ingress either source_tenant or source_address must be set
-  validation {
-    condition = !anytrue([
-      for rule in var.sg_rules : rule.type == "ingress" && (rule.source_tenant == null && rule.source_address == null)
-    ])
-    error_message = "For ingress rules, either source_tenant or source_address must be set."
-  }
 }
 
 variable "settings" {
@@ -79,4 +60,20 @@ variable "configurations" {
     mountPath   = optional(string, null)
   }))
   default = []
+}
+
+
+variable "policy" {
+  description = "The policy to apply to the tenant"
+  type        = string
+  default     = ""
+}
+
+variable "repos" {
+  description = <<EOT
+A list of Github repository names. 
+Each one will get a new environment matching the name of the tenant.
+EOT
+  type        = list(string)
+  default     = []
 }

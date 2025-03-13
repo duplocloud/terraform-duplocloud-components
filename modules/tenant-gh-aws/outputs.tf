@@ -1,6 +1,6 @@
 output "vpc" {
   description = "The VPC ID and name which is the default for this tenant."
-  value = module.tenant.vpc
+  value       = module.tenant.vpc
 }
 
 output "region" {
