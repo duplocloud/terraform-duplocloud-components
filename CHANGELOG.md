@@ -9,6 +9,12 @@ and this project adheres to
 ## [Unreleased]
 
 ### Added  
+
+- A new context module that can get jit credentials and information about the current portal, infra, and tenant. It can also make references to other workspaces very easily. 
+
+## [0.0.33] - 2025-03-11
+
+### Added  
 - a parser for env files in a new module
 - added aws-ssm-secure and aws-ssm-list as classes to use
 - a submodule under configurations called github. This way we have configurations for github as well with their own nuances. 
