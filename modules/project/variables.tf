@@ -1,3 +1,3 @@
 variable "name" {
-  description = "Name ofthe project."
+  description = "Name of the project."
 }
