@@ -24,7 +24,7 @@ provider "duplocloud" {}
 
 provider "github" {
   owner = "duplocloud"
-  app_auth {}
+  # app_auth {}
 }
 
 provider "aws" {

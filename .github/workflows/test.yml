@@ -10,11 +10,6 @@ on:
     paths: 
     - modules/**
 
-env:
-  GITHUB_APP_ID: ${{ vars.GH_APP_ID }}
-  GITHUB_APP_INSTALLATION_ID: ${{ vars.GH_APP_INSTALLATION_ID }}
-  GITHUB_APP_PEM_FILE: ${{ secrets.GH_APP_KEY }}
-
 jobs:
   tf_module_test:
     name: Test
