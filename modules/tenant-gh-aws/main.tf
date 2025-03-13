@@ -9,6 +9,7 @@ module "tenant" {
 }
 
 module "iam" {
+  count           = var.policy != null ? 1 : 0
   source          = "../tenant-role-extension"
   tenant_name     = var.name
   policy_name     = "${var.name}-custom"

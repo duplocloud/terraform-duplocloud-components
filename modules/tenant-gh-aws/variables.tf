@@ -66,7 +66,8 @@ variable "configurations" {
 variable "policy" {
   description = "The policy to apply to the tenant"
   type        = string
-  default     = ""
+  default     = null
+  nullable    = true
 }
 
 variable "repos" {
