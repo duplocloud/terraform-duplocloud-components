@@ -1,9 +1,10 @@
-output "vpc" {
-  description = "The VPC ID and name which is the default for this tenant."
-  value       = module.tenant.vpc
+output "id" {
+  description = "The tenants id."
+  value       = module.tenant.id
 }
 
-output "region" {
-  description = "The region where the tenant is created."
-  value       = module.tenant.region
+output "name" {
+  description = "The tenants name."
+  value       = module.tenant.name
 }
+
