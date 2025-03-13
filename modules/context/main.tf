@@ -31,9 +31,10 @@ locals {
   })
   workspaces = {
     for key, workspace in coalesce(var.workspaces, {}) : key => {
-      name   = coalesce(workspace.name, terraform.workspace)
-      prefix = coalesce(workspace.prefix, key)
-      key    = coalesce(workspace.key, key)
+      name    = coalesce(workspace.name, terraform.workspace)
+      prefix  = coalesce(workspace.prefix, key)
+      key     = coalesce(workspace.key, key)
+      nameRef = workspace.nameRef
     }
   }
 }
