@@ -1,3 +1,7 @@
+mock_provider "duplocloud" {
+  source = "./tests"
+}
+
 run "target_group" {
   command = plan
   variables {

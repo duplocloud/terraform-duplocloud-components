@@ -5,20 +5,7 @@ variables {
 }
 
 mock_provider "duplocloud" {
-  mock_data "duplocloud_tenant" {
-    defaults = {
-      id      = "c4b717db-a61b-4edc-b895-37c3dfa58fa8"
-      name    = "tf-tests"
-      plan_id = "myinfra"
-    }
-  }
-  mock_data "duplocloud_plan_certificate" {
-    defaults = {
-      arn     = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
-      name    = "mycert"
-      plan_id = "myinfra"
-    }
-  }
+  source = "./tests"
 }
 
 run "alb_with_cert_arn" {

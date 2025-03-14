@@ -234,7 +234,7 @@ EOT
     path_pattern = optional(string, "/*")
     port         = optional(number, null)
     protocol     = optional(string, "http")
-    certificate  = optional(string, "")
+    certificate  = optional(string, null)
     listener     = optional(string, null)
     dns_prfx     = optional(string, null)
     internal     = optional(bool, false)
