@@ -56,9 +56,13 @@ variable "jit" {
 variable "workspaces" {
   description = "A map of workspaces to reference. Each key will be in the outputs with the outputs of that workspace from the state."
   type = map(object({
-    name   = optional(string)
+    name   = optional(string, null)
     prefix = optional(string)
     key    = optional(string)
+    nameRef = optional(object({
+      workspace = string
+      nameKey   = string
+    }), null)
   }))
   default  = null
   nullable = true

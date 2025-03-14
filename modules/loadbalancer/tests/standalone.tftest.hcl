@@ -1,3 +1,6 @@
+mock_provider "duplocloud" {
+  source = "./tests"
+}
 run "standalone_alb" {
   command = plan
   variables {

@@ -11,6 +11,8 @@ and this project adheres to
 ### Added  
 
 - A new context module that can get jit credentials and information about the current portal, infra, and tenant. It can also make references to other workspaces very easily. 
+- new tenant module which includes sg_rules and settings to add
+- a new tenant-gh-aws modules for making a tenant when using aws and github. 
 
 ## [0.0.33] - 2025-03-11
 

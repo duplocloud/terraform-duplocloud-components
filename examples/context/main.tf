@@ -38,12 +38,13 @@ variable "tenant" {
 module "ctx" {
   source = "../../modules/context"
   tenant = var.tenant
+  admin  = true
   jit = {
     aws = true
     k8s = true
   }
 }
 
-# output "ctx" {
-#   value = module.ctx
-# }
+output "ctx" {
+  value = module.ctx.infra
+}
