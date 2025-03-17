@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings. 
+
 ## [0.0.34] - 2025-03-14
 
 ### Added  
