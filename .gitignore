@@ -44,3 +44,8 @@ target/**
 # mac files
 .DS_Store
 temp-*
+auto.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+modules/**/.terraform.lock.hcl
+.qodo

@@ -1,7 +1,34 @@
 locals {
   service = var.image.managed ? duplocloud_duplo_service.managed[0] : duplocloud_duplo_service.unmanaged[0]
-  # build this here so we can decode the generated json first before re-encoding it later in the service
-  other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", local.container_context))
+  other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", {
+    env_from         = jsonencode(local.env_from)
+    image            = var.image
+    port             = var.port
+    health_check     = var.health_check
+    nodeSelector     = var.nodes.selector
+    restart_policy   = var.restart_policy
+    annotations      = jsonencode(var.annotations)
+    labels           = jsonencode(var.labels)
+    pod_labels       = jsonencode(var.pod_labels)
+    pod_annotations  = jsonencode(var.pod_annotations)
+    security_context = jsonencode(var.security_context != null ? var.security_context : {})
+    volume_mounts    = jsonencode(local.volume_mounts)
+    volumes          = jsonencode(local.volumes)
+    command          = jsonencode(var.command)
+    args             = jsonencode(var.args)
+    env              = jsonencode(local.container_env)
+    resources = {
+      # don't actuall print the null values
+      for key, value in var.resources : key => value
+      if value != null
+    }
+  }))
+  hpa_metrics = lookup(var.scale, "metrics", null)
+  hpa_specs = yamldecode(templatefile("${path.module}/templates/hpa-spec.yaml", {
+    minReplicas = var.scale.min
+    maxReplicas = var.scale.max
+    metrics     = local.hpa_metrics
+  }))
 }
 
 # the tf managed resource block
@@ -18,6 +45,7 @@ resource "duplocloud_duplo_service" "managed" {
   agent_platform                       = 7
   cloud                                = 0
   other_docker_config                  = jsonencode(local.other_docker_config)
+  hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
 }
@@ -37,6 +65,7 @@ resource "duplocloud_duplo_service" "unmanaged" {
   agent_platform                       = 7
   cloud                                = 0
   other_docker_config                  = jsonencode(local.other_docker_config)
+  hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
   lifecycle {

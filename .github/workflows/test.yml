@@ -1,9 +1,14 @@
-name: Test Modules
+name: 🧪 Test Modules
 
 on:
   push:
-    branches: [ main ]
+    paths: 
+    - modules/**
+    branches: 
+    - main
   pull_request:
+    paths: 
+    - modules/**
 
 jobs:
   tf_module_test:
