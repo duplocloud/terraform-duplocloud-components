@@ -3,6 +3,11 @@ output "name" {
   value       = local.name
 }
 
+output "address_prefix" {
+  description = "The address prefix of the infrastructure."
+  value       = var.address_prefix
+}
+
 output "metadata" {
   description = "All of the metadata values on this plan."
   value = {

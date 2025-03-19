@@ -15,7 +15,7 @@ terraform {
 provider "duplocloud" {}
 
 module "infra" {
-  source         = "../../modules/infra"
+  source         = "../../modules/infrastructure"
   name           = "nonprod01"
   class          = "k8s"
   address_prefix = "11.221.0.0/16"
