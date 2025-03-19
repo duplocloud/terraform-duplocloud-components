@@ -4,7 +4,7 @@ resource "duplocloud_infrastructure" "this" {
   region             = var.region
   enable_k8_cluster  = var.class == "k8s"
   enable_ecs_cluster = var.class == "ecs"
-  address_prefix     = var.address_prefix
+  address_prefix     = local.address_prefix
   azcount            = var.azcount
   subnet_cidr        = var.subnet_cidr
 }

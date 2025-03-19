@@ -6,8 +6,7 @@ locals {
   value     = var.value != null ? var.value : jsonencode(local.data)
   keys      = keys(local.data)
   schema    = local.definitions[var.class]
-  config    = local.configurations[var.class]
-  resource  = length(local.config) > 0 ? local.config[0] : null
+  resource  = one(local.configurations[var.class])
   volume    = [for k, v in local.volumes : v if v != null]
   envFrom   = [for k, v in local.envFromMap : v if v != null]
   mountPath = var.mountPath != null ? var.mountPath : "/mnt/${local.id}"

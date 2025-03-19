@@ -36,7 +36,8 @@ variable "region" {
 variable "address_prefix" {
   description = "The CIDR block for the infrastructure."
   type        = string
-  default     = "10.221.0.0/16"
+  default     = null
+  nullable    = true
 }
 
 variable "azcount" {

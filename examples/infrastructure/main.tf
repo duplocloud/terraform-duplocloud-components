@@ -32,3 +32,7 @@ module "infra" {
 output "infra" {
   value = module.infra
 }
+
+output "mask" {
+  value = cidrhost(module.infra.address_prefix, -1)
+}
