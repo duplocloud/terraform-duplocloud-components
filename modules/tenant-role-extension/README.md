@@ -40,6 +40,9 @@ module "tenant-role" {
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
+## Notes
+This module adds a given permissions policy to the DuploCloud IAM role. If modifying the assume role policy to permit AWS services to use the tenant role, you must manually edit the assume role policy in the console. Make sure you create a new SID for the new assume role policy, and ensure it does not start with "duplo".
+
 ## Modules
 
 No modules.
