@@ -1,15 +1,24 @@
 resource "duplocloud_tenant_network_security_rule" "this" {
   for_each = {
-    for rule in var.sg_rules : "${rule.type}-${rule.to_port}-${rule.protocol}" => {
+    for rule in var.sg_rules : "${coalesce(rule.source_tenant, rule.source_address, "parent")}-${rule.to_port}-${rule.protocol}" => {
       to_port        = rule.to_port
       from_port      = coalesce(rule.from_port, rule.to_port)
       protocol       = rule.protocol
-      tenant_id      = rule.type == "egress" ? local.parent.id : local.tenant_id
-      source_tenant  = rule.type == "egress" ? local.name : rule.source_tenant
       source_address = rule.source_address
+      tenant_id = (
+        rule.source_tenant == null &&
+        rule.source_address == null
+      ) ? local.parent.id : local.tenant_id
+      source_tenant = (
+        rule.source_tenant == null &&
+        rule.source_address == null
+      ) ? local.name : rule.source_tenant
       description = coalesce(
         rule.description,
-        "${rule.type} for ${local.name} for port ${rule.to_port}"
+        (
+          rule.source_tenant == null &&
+          rule.source_address == null
+        ) ? "${local.name} to port ${rule.to_port}" : "${coalesce(rule.source_tenant, rule.source_address)} to port ${rule.to_port}"
       )
     }
   }

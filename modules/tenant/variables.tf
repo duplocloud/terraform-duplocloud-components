@@ -28,10 +28,9 @@ variable "parent" {
 variable "sg_rules" {
   description = <<EOT
 A list of security group rules to apply to the tenant.
-The `type` field can be either `ingress` or `egress`. An ingress means you are exposing some service within this tenant to another tenant or IP. An egress means you are allowing this tenant to access some service in another tenant or IP. If the type is egress, you can only make rules with the parent tenant, and therefore var.parent must be set. 
+At least a `to_port` is required. The `from_port` will default to the `to_port` if not specified. If a `source_tenant` is not specified, then this rule will be created in the parent tenant to allow this tenant to use a certain port. IF the `source_tenant` is specified then the rule is created in this tenant to allow another tenant to access a certain port. 
 EOT
   type = list(object({
-    type           = optional(string, "ingress")
     description    = optional(string, null)
     protocol       = optional(string, "tcp")
     from_port      = optional(number, null)
@@ -41,17 +40,15 @@ EOT
   }))
   default = []
   validation {
-    condition = !(var.parent == null && anytrue([
-      for rule in var.sg_rules : rule.type == "egress"
-    ]))
-    error_message = "Parent must be set if any egress rules are defined."
-  }
-  # if the type is ingress either source_tenant or source_address must be set
-  validation {
-    condition = !anytrue([
-      for rule in var.sg_rules : rule.type == "ingress" && (rule.source_tenant == null && rule.source_address == null)
-    ])
-    error_message = "For ingress rules, either source_tenant or source_address must be set."
+    condition = !(
+      var.parent == null && anytrue([
+        for rule in var.sg_rules : (
+          rule.source_tenant == null &&
+          rule.source_address == null
+        )
+      ])
+    )
+    error_message = "Parent must be set if rules are defined."
   }
 }
 
