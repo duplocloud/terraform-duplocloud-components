@@ -15,9 +15,8 @@ terraform {
 provider "duplocloud" {}
 
 module "tenant" {
-  source     = "../../modules/tenant"
-  infra_name = "oteltest"
-  name       = "myapp"
+  source = "../../modules/tenant"
+  parent = "oteltest"
   settings = {
     enable_host_other_tenants = "true"
   }
@@ -27,4 +26,8 @@ module "tenant" {
       SHARED = "something"
     }
   }]
+}
+
+output "tenant" {
+  value = module.tenant
 }

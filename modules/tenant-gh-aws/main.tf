@@ -1,11 +1,12 @@
 module "tenant" {
   source         = "../tenant"
   infra_name     = var.infra_name
+  parent         = var.parent
   name           = var.name
   settings       = var.settings
   configurations = var.configurations
   sg_rules       = var.sg_rules
-  parent         = var.parent
+  grants         = var.grants
 }
 
 module "iam" {
