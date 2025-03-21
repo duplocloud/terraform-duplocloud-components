@@ -7,6 +7,9 @@ locals {
     google = 3
   }
   address_prefix = var.address_prefix != null ? var.address_prefix : data.external.cidrinc[0].result.next
+  has_plan_settings = (
+    var.dns != null || var.metadata != null
+  )
 }
 
 data "duplocloud_infrastructures" "all" {

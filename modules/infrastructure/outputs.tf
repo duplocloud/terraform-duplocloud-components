@@ -10,9 +10,9 @@ output "address_prefix" {
 
 output "metadata" {
   description = "All of the metadata values on this plan."
-  value = {
-    for meta in duplocloud_plan_settings.this.all_metadata : meta.key => meta.value
-  }
+  value = var.metadata != null ? {
+    for meta in duplocloud_plan_settings.this[0].all_metadata : meta.key => meta.value
+  } : null
 }
 
 output "settings" {

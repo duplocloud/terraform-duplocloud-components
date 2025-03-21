@@ -13,6 +13,7 @@ resource "duplocloud_plan_configs" "this" {
   }
 }
 resource "duplocloud_plan_settings" "this" {
+  count               = local.has_plan_settings ? 1 : 0
   plan_id             = local.name
   unrestricted_ext_lb = true
   dynamic "dns_setting" {

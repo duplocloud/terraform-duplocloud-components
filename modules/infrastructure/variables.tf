@@ -55,7 +55,8 @@ variable "subnet_cidr" {
 variable "metadata" {
   description = "A map of metadata to be used in the infrastructure."
   type        = map(string)
-  default     = {}
+  default     = null
+  nullable    = true
 }
 
 variable "settings" {

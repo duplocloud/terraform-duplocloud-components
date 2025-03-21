@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+OUTFILE="$SCRIPTPATH/cidr.txt"
+
 # Function to convert IP address from dotted-decimal to integer
 ip_to_int() {
   local a b c d
@@ -59,3 +63,5 @@ cat <<EOF
   "next": "$next_cidr"
 }
 EOF
+
+# echo "$next_cidr" >> "$OUTFILE"
