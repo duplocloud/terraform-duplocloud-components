@@ -13,6 +13,7 @@ data "duplocloud_infrastructures" "all" {
   count = var.address_prefix == null ? 1 : 0
 }
 
+# tflint-ignore: terraform_required_providers
 data "external" "cidrinc" {
   count = var.address_prefix == null ? 1 : 0
   program = concat([

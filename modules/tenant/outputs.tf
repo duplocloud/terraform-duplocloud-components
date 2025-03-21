@@ -5,7 +5,7 @@ output "id" {
 
 output "name" {
   description = "The tenants name."
-  value       = var.name
+  value       = local.name
 }
 
 output "infra_name" {

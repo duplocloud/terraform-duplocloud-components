@@ -1,5 +1,5 @@
 resource "duplocloud_tenant" "this" {
-  account_name   = var.name
+  account_name   = local.name
   plan_id        = local.infra_name
   allow_deletion = false
   lifecycle {
@@ -11,6 +11,7 @@ resource "duplocloud_tenant" "this" {
 }
 
 resource "duplocloud_tenant_config" "this" {
+  count     = var.settings != null ? 1 : 0
   tenant_id = local.tenant_id
   dynamic "setting" {
     for_each = var.settings

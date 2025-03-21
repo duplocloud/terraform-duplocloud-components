@@ -5,11 +5,11 @@ resource "duplocloud_tenant_network_security_rule" "this" {
       from_port      = coalesce(rule.from_port, rule.to_port)
       protocol       = rule.protocol
       tenant_id      = rule.type == "egress" ? local.parent.id : local.tenant_id
-      source_tenant  = rule.type == "egress" ? var.name : rule.source_tenant
+      source_tenant  = rule.type == "egress" ? local.name : rule.source_tenant
       source_address = rule.source_address
       description = coalesce(
         rule.description,
-        "${rule.type} for ${var.name} for port ${rule.to_port}"
+        "${rule.type} for ${local.name} for port ${rule.to_port}"
       )
     }
   }
