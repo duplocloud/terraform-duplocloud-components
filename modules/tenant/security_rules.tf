@@ -1,6 +1,6 @@
 resource "duplocloud_tenant_network_security_rule" "this" {
   for_each = {
-    for rule in var.sg_rules : "${coalesce(rule.source_tenant, rule.source_address, "parent")}-${rule.to_port}-${rule.protocol}" => {
+    for rule in var.security_rules : "${coalesce(rule.source_tenant, rule.source_address, "parent")}-${rule.to_port}-${rule.protocol}" => {
       to_port        = rule.to_port
       from_port      = coalesce(rule.from_port, rule.to_port)
       protocol       = rule.protocol

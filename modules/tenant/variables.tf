@@ -25,12 +25,12 @@ variable "parent" {
   }
 }
 
-variable "sg_rules" {
+variable "security_rules" {
   description = <<EOT
 A list of security group rules to apply to the tenant.
 At least a `to_port` is required. The `from_port` will default to the `to_port` if not specified. If a `source_tenant` is not specified, then this rule will be created in the parent tenant to allow this tenant to use a certain port. IF the `source_tenant` is specified then the rule is created in this tenant to allow another tenant to access a certain port. 
 EOT
-  type = list(object({
+  type = set(object({
     description    = optional(string, null)
     protocol       = optional(string, "tcp")
     from_port      = optional(number, null)
@@ -42,7 +42,7 @@ EOT
   validation {
     condition = !(
       var.parent == null && anytrue([
-        for rule in var.sg_rules : (
+        for rule in var.security_rules : (
           rule.source_tenant == null &&
           rule.source_address == null
         )

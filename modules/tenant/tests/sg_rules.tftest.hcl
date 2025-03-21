@@ -6,11 +6,11 @@ run "no_source_tenant_nor_address_nor_parent" {
   command = plan
   variables {
     name = "cooltenant"
-    sg_rules = [{
+    security_rules = [{
       to_port = 80
     }]
   }
-  expect_failures = [var.sg_rules]
+  expect_failures = [var.security_rules]
 }
 
 run "egress_with_parent" {
@@ -26,7 +26,7 @@ run "egress_with_parent" {
   variables {
     name   = "cooltenant"
     parent = "shared01"
-    sg_rules = [{
+    security_rules = [{
       to_port = 80
     }]
   }
