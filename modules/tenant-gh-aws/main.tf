@@ -5,7 +5,7 @@ module "tenant" {
   name           = var.name
   settings       = var.settings
   configurations = var.configurations
-  sg_rules       = var.sg_rules
+  security_rules = var.security_rules
   grants         = var.grants
 }
 
