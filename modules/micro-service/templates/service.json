@@ -28,6 +28,12 @@
   %{if security_context != "{}" }
   "PodSecurityContext": ${security_context},
   %{ endif }
+  %{if service_account_name != ""}
+  "ServiceAccountName": "${service_account_name}",
+  %{ endif }
+  %{if host_network != null }
+  "HostNetwork": ${host_network},
+  %{endif}
   %{if volumes != "[]" }
   "Volumes": ${volumes},
   %{ endif }
