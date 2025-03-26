@@ -3,6 +3,16 @@ output "name" {
   value       = local.name
 }
 
+output "region" {
+  description = "The region of the infrastructure."
+  value       = var.region
+}
+
+output "cloud" {
+  description = "The cloud provider of the infrastructure."
+  value       = var.cloud
+}
+
 output "address_prefix" {
   description = "The address prefix of the infrastructure."
   value       = var.address_prefix
