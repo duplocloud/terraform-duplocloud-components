@@ -25,6 +25,11 @@ The `ecs` option is for AWS only and makes an ECS cluster based infrastructure.
 EOT
   type        = string
   default     = "duplocloud"
+
+  validation {
+    condition     = contains(["duplocloud", "k8s", "ecs"], var.class)
+    error_message = "The class must be one of the following: duplocloud, k8s, ecs."
+  }
 }
 
 variable "region" {
@@ -49,7 +54,7 @@ variable "azcount" {
 variable "subnet_cidr" {
   description = "The base of each of the subnets."
   type        = number
-  default     = 24
+  default     = 22
 }
 
 variable "metadata" {
