@@ -2,28 +2,15 @@ mock_provider "duplocloud" {
   source = "./tests"
 }
 
-run "ingress_without_source_tenant_nor_address" {
+run "no_source_tenant_nor_address_nor_parent" {
   command = plan
   variables {
     name = "cooltenant"
-    sg_rules = [{
-      type    = "ingress"
+    security_rules = [{
       to_port = 80
     }]
   }
-  expect_failures = [var.sg_rules]
-}
-
-run "egress_without_parent" {
-  command = plan
-  variables {
-    name = "cooltenant"
-    sg_rules = [{
-      type    = "egress"
-      to_port = 80
-    }]
-  }
-  expect_failures = [var.sg_rules]
+  expect_failures = [var.security_rules]
 }
 
 run "egress_with_parent" {
@@ -39,8 +26,7 @@ run "egress_with_parent" {
   variables {
     name   = "cooltenant"
     parent = "shared01"
-    sg_rules = [{
-      type    = "egress"
+    security_rules = [{
       to_port = 80
     }]
   }
@@ -52,13 +38,13 @@ run "egress_with_parent" {
 
   # make sure the first key is like "${rule.type}-${rule.to_port}-${rule.protocol}"
   assert {
-    condition     = keys(duplocloud_tenant_network_security_rule.this)[0] == "egress-80-tcp"
+    condition     = keys(duplocloud_tenant_network_security_rule.this)[0] == "parent-80-tcp"
     error_message = "There should be a key like egress-80-tcp"
   }
 
   # check the parent id is the tenant_id of the rule
   assert {
-    condition     = duplocloud_tenant_network_security_rule.this["egress-80-tcp"].tenant_id == "00a03226-7f81-4723-90a1-face65f4278b"
+    condition     = duplocloud_tenant_network_security_rule.this["parent-80-tcp"].tenant_id == "00a03226-7f81-4723-90a1-face65f4278b"
     error_message = "The tenant_id should be the parent id"
   }
 }
