@@ -1,3 +1,7 @@
+mock_provider "duplocloud" {
+  source = "./tests"
+}
+
 run "ingress_alb" {
   command = plan
   variables {

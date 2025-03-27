@@ -1,22 +1,32 @@
 locals {
   service = var.image.managed ? duplocloud_duplo_service.managed[0] : duplocloud_duplo_service.unmanaged[0]
+  duplocloud_clouds = {
+    "AWS" : 0,
+    "ORACLE" : 1,
+    "AZURE" : 2,
+    "GCP" : 3,
+    "BYOH" : 4
+  }
+  duplocloud_cloud = local.duplocloud_clouds[var.cloud]
   other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", {
-    env_from         = jsonencode(local.env_from)
-    image            = var.image
-    port             = var.port
-    health_check     = var.health_check
-    nodeSelector     = var.nodes.selector
-    restart_policy   = var.restart_policy
-    annotations      = jsonencode(var.annotations)
-    labels           = jsonencode(var.labels)
-    pod_labels       = jsonencode(var.pod_labels)
-    pod_annotations  = jsonencode(var.pod_annotations)
-    security_context = jsonencode(var.security_context != null ? var.security_context : {})
-    volume_mounts    = jsonencode(local.volume_mounts)
-    volumes          = jsonencode(local.volumes)
-    command          = jsonencode(var.command)
-    args             = jsonencode(var.args)
-    env              = jsonencode(local.container_env)
+    env_from             = jsonencode(local.env_from)
+    image                = var.image
+    port                 = var.port
+    health_check         = var.health_check
+    host_network         = var.host_network
+    nodeSelector         = var.nodes.selector
+    restart_policy       = var.restart_policy
+    annotations          = jsonencode(var.annotations)
+    labels               = jsonencode(var.labels)
+    pod_labels           = jsonencode(var.pod_labels)
+    pod_annotations      = jsonencode(var.pod_annotations)
+    service_account_name = var.service_account_name
+    security_context     = jsonencode(var.security_context != null ? var.security_context : {})
+    volume_mounts        = jsonencode(local.volume_mounts)
+    volumes              = jsonencode(local.volumes)
+    command              = jsonencode(var.command)
+    args                 = jsonencode(var.args)
+    env                  = jsonencode(local.container_env)
     resources = {
       # don't actuall print the null values
       for key, value in var.resources : key => value
@@ -43,11 +53,15 @@ resource "duplocloud_duplo_service" "managed" {
   cloud_creds_from_k8s_service_account = true
   is_daemonset                         = false
   agent_platform                       = 7
-  cloud                                = 0
+  cloud                                = local.duplocloud_cloud
   other_docker_config                  = jsonencode(local.other_docker_config)
   hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
+
+  lifecycle {
+    ignore_changes = [any_host_allowed]
+  }
 }
 
 # this services image and maybe the other docker config is not managed by tf
@@ -63,14 +77,15 @@ resource "duplocloud_duplo_service" "unmanaged" {
   cloud_creds_from_k8s_service_account = true
   is_daemonset                         = false
   agent_platform                       = 7
-  cloud                                = 0
+  cloud                                = local.duplocloud_cloud
   other_docker_config                  = jsonencode(local.other_docker_config)
   hpa_specs                            = local.hpa_metrics != null ? jsonencode(local.hpa_specs) : null
   docker_image                         = local.image_uri
   depends_on                           = [duplocloud_k8s_job.before_update]
   lifecycle {
     ignore_changes = [
-      docker_image
+      docker_image,
+      any_host_allowed
     ]
   }
 }

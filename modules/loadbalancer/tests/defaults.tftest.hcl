@@ -1,3 +1,7 @@
+mock_provider "duplocloud" {
+  source = "./tests"
+}
+
 run "validate_defaults" {
   command = plan
   variables {
