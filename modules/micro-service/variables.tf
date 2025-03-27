@@ -188,6 +188,12 @@ variable "security_context" {
   nullable = true
 }
 
+variable "service_account_name" {
+  description = "The service account name for the service"
+  type        = string
+  default     = ""
+}
+
 variable "nodes" {
   description = <<EOT
   The configuration for which nodes to run the service on.
@@ -406,4 +412,16 @@ variable "jobs" {
     ], job.event)])
     error_message = "The event must be one of 'before-update', 'after-update', 'before-delete', or 'after-delete'"
   }
+}
+
+variable "cloud" {
+  description = "Set to GCP to enable gcp capability"
+  type        = string
+  default     = "AWS"
+}
+
+variable "host_network" {
+  description = "Set to true to enable host networking mode"
+  type        = bool
+  default     = null
 }
