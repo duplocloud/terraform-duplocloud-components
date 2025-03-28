@@ -8,7 +8,7 @@ locals {
     "BYOH" : 4
   }
   duplocloud_cloud = local.duplocloud_clouds[var.cloud]
-  other_docker_config = jsondecode(templatefile("${path.module}/templates/service.json", {
+  other_docker_config = yamldecode(templatefile("${path.module}/templates/service.yaml", {
     env_from             = jsonencode(local.env_from)
     image                = var.image
     port                 = var.port

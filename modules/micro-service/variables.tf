@@ -75,9 +75,9 @@ variable "scale" {
   The metrics field is a list of metrics to use for autoscaling. Auto scaling is considered `enabled` when there are metrics, if there are none then the service will only use the replica count. See [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) for more information.
   EOT
   type = object({
-    replicas = optional(number, 1)
-    min      = optional(number, 1)
-    max      = optional(number, 3)
+    replicas = optional(number, null)
+    min      = optional(number, null)
+    max      = optional(number, null)
     metrics = optional(list(object({
       type = string
       resource = optional(object({
@@ -121,18 +121,6 @@ variable "scale" {
     })))
   })
   default = {}
-
-  # make sure max is always greater than min
-  validation {
-    condition     = var.scale.max >= var.scale.min
-    error_message = "The max must be greater than the min."
-  }
-
-  # the replicas must be between min and max
-  validation {
-    condition     = var.scale.replicas >= var.scale.min && var.scale.replicas <= var.scale.max
-    error_message = "The replicas must be greater than or equal to min and less than or equal to max."
-  }
 }
 
 variable "restart_policy" {
