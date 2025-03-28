@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed  
+
+- Default the health checks to http instead of just tcp so path is actually used. 
+- the service template is yaml now
+
 ## [0.0.35] - 2025-03-27
 
 ### Added
