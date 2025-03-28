@@ -8,7 +8,24 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
 - new mongodb module to create mongodb atlas resources.
+
+### Fixed  
+
+- Default the health checks to http instead of just tcp so path is actually used. 
+- the service template is yaml now
+
+## [0.0.35] - 2025-03-27
+
+### Added
+
+- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings. 
+- tenants can add grants from their parents or to their siblings
+- tenants now output the volumes, volumeMounts, and envFrom for the configurations
+- refactored configuration module a bit to make it easier to read
+- auto discover next valid cidr when no cidr is given to an infrastructure
+
 
 ## [0.0.34] - 2025-03-14
 
