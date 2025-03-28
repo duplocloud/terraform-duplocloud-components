@@ -1,6 +1,10 @@
-
+---
+%{ if minReplicas != null }
 minReplicas: ${minReplicas}
+%{ endif }
+%{ if maxReplicas != null }
 maxReplicas: ${maxReplicas}
+%{ endif }
 %{ if metrics != null }
 metrics:
 %{ for metric in metrics }
