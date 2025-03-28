@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.36] - 2025-03-28
+
 ### Fixed  
 
 - Default the health checks to http instead of just tcp so path is actually used. 
