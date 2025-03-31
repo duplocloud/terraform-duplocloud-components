@@ -6,12 +6,18 @@ variable "name" {
 }
 
 variable "cloud" {
-  description = "The cloud this is deployed on."
+  description = "The cloud this is deployed on. If the class is specific enough the cloud will default to the cloud for that specific class."
   type        = string
-  default     = "aws"
-
+  default     = null
+  nullable    = true
   validation {
-    condition     = contains(["aws", "oracle", "azure", "google"], var.cloud)
+    condition = contains([
+      "aws",
+      "oracle",
+      "azure",
+      "gcp",
+      null
+    ], var.cloud)
     error_message = "The cloud must be one of the following: aws, oracle, azure, google."
   }
 }
@@ -27,7 +33,13 @@ EOT
   default     = "duplocloud"
 
   validation {
-    condition     = contains(["duplocloud", "k8s", "ecs"], var.class)
+    condition = contains([
+      "duplocloud",
+      "k8s",
+      "ecs",
+      "gke",
+      "gke-autopilot"
+    ], var.class)
     error_message = "The class must be one of the following: duplocloud, k8s, ecs."
   }
 }
@@ -113,4 +125,15 @@ variable "certificates" {
   type        = map(string)
   default     = null
   nullable    = true
+}
+
+variable "account" {
+  description = "If the cloud is gcp you can choose a GCP project to use which is the gcp name of r Duplos universal 'account id' terminology."
+  type        = string
+  default     = null
+  nullable    = true
+  validation {
+    condition     = var.cloud == "gcp" ? var.account != null : true
+    error_message = "The account must be set if the cloud is gcp."
+  }
 }

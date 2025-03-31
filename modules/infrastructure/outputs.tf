@@ -10,7 +10,7 @@ output "region" {
 
 output "cloud" {
   description = "The cloud provider of the infrastructure."
-  value       = var.cloud
+  value       = local.cloud
 }
 
 output "address_prefix" {
