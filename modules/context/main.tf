@@ -8,8 +8,9 @@ locals {
 
 
   ##
-  # Discover the cloud we are on and try and get the id for this duplo isntance
+  # Discover the cloud we are on and try and get the id for this duplo instance
   # This is helpful in determining how we will find certain details later on when clouds differn in ways. 
+  # We also want to know what kind of backend we are using.
   ## 
   cloud = one([
     for cloud, enabled in {
@@ -25,6 +26,11 @@ locals {
     local.infra != null ? local.infra.account_id : null,
     "na"
   )
+  backend = {
+    aws   = "s3"
+    gcp   = "gcs"
+    azure = "azurerm"
+  }[local.cloud]
 
   ## 
   # Get some infra info. 
@@ -66,9 +72,24 @@ locals {
   workspaces = {
     for key, workspace in coalesce(var.workspaces, {}) : key => {
       name    = coalesce(workspace.name, terraform.workspace)
-      prefix  = coalesce(workspace.prefix, key)
-      key     = coalesce(workspace.key, key)
       nameRef = workspace.nameRef
+      backend = {
+        s3 = {
+          bucket               = local.tfstate_bucket
+          region               = local.default_region
+          workspace_key_prefix = coalesce(workspace.prefix, key)
+          key                  = coalesce(workspace.key, key)
+        }
+        gcs = {
+          bucket = local.tfstate_bucket
+          region = local.default_region
+          prefix = coalesce(workspace.prefix, key)
+        }
+        azurerm = {
+          storage_account_name = local.tfstate_bucket
+          key                  = coalesce(workspace.key, key)
+        }
+      }[local.backend]
     }
   }
 }
