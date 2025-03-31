@@ -30,6 +30,11 @@ output "infra" {
   value = local.infra
 }
 
+output "default_infra" {
+  description = "The Default infrastructure if one was looked up."
+  value       = local.default_infra
+}
+
 output "tenant" {
   value = local.tenant
 }
