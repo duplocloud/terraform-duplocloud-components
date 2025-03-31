@@ -39,7 +39,7 @@ output "tenant" {
   value = local.tenant
 }
 
-output "refs" {
+output "workspaces" {
   description = "The map of references using the ouputs from each workspaces remote state."
   value = merge({
     for key, ref in data.terraform_remote_state.refs : key => ref.outputs
