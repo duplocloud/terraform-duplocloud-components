@@ -82,7 +82,6 @@ locals {
         }
         gcs = {
           bucket = local.tfstate_bucket
-          region = local.default_region
           prefix = coalesce(workspace.prefix, key)
         }
         azurerm = {
