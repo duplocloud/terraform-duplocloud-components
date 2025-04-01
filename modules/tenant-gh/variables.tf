@@ -103,7 +103,7 @@ variable "configurations" {
     name        = optional(string, null)
     description = optional(string, null)
     type        = optional(string, "environment") # environment or file
-    data        = optional(map(string), {})
+    data        = optional(map(string), null)
     value       = optional(string, null)
     managed     = optional(bool, true)
     csi         = optional(bool, false)
