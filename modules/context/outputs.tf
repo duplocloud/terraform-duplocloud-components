@@ -30,11 +30,16 @@ output "infra" {
   value = local.infra
 }
 
+output "default_infra" {
+  description = "The Default infrastructure if one was looked up."
+  value       = local.default_infra
+}
+
 output "tenant" {
   value = local.tenant
 }
 
-output "refs" {
+output "workspaces" {
   description = "The map of references using the ouputs from each workspaces remote state."
   value = merge({
     for key, ref in data.terraform_remote_state.refs : key => ref.outputs

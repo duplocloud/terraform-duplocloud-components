@@ -3,14 +3,9 @@ data "terraform_remote_state" "refs" {
     for name, workspace in local.workspaces : name => workspace
     if workspace.nameRef == null
   }
-  backend   = "s3"
+  backend   = local.backend
   workspace = each.value.name
-  config = {
-    bucket               = local.tfstate_bucket
-    region               = local.default_region
-    workspace_key_prefix = each.value.prefix
-    key                  = each.value.key
-  }
+  config    = each.value.backend
 }
 
 data "terraform_remote_state" "namerefs" {
@@ -18,12 +13,7 @@ data "terraform_remote_state" "namerefs" {
     for name, workspace in local.workspaces : name => workspace
     if workspace.nameRef != null
   }
-  backend   = "s3"
+  backend   = local.backend
   workspace = data.terraform_remote_state.refs[each.value.nameRef.workspace].outputs[each.value.nameRef.nameKey]
-  config = {
-    bucket               = local.tfstate_bucket
-    region               = local.default_region
-    workspace_key_prefix = each.value.prefix
-    key                  = each.value.key
-  }
+  config    = each.value.backend
 }
