@@ -11,13 +11,12 @@ variable "cloud" {
   default     = null
   nullable    = true
   validation {
-    condition = contains([
+    condition = var.cloud == null || contains([
       "aws",
       "oracle",
       "azure",
-      "gcp",
-      null
-    ], var.cloud)
+      "gcp"
+    ], coalesce(var.cloud, "na"))
     error_message = "The cloud must be one of the following: aws, oracle, azure, google."
   }
 }
