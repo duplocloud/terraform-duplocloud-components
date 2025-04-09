@@ -13,26 +13,7 @@ output "infra_name" {
   value       = local.infra_name
 }
 
-output "envFrom" {
-  description = "The envFrom for the embedded configurations ready for some services to use."
-  value = [
-    for config in module.configurations : config.envFrom
-    if config.envFrom != null
-  ]
-}
-
-output "volumeMounts" {
-  description = "The volumeMounts for the embedded configurations ready for some services to use."
-  value = [
-    for config in module.configurations : config.volumeMount
-    if config.volumeMount != null
-  ]
-}
-
-output "volumes" {
-  description = "The volumes for the embedded configurations ready for some services to use."
-  value = [
-    for config in module.configurations : config.volume
-    if config.volume != null
-  ]
+output "configurations" {
+  value       = module.configurations
+  description = "The configurations for the tenant."
 }

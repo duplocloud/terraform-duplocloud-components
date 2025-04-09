@@ -13,6 +13,12 @@ and this project adheres to
 
 ### Fixed  
 
+- context module now supports gcp, it was very specific to aws before. It might work with azure too.
+
+## [0.0.36] - 2025-03-28
+
+### Fixed  
+
 - Default the health checks to http instead of just tcp so path is actually used. 
 - the service template is yaml now
 
