@@ -1,12 +1,14 @@
 resource "duplocloud_infrastructure" "this" {
-  infra_name         = coalesce(var.name, terraform.workspace)
-  cloud              = local.clouds[var.cloud]
-  region             = var.region
-  enable_k8_cluster  = var.class == "k8s"
-  enable_ecs_cluster = var.class == "ecs"
-  address_prefix     = local.address_prefix
-  azcount            = var.azcount
-  subnet_cidr        = var.subnet_cidr
+  infra_name               = coalesce(var.name, terraform.workspace)
+  cloud                    = local.clouds[local.cloud]
+  account_id               = var.account
+  region                   = var.region
+  enable_k8_cluster        = local.classdef.has_k8s
+  enable_ecs_cluster       = local.classdef.has_ecs
+  is_serverless_kubernetes = local.classdef.has_autopilot
+  address_prefix           = local.address_prefix
+  azcount                  = var.azcount
+  subnet_cidr              = var.subnet_cidr
   lifecycle {
     ignore_changes = [
       # don't try and recreate because any of these changed

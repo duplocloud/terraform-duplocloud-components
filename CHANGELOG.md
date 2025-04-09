@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed  
+
+- context module now supports gcp, it was very specific to aws before. It might work with azure too.
+
 ## [0.0.36] - 2025-03-28
 
 ### Fixed  

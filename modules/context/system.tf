@@ -20,8 +20,21 @@ data "duplocloud_infrastructure" "this" {
   infra_name = local.infra_name
 }
 
-# if non admin then get region from data
+data "duplocloud_infrastructure" "default" {
+  count = (
+    local.infra_name != "default" &&
+    var.admin &&
+    contains(["gcp", "azure"], local.cloud)
+  ) ? 1 : 0
+  infra_name = "default"
+}
+
+# if non admin then get region from data only if aws
 data "duplocloud_tenant_aws_region" "this" {
-  count     = var.tenant != null && !var.admin ? 1 : 0
+  count = (
+    local.cloud == "aws" &&
+    var.tenant != null &&
+    !var.admin
+  ) ? 1 : 0
   tenant_id = local.tenant.id
 }
