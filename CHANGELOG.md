@@ -7,7 +7,9 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
- - Added support for govcloud certificate arns in the load balancer module.
+
+### Fixed
+ - cert arn local did not match on govcloud cert arns
 
 ## [0.0.37] - 2025-04-09
 
