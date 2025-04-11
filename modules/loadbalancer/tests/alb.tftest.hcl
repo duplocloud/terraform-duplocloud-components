@@ -39,6 +39,37 @@ run "alb_with_cert_arn" {
   }
 }
 
+run "alb_with_govcloud_cert_arn" {
+  command = plan
+  variables {
+    tenant      = var.tenant
+    name        = var.name
+    class       = var.class
+    certificate = "arn:aws-us-gov:acm:us-gov-west-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+  }
+
+  # the cert lookup should be 0 because a cert arn is provided
+  assert {
+    condition     = length(data.duplocloud_plan_certificate.this) == 0
+    error_message = "Expected length(duplocloud_plan_certificate.this) to be 0 but got '${length(data.duplocloud_plan_certificate.this)}'"
+  }
+
+  # the local.cert_is_arn should be true
+  assert {
+    condition     = local.cert_is_arn == true
+    error_message = "Expected local.cert_is_arn to be true but got '${local.cert_is_arn}'"
+  }
+
+  # the https redirect here should be true
+  assert {
+    condition = (
+      local.https_redirect == true &&
+      duplocloud_duplo_service_params.this[0].http_to_https_redirect == true
+    )
+    error_message = "Expected local.https_redirect to be false but got '${local.https_redirect}'"
+  }
+}
+
 run "lookup_named_cert" {
   command = plan
   variables {

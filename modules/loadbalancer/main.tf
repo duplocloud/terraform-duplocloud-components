@@ -7,7 +7,7 @@ locals {
   ingress_class     = local.is_ingress ? replace(var.class, local.ingress_prefix, "") : null
   class             = local.is_ingress ? "service" : var.class
   lbconfig_needed   = contains(keys(local.duplo_types), local.class)
-  cert_is_arn       = startswith(coalesce(var.certificate, "na"), "arn:aws:acm:")
+  cert_is_arn       = length(regexall("^arn:aws(-us-gov)?:acm", coalesce(var.certificate, "na"), )) > 0
   do_cert_lookup    = var.certificate != null && !local.cert_is_arn
   cert_arn          = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.certificate
   external_port     = var.external_port != null ? var.external_port : var.certificate != null ? 443 : local.class == "service" ? var.port : 80
