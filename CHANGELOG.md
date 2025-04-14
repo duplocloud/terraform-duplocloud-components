@@ -11,6 +11,7 @@ and this project adheres to
 ### Fixed
 
  - cert arn local did not match on govcloud cert arns
+ - service params removed for ingress resources to conflict on dns_prfx
 
 ## [0.0.37] - 2025-04-09
 
