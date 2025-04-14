@@ -8,9 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+ - cert arn local did not match on govcloud cert arns
+
 ## [0.0.37] - 2025-04-09
 
 ### Added
+
 - new mongodb module to create mongodb atlas resources.
 
 ### Fixed  
