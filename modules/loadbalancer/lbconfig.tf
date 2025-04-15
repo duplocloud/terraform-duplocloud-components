@@ -7,7 +7,7 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
     is_native        = false
     is_internal      = var.internal
     port             = var.port
-    external_port    = local.external_port
+    external_port    = var.is_ingress ? var.port : local.external_port
     certificate_arn  = var.certificate
     protocol         = upper(var.protocol)
     health_check_url = var.health_check_url
