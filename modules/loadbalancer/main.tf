@@ -11,8 +11,8 @@ locals {
   do_cert_lookup    = var.certificate != null && !local.cert_is_arn
   cert_arn          = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.certificate
   external_port     = (var.external_port != null ? var.external_port : 
-                      var.certificate != null ? 443 : 
-                      local.class == "service" || local.is_ingress ? var.port 
+                      local.class == "service" || local.is_ingress ? var.port :
+                      var.certificate != null ? 443 
                       : 80)
   dns_prfx          = coalesce(var.dns_prfx, "${var.name}-${var.tenant}")
   https_redirect    = var.certificate != null ? true : false
