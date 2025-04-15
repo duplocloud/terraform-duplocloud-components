@@ -23,6 +23,14 @@ run "alb_with_cert_arn" {
     error_message = "Expected length(duplocloud_plan_certificate.this) to be 0 but got '${length(data.duplocloud_plan_certificate.this)}'"
   }
 
+  # the lbconfig should be listening on 443
+  assert {
+    condition = (
+      duplocloud_duplo_service_lbconfigs.this[0].lbconfigs[0].external_port == 443
+    )
+    error_message = "Expected external port to be 443, but got ${duplocloud_duplo_service_lbconfigs.this[0].lbconfigs[0].external_port}"
+  }
+
   # the local.cert_is_arn should be true
   assert {
     condition     = local.cert_is_arn == true
