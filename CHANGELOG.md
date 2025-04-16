@@ -12,7 +12,7 @@ and this project adheres to
 
 - On the micro-service module, jobs can individually override the timeouts, env vars, labels, and annotations.
 - added the following fields to nodes on the micro-service; `unique` and `spread_across_zones`
-- micro-service now outputs the follwoing fields: domain, parent_domain, image, namespace
+- micro-service now outputs the follwoing fields: domain, parent_domain, image, name, namespace
 
 ### Fixed
 

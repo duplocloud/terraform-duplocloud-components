@@ -1,4 +1,7 @@
-
+output "name" {
+  description = "The name of the service."
+  value       = local.service.name
+}
 output "configurations" {
   value       = module.configurations
   description = "The configurations object."
