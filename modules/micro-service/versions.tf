@@ -3,7 +3,7 @@ terraform {
   required_providers {
     duplocloud = {
       source  = "duplocloud/duplocloud"
-      version = ">= 0.10.40"
+      version = ">= 0.11.0"
     }
     random = {
       source  = "hashicorp/random"
