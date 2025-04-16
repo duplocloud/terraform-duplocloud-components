@@ -36,7 +36,7 @@ resource "duplocloud_k8s_job" "before_update" {
           var.nodes.allocation_tags == null ? {} : {
             allocationtags = var.nodes.allocation_tags
           },
-          coalesce(var.node.selector, {})
+          coalesce(var.nodes.selector, {})
         )
         restart_policy       = "OnFailure"
         service_account_name = "${local.namespace}-readonly-user"
