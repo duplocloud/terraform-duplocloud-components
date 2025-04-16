@@ -128,7 +128,13 @@ resource "duplocloud_k8s_job" "before_update" {
       spec[0].template[0].metadata[0].labels["app"],
       spec[0].template[0].metadata[0].labels["owner"],
       spec[0].template[0].metadata[0].labels["tenantid"],
-      spec[0].template[0].metadata[0].labels["tenantname"]
+      spec[0].template[0].metadata[0].labels["tenantname"],
+      spec[0].template[0].metadata[0].labels["duplocloud.net/owner"],
+      spec[0].template[0].metadata[0].labels["duplocloud.net/tenantid"],
+      metadata[0].labels["duplocloud.net/tenantname"],
+      metadata[0].labels["duplocloud.net/owner"],
+      metadata[0].labels["duplocloud.net/tenantid"],
+      metadata[0].labels["duplocloud.net/tenantname"]
     ]
   }
 }
