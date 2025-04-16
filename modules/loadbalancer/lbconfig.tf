@@ -7,7 +7,7 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
     is_native        = false
     is_internal      = var.internal
     port             = var.port
-    external_port    = local.external_port
+    external_port    = local.is_ingress ? var.port : local.external_port
     certificate_arn  = var.certificate
     protocol         = upper(var.protocol)
     health_check_url = var.health_check_url
@@ -21,7 +21,7 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
 }
 
 resource "duplocloud_duplo_service_params" "this" {
-  count                       = local.lbconfig_needed ? 1 : 0
+  count                       = local.lbconfig_needed && !local.is_ingress ? 1 : 0
   tenant_id                   = local.tenant.id
   replication_controller_name = var.name
   dns_prfx                    = local.dns_prfx

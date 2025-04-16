@@ -8,6 +8,7 @@ run "ingress_alb" {
     tenant = "tf-tests"
     name   = "myapp"
     class  = "ingress-alb"
+    port   = "8080"
   }
 
   # assert the local.is_standalone is true
@@ -42,5 +43,11 @@ run "ingress_alb" {
       local.ingress_annotations["kubernetes.io/ingress.class"] == "alb"
     )
     error_message = "Expected local.ingress_annotations to be null"
+  }
+  assert {
+    condition = (
+      duplocloud_duplo_service_lbconfigs.this[0].lbconfigs[0].external_port == 8080
+    )
+    error_message = "Expected external port to match test port 8080, but got ${duplocloud_duplo_service_lbconfigs.this[0].lbconfigs[0].external_port}"
   }
 }
