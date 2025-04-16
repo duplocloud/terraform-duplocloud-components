@@ -7,6 +7,7 @@ resource "duplocloud_k8s_job" "before_update" {
   tenant_id           = local.tenant.id
   is_any_host_allowed = var.nodes.shared
   wait_for_completion = each.value.wait
+  # allocation_tags     = var.nodes.allocation_tags
   timeouts {
     create = each.value.timeout
     update = "1m"
@@ -24,10 +25,19 @@ resource "duplocloud_k8s_job" "before_update" {
         labels      = merge(var.pod_labels, each.value.labels)
       }
       spec {
-        node_selector = var.nodes.selector != null ? var.nodes.selector : {
-          "kubernetes.io/os" = "linux"
-          tenantname         = local.namespace
-        }
+        # node_selector = var.nodes.selector != null ? var.nodes.selector : {
+        #   "kubernetes.io/os" = "linux"
+        #   tenantname         = local.namespace
+        # }
+        node_selector = merge(
+          var.nodes.shared ? {} : {
+            "tenantname" = local.namespace
+          },
+          var.nodes.allocation_tags == null ? {} : {
+            allocationtags = var.nodes.allocation_tags
+          },
+          coalesce(var.node.selector, {})
+        )
         restart_policy       = "OnFailure"
         service_account_name = "${local.namespace}-readonly-user"
         dynamic "security_context" {
