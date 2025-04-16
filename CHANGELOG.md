@@ -8,11 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added 
+
+- On the micro-service module, jobs can individually override the timeouts, env vars, labels, and annotations.
+
 ### Fixed
 
- - cert arn local did not match on govcloud cert arns
- - service params removed for ingress resources to conflict on dns_prfx
- - lbconfigs for clusterip services should use var.port as external_port instead of computed value.
+- cert arn local did not match on govcloud cert arns
+- service params removed for ingress resources to conflict on dns_prfx
+- lbconfigs for clusterip services should use var.port as external_port instead of computed value.
 
 ## [0.0.37] - 2025-04-09
 

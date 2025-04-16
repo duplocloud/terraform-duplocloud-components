@@ -379,15 +379,27 @@ variable "jobs" {
   The `wait` field will determine if the job should wait for completion. If the field is not set, the job will wait for completion.
 
   The `event` field will determine the event to trigger the job. If the field is not set, the event will be "before-update". This can be one of the following: before-update, after-update, before-delete, after-delete.
+
+  The `timeout` field will determine the timeout for the job. If the field is not set, the timeout will be 60 seconds.
+
+  The `labels` field will determine the labels to add to the job. If the field is not set, the labels will be an empty map. These are applied to the job and on the pod merged with pod labels.
+
+  The `annotations` field will determine the annotations to add to the job. If the field is not set, the annotations will be an empty map. These are applied to the job and on the pod merged with pod annotations.
+
+  The `env` field will determine the environment variables to add to the job. If the field is not set, the env will be an empty map. These are applied to the job and on the pod merged with pod env.
   EOT
   type = list(object({
-    enabled  = optional(bool, true)
-    name     = optional(string, null)
-    command  = optional(list(string), null)
-    args     = optional(list(string), [])
-    wait     = optional(bool, true)
-    event    = optional(string, "before-update")
-    schedule = optional(string, "0 1 * * *")
+    enabled     = optional(bool, true)
+    name        = optional(string, null)
+    command     = optional(list(string), null)
+    args        = optional(list(string), [])
+    wait        = optional(bool, true)
+    event       = optional(string, "before-update")
+    schedule    = optional(string, "0 1 * * *")
+    timeout     = optional(string, "1m")
+    labels      = optional(map(string), {})
+    annotations = optional(map(string), {})
+    env         = optional(map(string), {})
   }))
   default = []
 
