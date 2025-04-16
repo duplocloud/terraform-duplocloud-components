@@ -185,11 +185,23 @@ variable "service_account_name" {
 variable "nodes" {
   description = <<EOT
   The configuration for which nodes to run the service on.
+
+  The `shared` field will determine if the service can run on shared nodes or not. If the field is not set, the service will only run on nodes within its own tenant. 
+
+  The `allocation_tags` field is a list of tags to use for allocating the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the allocation_tags may be ones from another tenant sharing it's nodes. 
+
+  The `selector` field is a map of labels to use for selecting the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the selector may use labels on nodes from tenants sharing their nodes.
+
+  The `unique` field will determine if the service should run on a unique node or not. This will treat a normal service kind of like a daemonset. In the background, the pod is asking to be on nodes which don't have one of itself already on it. 
+
+  The `spread_across_zones` field will determine if the service should be spread across zones or not. The scheduler will pick the least used node it can which might be another node in a zone that already has one of itself. This ensures the scheduler will also consider the least used zone it can. 
   EOT
   type = object({
-    allocation_tags = optional(string, null)
-    shared          = optional(bool, false)
-    selector        = optional(map(string), null)
+    shared              = optional(bool, false)
+    allocation_tags     = optional(string, null)
+    selector            = optional(map(string), null)
+    unique              = optional(bool, false)
+    spread_across_zones = optional(bool, false)
   })
   default = {}
 }

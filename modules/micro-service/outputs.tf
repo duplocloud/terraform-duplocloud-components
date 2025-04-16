@@ -19,7 +19,23 @@ output "namespace" {
   value       = local.namespace
 }
 
-output "service" {
-  description = "The output of the service from the provider."
-  value       = local.service
+output "domain" {
+  description = "The fully qualified domain name of the service."
+  value       = local.service.domain
 }
+
+output "parent_domain" {
+  description = "The parent domain of the service."
+  value       = local.service.parent_domain
+}
+
+output "image" {
+  description = "The actual image in use atm."
+  value       = local.service.docker_image
+}
+
+## leave this commented out, it's useful when deciding what to output
+# output "service" {
+#   description = "The output of the service from the provider."
+#   value       = local.service
+# }
