@@ -1,0 +1,58 @@
+name: 💿 Publish Image
+on:
+  workflow_dispatch: 
+    inputs:
+      push:
+        description: Push the image to the registry
+        type: boolean
+        default: false
+  workflow_call: 
+    inputs:
+      push:
+        description: Push the image to the registry
+        type: boolean
+        default: false
+    outputs:
+      image:
+        description: The URI of the image
+        value: $${{ jobs.build_image.outputs.image }}
+      tag:
+        description: The tag of the image
+        value: $${{ jobs.build_image.outputs.tag }}
+    secrets:
+      DUPLO_TOKEN:
+        description: The token to use for Duplo API calls
+        required: true
+
+env:
+  DUPLO_HOST: $${{ vars.DUPLO_HOST }}
+  DUPLO_TOKEN: $${{ secrets.DUPLO_TOKEN }}
+  DUPLO_TENANT: devops
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build_image:
+    name: Publish Image
+    runs-on: ubuntu-latest
+    outputs:
+      image: $${{ steps.build_image.outputs.uri }}
+      tag: $${{ steps.build_image.outputs.tag }}
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Duplo Setup
+      uses: duplocloud/actions@${ref}
+      with:
+        admin: true
+        credentials: $${{ secrets.CLOUD_CREDENTIALS }}
+        region: us-central1
+
+    - name: Build and Push Docker Image
+      id: build_image
+      uses: duplocloud/actions/build-image@${ref}
+      with:
+        type: bake
+        target: ${name} # tf var
+        push: $${{ inputs.push }}
