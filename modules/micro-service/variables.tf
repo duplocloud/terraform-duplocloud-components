@@ -219,19 +219,23 @@ If the class is `target-group`, the `listener` field must be set to the ARN of t
 
 The `dns_prfx` field will determine the subdomain for the base host tenant. If the field is not set, the prefix will be the service name and tenant name.
 
+The `release_header` is a boolean option which, when enabled, will add a header rule to the load balancer requiring the release ID on `X-Access-Control`. The release ID is an output, this means you can use it on a CDN to inject the corresponding header so the cdn is the only thing talking to the lb. 
+
 See more docs here: https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/duplo_service_lbconfigs
 EOT
   type = object({
-    enabled      = optional(bool, false)
-    class        = optional(string, "service")
-    priority     = optional(number, 0)
-    path_pattern = optional(string, "/*")
-    port         = optional(number, null)
-    protocol     = optional(string, "http")
-    certificate  = optional(string, null)
-    listener     = optional(string, null)
-    dns_prfx     = optional(string, null)
-    internal     = optional(bool, false)
+    enabled        = optional(bool, false)
+    class          = optional(string, "service")
+    priority       = optional(number, 0)
+    path_pattern   = optional(string, "/*")
+    port           = optional(number, null)
+    protocol       = optional(string, "http")
+    certificate    = optional(string, null)
+    listener       = optional(string, null)
+    dns_prfx       = optional(string, null)
+    internal       = optional(bool, false)
+    release_header = optional(bool, false)
+    annotations    = optional(map(string), {})
   })
   default = {}
   validation {

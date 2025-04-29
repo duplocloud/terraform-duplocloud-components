@@ -14,4 +14,16 @@ module "loadbalancer" {
   dns_prfx         = var.lb.dns_prfx
   internal         = var.lb.internal
   health_check_url = var.health_check.path
+  annotations = merge(
+    var.lb.annotations,
+    var.lb.release_header ? {
+      ("alb.ingress.kubernetes.io/conditions.${local.service.name}") = jsonencode([{
+        Field = "http-header"
+        HttpHeaderConfig = {
+          HttpHeaderName = "X-Access-Control"
+          Values         = [local.release_id]
+        }
+      }])
+    } : {}
+  )
 }
