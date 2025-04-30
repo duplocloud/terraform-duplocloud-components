@@ -1,8 +1,9 @@
 locals {
-  tenant     = data.duplocloud_tenant.this
-  namespace  = "duploservices-${local.tenant.name}"
-  release_id = random_string.release_id.id
-  image_uri  = var.image.uri != null ? var.image.uri : "${var.image.registry}/${coalesce(var.image.repo, var.name)}:${var.image.tag}"
+  tenant              = data.duplocloud_tenant.this
+  namespace           = "duploservices-${local.tenant.name}"
+  release_id          = random_string.release_id.id
+  image_uri           = var.image.uri != null ? var.image.uri : "${var.image.registry}/${coalesce(var.image.repo, var.name)}:${var.image.tag}"
+  release_header_name = "X-Access-Control"
   volumes = concat([
     for config in module.configurations : config.volume if config.volume != null
     ], [

@@ -20,7 +20,7 @@ module "loadbalancer" {
       ("alb.ingress.kubernetes.io/conditions.${local.service.name}") = jsonencode([{
         Field = "http-header"
         HttpHeaderConfig = {
-          HttpHeaderName = "X-Access-Control"
+          HttpHeaderName = local.release_header_name
           Values         = [local.release_id]
         }
       }])
