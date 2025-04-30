@@ -16,8 +16,8 @@ Command: ${command}
 %{if args != "[]" }
 Args: ${args}
 %{ endif }
-%{if nodeSelector != null }
-NodeSelector: ${jsonencode(nodeSelector)}
+%{if nodes.selector != null }
+NodeSelector: ${jsonencode(nodes.selector)}
 %{ endif }
 %{if pod_annotations != "{}" }
 PodAnnotations: ${pod_annotations}
