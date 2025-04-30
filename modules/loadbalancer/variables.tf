@@ -69,7 +69,8 @@ variable "certificate" {
 variable "protocol" {
   description = "The protocol to use for the load balancers backend."
   type        = string
-  default     = "HTTP"
+  default     = null
+  nullable    = true
 
   validation {
     condition = contains([
@@ -78,8 +79,9 @@ variable "protocol" {
       "TCP",
       "UDP",
       "TLS",
-      "TCP_UDP"
-    ], upper(var.protocol))
+      "TCP_UDP",
+      "NA"
+    ], upper(coalesce(var.protocol, "na")))
     error_message = "The protocol must be one of 'HTTP', 'HTTPS', 'TCP', 'UDP', 'TLS', 'TCP_UDP'."
   }
 }
