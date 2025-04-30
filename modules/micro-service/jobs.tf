@@ -1,26 +1,45 @@
 # do the before update jobs
 resource "duplocloud_k8s_job" "before_update" {
-  for_each            = { for job in var.jobs : job.name != null ? job.name : job.event => job if job.enabled && job.event == "before-update" }
+  for_each = {
+    for job in var.jobs : (job.name != null ? job.name : job.event) => job
+    if job.enabled && job.event == "before-update"
+  }
   tenant_id           = local.tenant.id
   is_any_host_allowed = var.nodes.shared
   wait_for_completion = each.value.wait
+  # allocation_tags     = var.nodes.allocation_tags
+  timeouts {
+    create = each.value.timeout
+    update = "1m"
+    delete = "1m"
+  }
   metadata {
     name        = "${var.name}-${each.value.name != null ? each.value.name : each.value.event}-${local.release_id}"
-    annotations = var.annotations
-    labels      = var.labels
+    annotations = merge(var.annotations, each.value.annotations)
+    labels      = merge(var.labels, each.value.labels)
   }
   spec {
     template {
       metadata {
-        annotations = var.pod_annotations
-        labels      = var.pod_labels
+        annotations = merge(var.pod_annotations, each.value.annotations)
+        labels      = merge(var.pod_labels, each.value.labels)
       }
       spec {
-        node_selector = var.nodes.selector != null ? var.nodes.selector : {
-          "kubernetes.io/os" = "linux"
-        }
+        # node_selector = var.nodes.selector != null ? var.nodes.selector : {
+        #   "kubernetes.io/os" = "linux"
+        #   tenantname         = local.namespace
+        # }
+        node_selector = merge(
+          var.nodes.shared ? {} : {
+            "tenantname" = local.namespace
+          },
+          var.nodes.allocation_tags == null ? {} : {
+            allocationtags = var.nodes.allocation_tags
+          },
+          coalesce(var.nodes.selector, {})
+        )
         restart_policy       = "OnFailure"
-        service_account_name = "duploservices-${local.tenant.name}-readonly-user"
+        service_account_name = "${local.namespace}-readonly-user"
         dynamic "security_context" {
           for_each = var.security_context == null ? [] : [var.security_context]
           content {
@@ -39,7 +58,7 @@ resource "duplocloud_k8s_job" "before_update" {
             value = local.release_id
           }
           dynamic "env" {
-            for_each = var.env
+            for_each = merge(var.env, each.value.env)
             content {
               name  = env.key
               value = env.value
@@ -109,7 +128,13 @@ resource "duplocloud_k8s_job" "before_update" {
       spec[0].template[0].metadata[0].labels["app"],
       spec[0].template[0].metadata[0].labels["owner"],
       spec[0].template[0].metadata[0].labels["tenantid"],
-      spec[0].template[0].metadata[0].labels["tenantname"]
+      spec[0].template[0].metadata[0].labels["tenantname"],
+      spec[0].template[0].metadata[0].labels["duplocloud.net/owner"],
+      spec[0].template[0].metadata[0].labels["duplocloud.net/tenantid"],
+      metadata[0].labels["duplocloud.net/tenantname"],
+      metadata[0].labels["duplocloud.net/owner"],
+      metadata[0].labels["duplocloud.net/tenantid"],
+      metadata[0].labels["duplocloud.net/tenantname"]
     ]
   }
 }

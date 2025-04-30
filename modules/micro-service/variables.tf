@@ -185,11 +185,23 @@ variable "service_account_name" {
 variable "nodes" {
   description = <<EOT
   The configuration for which nodes to run the service on.
+
+  The `shared` field will determine if the service can run on shared nodes or not. If the field is not set, the service will only run on nodes within its own tenant. 
+
+  The `allocation_tags` field is a list of tags to use for allocating the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the allocation_tags may be ones from another tenant sharing it's nodes. 
+
+  The `selector` field is a map of labels to use for selecting the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the selector may use labels on nodes from tenants sharing their nodes.
+
+  The `unique` field will determine if the service should run on a unique node or not. This will treat a normal service kind of like a daemonset. In the background, the pod is asking to be on nodes which don't have one of itself already on it. 
+
+  The `spread_across_zones` field will determine if the service should be spread across zones or not. The scheduler will pick the least used node it can which might be another node in a zone that already has one of itself. This ensures the scheduler will also consider the least used zone it can. 
   EOT
   type = object({
-    allocation_tags = optional(string, null)
-    shared          = optional(bool, false)
-    selector        = optional(map(string), null)
+    shared              = optional(bool, false)
+    allocation_tags     = optional(string, null)
+    selector            = optional(map(string), null)
+    unique              = optional(bool, false)
+    spread_across_zones = optional(bool, false)
   })
   default = {}
 }
@@ -379,15 +391,27 @@ variable "jobs" {
   The `wait` field will determine if the job should wait for completion. If the field is not set, the job will wait for completion.
 
   The `event` field will determine the event to trigger the job. If the field is not set, the event will be "before-update". This can be one of the following: before-update, after-update, before-delete, after-delete.
+
+  The `timeout` field will determine the timeout for the job. If the field is not set, the timeout will be 60 seconds.
+
+  The `labels` field will determine the labels to add to the job. If the field is not set, the labels will be an empty map. These are applied to the job and on the pod merged with pod labels.
+
+  The `annotations` field will determine the annotations to add to the job. If the field is not set, the annotations will be an empty map. These are applied to the job and on the pod merged with pod annotations.
+
+  The `env` field will determine the environment variables to add to the job. If the field is not set, the env will be an empty map. These are applied to the job and on the pod merged with pod env.
   EOT
   type = list(object({
-    enabled  = optional(bool, true)
-    name     = optional(string, null)
-    command  = optional(list(string), null)
-    args     = optional(list(string), [])
-    wait     = optional(bool, true)
-    event    = optional(string, "before-update")
-    schedule = optional(string, "0 1 * * *")
+    enabled     = optional(bool, true)
+    name        = optional(string, null)
+    command     = optional(list(string), null)
+    args        = optional(list(string), [])
+    wait        = optional(bool, true)
+    event       = optional(string, "before-update")
+    schedule    = optional(string, "0 1 * * *")
+    timeout     = optional(string, "1m")
+    labels      = optional(map(string), {})
+    annotations = optional(map(string), {})
+    env         = optional(map(string), {})
   }))
   default = []
 

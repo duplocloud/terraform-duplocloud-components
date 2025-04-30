@@ -14,7 +14,7 @@ locals {
     port                 = var.port
     health_check         = var.health_check
     host_network         = var.host_network
-    nodeSelector         = var.nodes.selector
+    nodes                = var.nodes
     restart_policy       = var.restart_policy
     annotations          = jsonencode(var.annotations)
     labels               = jsonencode(var.labels)
@@ -49,6 +49,8 @@ resource "duplocloud_duplo_service" "managed" {
   replicas                             = var.scale.replicas
   allocation_tags                      = var.nodes.allocation_tags
   any_host_allowed                     = var.nodes.shared
+  is_unique_k8s_node_required          = var.nodes.unique
+  should_spread_across_zones           = var.nodes.spread_across_zones
   lb_synced_deployment                 = false
   cloud_creds_from_k8s_service_account = true
   is_daemonset                         = false
@@ -73,6 +75,8 @@ resource "duplocloud_duplo_service" "unmanaged" {
   replicas                             = var.scale.replicas
   allocation_tags                      = var.nodes.allocation_tags
   any_host_allowed                     = var.nodes.shared
+  is_unique_k8s_node_required          = var.nodes.unique
+  should_spread_across_zones           = var.nodes.spread_across_zones
   lb_synced_deployment                 = false
   cloud_creds_from_k8s_service_account = true
   is_daemonset                         = false
