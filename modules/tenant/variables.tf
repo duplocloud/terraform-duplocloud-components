@@ -111,3 +111,9 @@ variable "configurations" {
   }))
   default = []
 }
+
+variable "allow_deletion" {
+  description = "this supersedes delete_protection on tenant settings"
+  type        = bool
+  default = true
+}
