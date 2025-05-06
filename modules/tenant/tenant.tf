@@ -1,7 +1,7 @@
 resource "duplocloud_tenant" "this" {
   account_name   = local.name
   plan_id        = local.infra_name
-  allow_deletion = var.allow_deletion
+  allow_deletion = (lower(lookup(var.settings, "delete_protection", "false")) == "true")
   lifecycle {
     ignore_changes = [
       account_name,
