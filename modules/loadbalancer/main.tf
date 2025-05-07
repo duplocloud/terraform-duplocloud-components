@@ -6,11 +6,11 @@ locals {
   is_standalone     = startswith(var.class, local.standalone_prefix)
   ingress_class     = local.is_ingress ? replace(var.class, local.ingress_prefix, "") : null
   standalone_class  = local.is_standalone ? replace(var.class, local.standalone_prefix, "") : null
-  base_class = coalesce(
-    local.ingress_class,
-    local.standalone_class,
-    var.class
-  )
+  # base_class = coalesce(
+  #   local.ingress_class,
+  #   local.standalone_class,
+  #   var.class
+  # )
   class = coalesce(
     local.is_ingress ? "service" : null,
     local.standalone_class,
