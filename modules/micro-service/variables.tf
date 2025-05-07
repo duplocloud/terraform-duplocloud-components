@@ -437,3 +437,9 @@ variable "host_network" {
   type        = bool
   default     = null
 }
+
+variable "termination_grace_period" {
+  description = "The amount of time to wait, in seconds, for pod activity to terminate gracefully after shutdown signal"
+  type        = number
+  default     = null
+}
