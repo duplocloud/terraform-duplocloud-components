@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- reversed tenant deletion logic handeling
+
 ## [0.0.38] - 2025-05-07
 
 ### Added
