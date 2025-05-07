@@ -42,3 +42,11 @@ output "image" {
 #   description = "The output of the service from the provider."
 #   value       = local.service
 # }
+
+output "release_header" {
+  description = "This is an object with name and value. The name is the header name and the value is header value which is the value of the release_id."
+  value = var.lb.release_header ? {
+    name  = local.release_header_name
+    value = local.release_id
+  } : null
+}
