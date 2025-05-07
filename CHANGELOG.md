@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added 
 
+- Added termination grace period as an option in the microservices module
 - On the micro-service module, jobs can individually override the timeouts, env vars, labels, and annotations.
 - added the following fields to nodes on the micro-service; `unique` and `spread_across_zones`
 - micro-service now outputs the follwoing fields: domain, parent_domain, image, name, namespace

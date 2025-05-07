@@ -40,6 +40,9 @@ Volumes: ${volumes}
 %{if volume_mounts != "[]" }
 VolumesMounts: ${volume_mounts}
 %{ endif }
+%{if termination_grace_period != null }
+terminationGracePeriodSeconds: ${termination_grace_period}
+%{ endif }
 %{if health_check.enabled }
 LivenessProbe: 
   failureThreshold: ${health_check.failureThreshold}
