@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.38] - 2025-05-07
+
 ### Added
 
 - a `release_header` rule under `lb` in the micro-service module. When enabled will add the release ID as a required value in the `X-Access-Control` header for the load balancer.
