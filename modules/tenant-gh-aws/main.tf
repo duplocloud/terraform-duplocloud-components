@@ -9,6 +9,8 @@ module "tenant" {
   grants         = var.grants
 }
 
+# unfortunately the implicite dependency on the tenant isn't working
+# although the tenant is considered done, the iam role doesn't always exist yet
 module "iam" {
   count           = var.policy != null ? 1 : 0
   source          = "../tenant-role-extension"
