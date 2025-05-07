@@ -3,7 +3,7 @@ locals {
 }
 
 data "duplocloud_tenant" "this" {
-  name = var.tenant_name
+  name = var.tenant
 }
 
 # data "duplocloud_infrastructure" "this" {
