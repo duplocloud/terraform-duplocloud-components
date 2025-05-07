@@ -21,6 +21,7 @@ and this project adheres to
 - service params removed for ingress resources to conflict on dns_prfx
 - lbconfigs for clusterip services should use var.port as external_port instead of computed value.
 - micro-service jobs were not properly using the allocation tags and nodeSelector from the `nodes` field
+- parameterized `allow_deletion` which will be the same value with `deletion_protection`
 
 ## [0.0.37] - 2025-04-09
 
