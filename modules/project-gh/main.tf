@@ -13,18 +13,51 @@ locals {
       class     = ["service"]
     }
   }
-  workflows = merge({
+  workflow_context = {
+    name    = var.name
+    ref     = "main"
+    cloud   = var.cloud
+    props   = local.props
+    use_app = false
+  }
+  default_workflows = {
     image = {
       enabled    = true
-      conditions = local.condition.service
       content    = null
+      conditions = local.condition.service
+      context    = {}
     }
     update_image = {
       enabled    = true
       conditions = local.condition.service
       content    = null
+      context    = {}
     }
-  }, var.workflows)
+  }
+  default_workflow_keys = keys(local.default_workflows)
+  ##
+  # First merge the user provided workflows and the default workflows
+  # This will cause the conditions to be nulled out if the user updated 
+  # the workflow values. We need the default conditions back when this happens. 
+  # If it's some user defined workflow with null conditions then empty object it is
+  ## 
+  workflows = {
+    for name, workflow in merge(local.default_workflows, var.workflows) : name => merge(
+      workflow,
+      {
+        conditions = (
+          contains(local.default_workflow_keys, name) &&
+          workflow.conditions == null
+        ) ? local.default_workflows[name].conditions : coalesce(workflow.conditions, {})
+      }
+    )
+  }
+  ##
+  # This is basically saying for each of the workflows;
+  # first check if the repo has any properties that exist in the condition
+  # If so, then make sure the actual value is one of the allowed values in the condition
+  # Then we can say it's active
+  ## 
   active_workflows = [
     for name, workflow in local.workflows : name
     if workflow.enabled && anytrue([
@@ -33,4 +66,14 @@ locals {
       ])
     ])
   ]
+}
+
+##
+# Retrieves the top level files from the repo. 
+# This enables us to check if files exist before operating on them. 
+# Normally TF has issues with this because it doesn't know what to do when a resource already exists. 
+# With this we can even make changes to files if needed. 
+##
+data "github_rest_api" "root_files" {
+  endpoint = "repos/${var.owner}/${var.name}/contents"
 }

@@ -31,3 +31,10 @@ output "repo" {
 output "active_workflows" {
   value = local.active_workflows
 }
+
+output "root_files" {
+  description = "The root files of the repo."
+  value = [
+    for f in jsondecode(data.github_rest_api.root_files.body) : f.name
+  ]
+}

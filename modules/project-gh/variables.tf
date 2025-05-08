@@ -96,12 +96,19 @@ variable "visibility" {
 
 variable "workflows" {
   description = <<EOT
+Each workflows describes a Gtihub Action Workflow file and under what conditons it should be added to the repo. This provides a dynamic way to manage the files themselves especially when a lot of repos are using the same exact or slightly different workflows.
 
+The `content` is the actual content of the workflow file. This can be a string or a template file. If it's a string then it will be used as is. If it's a template file then it will be rendered with the context provided in the `context` key. The properties themselves are available in the template as the `props` variable, eg `props.my_prop[0] == "true"` because all the props are arrrays. 
+ 
+The `conditions` are the allowed values for certain properties that determine when the workflow is present in the repo. So if a repo has the has_image set to true then the image workflow is added to the repo. 
+
+The `context` are extra values you want included in the variables for the template provided in the content key. 
 EOT
   type = map(object({
     enabled    = optional(bool, true)
-    conditions = optional(map(list(string)), {})
+    conditions = optional(map(list(string)), null)
     content    = optional(string, null)
+    context    = optional(map(any), {})
   }))
   default = {}
 }

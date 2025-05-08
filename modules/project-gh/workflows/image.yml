@@ -23,6 +23,10 @@ on:
       DUPLO_TOKEN:
         description: The token to use for Duplo API calls
         required: true
+      %{if use_app }GH_APP_KEY:
+        description: The private key for the GitHub App
+        required: true
+      %{ endif }
 
 env:
   DUPLO_HOST: $${{ vars.DUPLO_HOST }}
@@ -38,9 +42,23 @@ jobs:
       image: $${{ steps.build_image.outputs.uri }}
       tag: $${{ steps.build_image.outputs.tag }}
     steps:
-
+    %{if use_app }
+    - name: Init Github App
+      uses: actions/create-github-app-token@v1
+      id: gha-app
+      with:
+        app-id: $${{ vars.GH_APP_ID }}
+        private-key: $${{ secrets.GH_APP_KEY }}
+        repositories: |
+          ${name}
+          shared
+    %{ endif }
     - name: Checkout code
       uses: actions/checkout@v4
+      %{if use_app }with:
+        submodules: true
+        token: $${{ steps.gha-app.outputs.token }}
+      %{ endif }
 
     - name: Duplo Setup
       uses: duplocloud/actions@${ref}
