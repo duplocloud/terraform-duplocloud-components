@@ -8,11 +8,30 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.39] - 2025-05-07
+
 ### Fixed
 
- - cert arn local did not match on govcloud cert arns
- - service params removed for ingress resources to conflict on dns_prfx
- - lbconfigs for clusterip services should use var.port as external_port instead of computed value.
+- reversed tenant deletion logic handeling
+
+## [0.0.38] - 2025-05-07
+
+### Added
+
+- a `release_header` rule under `lb` in the micro-service module. When enabled will add the release ID as a required value in the `X-Access-Control` header for the load balancer.
+- exposed annotations on the lb variable for micro-service
+- Added termination grace period as an option in the microservices module
+- On the micro-service module, jobs can individually override the timeouts, env vars, labels, and annotations.
+- added the following fields to nodes on the micro-service; `unique` and `spread_across_zones`
+- micro-service now outputs the follwoing fields: domain, parent_domain, image, name, namespace
+
+### Fixed
+
+- cert arn local did not match on govcloud cert arns
+- service params removed for ingress resources to conflict on dns_prfx
+- lbconfigs for clusterip services should use var.port as external_port instead of computed value.
+- micro-service jobs were not properly using the allocation tags and nodeSelector from the `nodes` field
+- parameterized `allow_deletion` which will be the same value with `deletion_protection`
 
 ## [0.0.37] - 2025-04-09
 

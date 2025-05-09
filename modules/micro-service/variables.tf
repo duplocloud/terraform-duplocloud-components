@@ -185,11 +185,23 @@ variable "service_account_name" {
 variable "nodes" {
   description = <<EOT
   The configuration for which nodes to run the service on.
+
+  The `shared` field will determine if the service can run on shared nodes or not. If the field is not set, the service will only run on nodes within its own tenant. 
+
+  The `allocation_tags` field is a list of tags to use for allocating the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the allocation_tags may be ones from another tenant sharing it's nodes. 
+
+  The `selector` field is a map of labels to use for selecting the nodes. If the field is not set, the service will run on any node within a tenant. If the `shared` field is set, then the selector may use labels on nodes from tenants sharing their nodes.
+
+  The `unique` field will determine if the service should run on a unique node or not. This will treat a normal service kind of like a daemonset. In the background, the pod is asking to be on nodes which don't have one of itself already on it. 
+
+  The `spread_across_zones` field will determine if the service should be spread across zones or not. The scheduler will pick the least used node it can which might be another node in a zone that already has one of itself. This ensures the scheduler will also consider the least used zone it can. 
   EOT
   type = object({
-    allocation_tags = optional(string, null)
-    shared          = optional(bool, false)
-    selector        = optional(map(string), null)
+    shared              = optional(bool, false)
+    allocation_tags     = optional(string, null)
+    selector            = optional(map(string), null)
+    unique              = optional(bool, false)
+    spread_across_zones = optional(bool, false)
   })
   default = {}
 }
@@ -219,43 +231,25 @@ If the class is `target-group`, the `listener` field must be set to the ARN of t
 
 The `dns_prfx` field will determine the subdomain for the base host tenant. If the field is not set, the prefix will be the service name and tenant name.
 
+The `release_header` is a boolean option which, when enabled, will add a header rule to the load balancer requiring the release ID on `X-Access-Control`. The release ID is an output, this means you can use it on a CDN to inject the corresponding header so the cdn is the only thing talking to the lb. 
+
 See more docs here: https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/duplo_service_lbconfigs
 EOT
   type = object({
-    enabled      = optional(bool, false)
-    class        = optional(string, "service")
-    priority     = optional(number, 0)
-    path_pattern = optional(string, "/*")
-    port         = optional(number, null)
-    protocol     = optional(string, "http")
-    certificate  = optional(string, null)
-    listener     = optional(string, null)
-    dns_prfx     = optional(string, null)
-    internal     = optional(bool, false)
+    enabled        = optional(bool, false)
+    class          = optional(string, "service")
+    priority       = optional(number, 0)
+    path_pattern   = optional(string, "/*")
+    port           = optional(number, null)
+    protocol       = optional(string, null)
+    certificate    = optional(string, null)
+    listener       = optional(string, null)
+    dns_prfx       = optional(string, null)
+    internal       = optional(bool, false)
+    release_header = optional(bool, false)
+    annotations    = optional(map(string), {})
   })
   default = {}
-  validation {
-    condition = contains([
-      "elb",
-      "alb",
-      "health-only",
-      "service",
-      "node-port",
-      "azure-shared-gateway",
-      "nlb",
-      "target-group",
-      "ingress-alb"
-    ], var.lb.class)
-    error_message = "The load balancer type must be one of 'elb', 'alb', 'health-only', 'service', 'node-port', 'azure-shared-gateway', 'nlb', or 'target-group'"
-  }
-  validation {
-    condition     = can(regex("^(http|https|tcp)$", var.lb.protocol))
-    error_message = "The protocol must be one of 'http', 'https', or 'tcp'"
-  }
-  validation {
-    condition     = var.lb.class == "target-group" ? var.lb.listener != null : true
-    error_message = "The listener must be set when the load balancer type is 'target-group'"
-  }
 }
 
 variable "health_check" {
@@ -379,15 +373,27 @@ variable "jobs" {
   The `wait` field will determine if the job should wait for completion. If the field is not set, the job will wait for completion.
 
   The `event` field will determine the event to trigger the job. If the field is not set, the event will be "before-update". This can be one of the following: before-update, after-update, before-delete, after-delete.
+
+  The `timeout` field will determine the timeout for the job. If the field is not set, the timeout will be 60 seconds.
+
+  The `labels` field will determine the labels to add to the job. If the field is not set, the labels will be an empty map. These are applied to the job and on the pod merged with pod labels.
+
+  The `annotations` field will determine the annotations to add to the job. If the field is not set, the annotations will be an empty map. These are applied to the job and on the pod merged with pod annotations.
+
+  The `env` field will determine the environment variables to add to the job. If the field is not set, the env will be an empty map. These are applied to the job and on the pod merged with pod env.
   EOT
   type = list(object({
-    enabled  = optional(bool, true)
-    name     = optional(string, null)
-    command  = optional(list(string), null)
-    args     = optional(list(string), [])
-    wait     = optional(bool, true)
-    event    = optional(string, "before-update")
-    schedule = optional(string, "0 1 * * *")
+    enabled     = optional(bool, true)
+    name        = optional(string, null)
+    command     = optional(list(string), null)
+    args        = optional(list(string), [])
+    wait        = optional(bool, true)
+    event       = optional(string, "before-update")
+    schedule    = optional(string, "0 1 * * *")
+    timeout     = optional(string, "1m")
+    labels      = optional(map(string), {})
+    annotations = optional(map(string), {})
+    env         = optional(map(string), {})
   }))
   default = []
 
@@ -420,5 +426,11 @@ variable "cloud" {
 variable "host_network" {
   description = "Set to true to enable host networking mode"
   type        = bool
+  default     = null
+}
+
+variable "termination_grace_period" {
+  description = "The amount of time to wait, in seconds, for pod activity to terminate gracefully after shutdown signal"
+  type        = number
   default     = null
 }

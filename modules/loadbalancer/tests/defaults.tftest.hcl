@@ -43,6 +43,12 @@ run "validate_defaults" {
     error_message = "Expected local.cert_arn to be null but got"
   }
 
+  # local.class should be service
+  assert {
+    condition     = (local.class == "service" && local.duplo_type.id == 3)
+    error_message = "Expected local.class to be 'service' but got '${local.class}'"
+  }
+
   # make sure the default dns_prfx is app name - tenant name
   assert {
     condition     = local.dns_prfx == "myapp-tf-tests"

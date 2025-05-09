@@ -5,11 +5,21 @@ locals {
   is_ingress        = startswith(var.class, local.ingress_prefix)
   is_standalone     = startswith(var.class, local.standalone_prefix)
   ingress_class     = local.is_ingress ? replace(var.class, local.ingress_prefix, "") : null
-  class             = local.is_ingress ? "service" : var.class
-  lbconfig_needed   = contains(keys(local.duplo_types), local.class)
-  cert_is_arn       = length(regexall("^arn:aws(-us-gov)?:acm", coalesce(var.certificate, "na"), )) > 0
-  do_cert_lookup    = var.certificate != null && !local.cert_is_arn
-  cert_arn          = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.certificate
+  standalone_class  = local.is_standalone ? replace(var.class, local.standalone_prefix, "") : null
+  # base_class = coalesce(
+  #   local.ingress_class,
+  #   local.standalone_class,
+  #   var.class
+  # )
+  class = coalesce(
+    local.is_ingress ? "service" : null,
+    local.standalone_class,
+    var.class
+  )
+  lbconfig_needed = contains(keys(local.duplo_types), local.class)
+  cert_is_arn     = length(regexall("^arn:aws(-us-gov)?:acm", coalesce(var.certificate, "na"), )) > 0
+  do_cert_lookup  = var.certificate != null && !local.cert_is_arn
+  cert_arn        = local.do_cert_lookup ? data.duplocloud_plan_certificate.this[0].arn : var.certificate
   external_port = (
     var.external_port != null ? var.external_port :
     var.certificate != null ? 443 :
@@ -29,15 +39,41 @@ locals {
     ) : key => value
     if value != null
   } : null
+  duplo_type = local.duplo_types[local.class]
+  protocol   = var.protocol != null ? upper(var.protocol) : local.duplo_type.protocols[0]
   duplo_types = {
-    "elb"                  = 0
-    "alb"                  = 1
-    "health-only"          = 2
-    "service"              = 3
-    "node-port"            = 4
-    "azure-shared-gateway" = 5
-    "nlb"                  = 6
-    "target-group"         = 7
+    "elb" = {
+      id        = 0
+      protocols = ["HTTP", "HTTPS", "TCP", "UDP"]
+    }
+    "alb" = {
+      id        = 1
+      protocols = ["HTTP", "HTTPS"]
+    }
+    "health-only" = {
+      id        = 2
+      protocols = ["HTTP", "HTTPS", "TCP", "UDP", "TLS"] # this is ignored so all values allowed cuz it don't matter
+    }
+    "service" = {
+      id        = 3
+      protocols = ["TCP", "UDP"]
+    }
+    "node-port" = {
+      id        = 4
+      protocols = ["TCP", "UDP"]
+    }
+    "azure-shared-gateway" = {
+      id        = 5
+      protocols = ["HTTP", "HTTPS"]
+    }
+    "nlb" = {
+      id        = 6
+      protocols = ["TCP", "UDP", "TLS"]
+    }
+    "target-group" = {
+      id        = 7
+      protocols = ["HTTP", "HTTPS"]
+    }
   }
 }
 
@@ -56,4 +92,13 @@ data "duplocloud_plan_certificate" "this" {
 data "duplocloud_infrastructure" "this" {
   count      = local.is_standalone ? 1 : 0
   infra_name = local.tenant.plan_id
+}
+
+check "class-accepts-protocol" {
+  assert {
+    condition     = contains(local.duplo_type.protocols, local.protocol)
+    error_message = <<EOT
+The chosen protocol ${local.protocol} won't be accepted by the load balancer type "${local.class}".
+EOT
+  }
 }

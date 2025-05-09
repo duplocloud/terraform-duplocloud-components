@@ -16,8 +16,8 @@ Command: ${command}
 %{if args != "[]" }
 Args: ${args}
 %{ endif }
-%{if nodeSelector != null }
-NodeSelector: ${jsonencode(nodeSelector)}
+%{if nodes.selector != null }
+NodeSelector: ${jsonencode(nodes.selector)}
 %{ endif }
 %{if pod_annotations != "{}" }
 PodAnnotations: ${pod_annotations}
@@ -39,6 +39,9 @@ Volumes: ${volumes}
 %{ endif }
 %{if volume_mounts != "[]" }
 VolumesMounts: ${volume_mounts}
+%{ endif }
+%{if termination_grace_period != null }
+terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
 %{if health_check.enabled }
 LivenessProbe: 
