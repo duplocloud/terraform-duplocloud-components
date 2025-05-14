@@ -430,12 +430,12 @@ variable "deployment_strategy" {
   description = <<EOT
   The deployment strategy to use.  If "RollingUpdate", optionally provide MaxSurge and MaxUnavailable.
   EOT
-  type              = object({
-    type            = optional(string, "RollingUpdate" )
-    maxSurge        = optional(string, "25%")
-    maxUnavailable  = optional(string, "25%")
+  type = object({
+    type           = optional(string, "RollingUpdate")
+    maxSurge       = optional(string, "25%")
+    maxUnavailable = optional(string, "25%")
   })
-  default     = null
+  default = null
   validation {
     condition = (
       var.deployment_strategy == null ||
