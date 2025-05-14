@@ -441,6 +441,6 @@ variable "deployment_strategy" {
       var.deployment_strategy == null ||
       contains(["RollingUpdate", "Recreate"], try(var.deployment_strategy.type, "RollingUpdate"))
     )
-    error_message = "When deployment_strategy is set, you must set type to either 'RollingUpdate' or 'Recreate'"
+    error_message = "When deployment_strategy is set, you must set 'type' to either 'RollingUpdate' or 'Recreate'"
   }
 }

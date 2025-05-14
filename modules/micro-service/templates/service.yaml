@@ -48,8 +48,8 @@ DeploymentStrategy:
   type: ${deployment_strategy.type}
   %{if deployment_strategy.type == "RollingUpdate" }
   rollingUpdate:
-    "maxUnvailable": ${deployment_strategy.maxUnavailable}
-    "maxSurge": ${deployment_strategy.maxSurge}
+    maxUnavailable: ${deployment_strategy.maxUnavailable}
+    maxSurge: ${deployment_strategy.maxSurge}
   %{ endif }
 %{ endif }
 %{if health_check.enabled }
