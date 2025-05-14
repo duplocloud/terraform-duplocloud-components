@@ -432,8 +432,8 @@ variable "deployment_strategy" {
   EOT
   type              = object({
     type            = optional(string, "RollingUpdate" )
-    MaxSurge        = optional(string, "25%")
-    MaxUnavailable  = optional(string, "25%")
+    maxSurge        = optional(string, "25%")
+    maxUnavailable  = optional(string, "25%")
   })
   default     = {}
   validation {

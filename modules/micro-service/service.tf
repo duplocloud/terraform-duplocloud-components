@@ -16,7 +16,7 @@ locals {
     host_network             = var.host_network
     nodes                    = var.nodes
     termination_grace_period = var.termination_grace_period
-    deployment_strategy      = jsonencode(var.deployment_strategy)
+    deployment_strategy      = var.deployment_strategy
     restart_policy           = var.restart_policy
     annotations              = jsonencode(var.annotations)
     labels                   = jsonencode(var.labels)
