@@ -43,7 +43,7 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
-%{if deployment_strategy != {} }
+%{if deployment_strategy != null }
 DeploymentStrategy:
   type: ${deployment_strategy.type}
   %{if deployment_strategy.type == "RollingUpdate" }

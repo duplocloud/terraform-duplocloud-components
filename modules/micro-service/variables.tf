@@ -435,10 +435,10 @@ variable "deployment_strategy" {
     maxSurge        = optional(string, "25%")
     maxUnavailable  = optional(string, "25%")
   })
-  default     = {}
+  default     = null
   validation {
     condition = (
-      var.deployment_strategy == {} ||
+      var.deployment_strategy == null ||
       contains(["RollingUpdate", "Recreate"], var.deployment_strategy.type)
     )
     error_message = "When deployment_strategy is set, you must set type to either 'RollingUpdate' or 'Recreate'"
