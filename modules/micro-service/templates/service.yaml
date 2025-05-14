@@ -43,6 +43,15 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
+%{if deployment_strategy != {} }
+DeploymentStrategy:
+  type: ${deployment_strategy.type}
+  %{if deployment_strategy.type == "RollingUpdate" }
+  rollingUpdate:
+    "maxUnvailable": ${deployment_strategy.max_unavailable}
+    "maxSurge": ${deployment_strategy.max_surge}
+  %{ endif }
+%{ endif }
 %{if health_check.enabled }
 LivenessProbe: 
   failureThreshold: ${health_check.failureThreshold}

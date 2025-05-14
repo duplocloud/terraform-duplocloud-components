@@ -425,3 +425,22 @@ variable "termination_grace_period" {
   type        = number
   default     = null
 }
+
+variable "deployment_strategy" {
+  description = <<EOT
+  The deployment strategy to use.  If "RollingUpdate", optionally provide MaxSurge and MaxUnavailable.
+  EOT
+  type              = object({
+    type            = optional(string, "RollingUpdate" )
+    MaxSurge        = optional(string, "25%")
+    MaxUnavailable  = optional(string, "25%")
+  })
+  default     = {}
+  validation {
+    condition = (
+      var.deployment_strategy == {} ||
+      contains(["RollingUpdate", "Recreate"], var.deployment_strategy.type)
+    )
+    error_message = "When deployment_strategy is set, you must set type to either 'RollingUpdate' or 'Recreate'"
+  }
+}
