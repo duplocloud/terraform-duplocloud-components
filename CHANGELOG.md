@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Added support for deployment strategy
+
 ## [0.0.39] - 2025-05-07
 
 ### Fixed
