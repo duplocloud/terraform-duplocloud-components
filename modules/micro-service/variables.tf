@@ -439,7 +439,7 @@ variable "deployment_strategy" {
   validation {
     condition = (
       var.deployment_strategy == null ||
-      contains(["RollingUpdate", "Recreate"], coalesce(var.deployment_strategy.type, "RollingUpdate"))
+      contains(["RollingUpdate", "Recreate"], try(var.deployment_strategy.type, "RollingUpdate"))
     )
     error_message = "When deployment_strategy is set, you must set type to either 'RollingUpdate' or 'Recreate'"
   }
