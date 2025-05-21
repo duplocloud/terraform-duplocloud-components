@@ -1,7 +1,10 @@
 locals {
-  ami_identifier = random_integer.identifier.result
-  asg_ami        = var.asg_ami != null ? var.asg_ami : data.aws_ami.eks.id
-  zones          = ["a", "b", "c", "d", "e", "f", "g", "h"]
+  asg_ami = var.asg_ami != null ? var.asg_ami : data.aws_ami.eks.id
+  zones   = ["a", "b", "c", "d", "e", "f", "g", "h"]
+  # New zones field accepts ints and null, logic in place to handle either case.
+  asg_zones = length(var.az_list) > 0 ? [
+    for zone in var.az_list : contains(local.zones, zone) ? index(local.zones, zone) : null
+  ] : null
   minion_tags = [
     for k, v in var.minion_tags : {
       key   = k
@@ -37,10 +40,35 @@ data "aws_ami" "eks" {
   }
 }
 
+# AMI data for both queried and manually input
+data "aws_ami" "ami" {
+  most_recent = true
+
+  filter {
+    name   = "image-id"
+    values = [local.asg_ami]
+  }
+}
+
+resource "duplocloud_aws_launch_template_default_version" "name" {
+  tenant_id       = var.tenant_id
+  name            = duplocloud_aws_launch_template.nodes.name
+  default_version = duplocloud_aws_launch_template.nodes.latest_version
+}
+
+# Uses version 1 as base, though all inputs are changed in this resource, thus making the exact version irrelevant.
+resource "duplocloud_aws_launch_template" "nodes" {
+  tenant_id           = var.tenant_id
+  name                = duplocloud_asg_profile.nodes.fullname
+  instance_type       = var.capacity
+  version             = 1
+  version_description = data.aws_ami.ami.description
+  ami                 = local.asg_ami
+}
+
 resource "duplocloud_asg_profile" "nodes" {
-  count         = length(var.az_list)
-  zone          = index(local.zones, var.az_list[count.index])
-  friendly_name = "${var.prefix}${var.az_list[count.index]}-${local.ami_identifier}"
+  zones         = local.asg_zones
+  friendly_name = var.prefix
   image_id      = local.asg_ami
 
   tenant_id           = var.tenant_id
@@ -81,48 +109,27 @@ resource "duplocloud_asg_profile" "nodes" {
     }
   }
   lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [instance_count]
+    ignore_changes = [instance_count, image_id, capacity]
   }
+}
+
+# Refreshes upon changes to asg_ami and capacity, or upon changing associated variables
+resource "duplocloud_asg_instance_refresh" "name" {
+  count                  = var.use_auto_refresh ? 1 : 0
+  tenant_id              = var.tenant_id
+  asg_name               = duplocloud_asg_profile.nodes.fullname
+  refresh_identifier     = random_integer.identifier[0].result
+  instance_warmup        = var.instance_warmup_seconds
+  max_healthy_percentage = var.max_healthy_percentage
+  min_healthy_percentage = var.min_healthy_percentage
 }
 
 resource "random_integer" "identifier" {
-  min = 10000
-  max = 99999
+  count = var.use_auto_refresh ? 1 : 0
+  min   = 10000
+  max   = 99999
   keepers = {
-    asg_ami             = local.asg_ami
-    capacity            = var.capacity
-    is_ebs_optimized    = var.is_ebs_optimized
-    encrypt_disk        = var.encrypt_disk
-    use_spot_instances  = tostring(var.use_spot_instances)
-    max_spot_price      = tostring(var.max_spot_price)
-    can_scale_from_zero = var.can_scale_from_zero
-    prefix              = var.prefix
-    az_list             = jsonencode(var.az_list)
-  }
-}
-
-resource "null_resource" "destroy_script" {
-  count = var.pod_rollover ? length(var.az_list) : 0
-  triggers = {
-    fullname = duplocloud_asg_profile.nodes[count.index].fullname
-  }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "${path.module}/kubectl-1.sh ${self.triggers.fullname} ${terraform.workspace} ${count.index}"
-  }
-}
-
-resource "null_resource" "create_script" {
-  count = var.pod_rollover ? length(var.az_list) : 0
-  triggers = {
-    fullname = duplocloud_asg_profile.nodes[count.index].fullname
-  }
-
-  provisioner "local-exec" {
-    when       = create
-    command    = "${path.module}/kubectl.sh ${count.index} ${terraform.workspace} ${var.rollover_timeout}"
-    on_failure = continue
+    asg_ami  = local.asg_ami
+    capacity = var.capacity
   }
 }
