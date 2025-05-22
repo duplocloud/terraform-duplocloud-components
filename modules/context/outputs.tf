@@ -36,7 +36,13 @@ output "default_infra" {
 }
 
 output "tenant" {
-  value = local.tenant
+  description = <<EOT
+The entire tenant object based on the name given in the `tenant` input variable. 
+
+See tenant data object for more details about the attributes available.
+https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/data-sources/tenant
+EOT
+  value       = local.tenant
 }
 
 output "workspaces" {
