@@ -57,8 +57,8 @@ module "website" {
     }
   ]
   dns_name      = data.google_dns_managed_zone.cloud_dns.dns_name
-  dns_zone_name = var.dns_zone_name
-  domain        = var.domain
+  dns_zone_name = "myzone"
+  domain        = "mywebsite.example.com"
   url_map_name  = "${local.tenant_name}-static-sites"
   proxy_name    = "${local.tenant_name}-website"
 }
