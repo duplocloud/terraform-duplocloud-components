@@ -1,5 +1,5 @@
 variable "tenant" {
-  description = "The tenant name to scope into."
+  description = "The tenant name to scope into. Setting this will output the entire tennant object onto the outputs."
   type        = string
   nullable    = true
   default     = null

@@ -1,5 +1,6 @@
 locals {
-  default_backend = tolist(var.sites)[0].name
+  default_backend_name = tolist(var.sites)[0].name
+  default_backend      = google_compute_backend_bucket.website[local.default_backend_name]
   site_map = {
     for site in var.sites : site.name => site
   }
@@ -49,14 +50,14 @@ resource "google_compute_backend_bucket" "website" {
 resource "google_compute_url_map" "website" {
   provider        = google
   name            = var.url_map_name
-  default_service = google_compute_backend_bucket.website.0.id
+  default_service = local.default_backend.id
   host_rule {
     hosts        = [trimsuffix(var.dns_name, ".")]
     path_matcher = "allpaths"
   }
   path_matcher {
     name            = "allpaths"
-    default_service = var.default_url_redirect == null ? google_compute_backend_bucket.website[local.default_backend].id : null
+    default_service = var.default_url_redirect == null ? local.default_backend.id : null
     dynamic "default_url_redirect" {
       for_each = var.default_url_redirect[*]
       content {
