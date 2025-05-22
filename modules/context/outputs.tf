@@ -48,7 +48,7 @@ output "workspaces" {
   })
 }
 
-output "creds" {
+output "jit" {
   description = "The map of enabled JIT login credentials for each provider."
   sensitive   = true
   value = {
