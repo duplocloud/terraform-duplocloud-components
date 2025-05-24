@@ -124,6 +124,7 @@ resource "duplocloud_k8s_job" "before_update" {
     }
   }
   lifecycle {
+    create_before_destroy = true
     ignore_changes = [
       spec[0].template[0].metadata[0].labels["app"],
       spec[0].template[0].metadata[0].labels["owner"],
