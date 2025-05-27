@@ -5,7 +5,9 @@ locals {
     var.dns_prefix,
     "${var.tenant_name}-${var.name}"
   )
-  hostname = "${local.dns_prefix}.${local.domain}"
+  recordname = "${local.dns_prefix}.${local.domain}"
+  hostname   = trimsuffix(local.recordname, ".")
+  url        = "https://${local.hostname}"
 
   # a base id to find stuff in gcp
   base_name = "${local.dns_prefix}-website"
@@ -34,7 +36,7 @@ data "google_dns_managed_zone" "this" {
 # Add the IP to the DNS
 resource "google_dns_record_set" "this" {
   provider     = google
-  name         = local.hostname
+  name         = local.recordname
   type         = "A"
   ttl          = 300
   managed_zone = data.google_dns_managed_zone.this.name
@@ -66,7 +68,7 @@ resource "google_compute_url_map" "this" {
   name            = local.base_name
   default_service = local.default_backend.id
   host_rule {
-    hosts        = [trimsuffix(local.hostname, ".")]
+    hosts        = [local.hostname]
     path_matcher = "allpaths"
   }
   path_matcher {
