@@ -3,23 +3,30 @@ variable "tenant_name" {
   type        = string
 }
 
+variable "name" {
+  description = "Name of the website"
+  type        = string
+}
+
 variable "sites" {
-  description = "List of sites to create"
+  description = <<EOT
+List of sites to create. The name will default to the sites name. 
+Ideally you leave the first site without a name and let it use the name variable. 
+EOT
   type = set(object({
-    name   = string
+    name   = optional(string)
     bucket = string
     path   = string
   }))
 }
 
-variable "domain" {
-  description = "Domain name for the website"
+variable "dns_prefix" {
+  description = <<EOT
+The prefix to use for the website in front of the domain defined by the zone. Will default to <tenant-name> if this is left as null.
+EOT
   type        = string
-}
-
-variable "dns_name" {
-  description = "DNS name for the website"
-  type        = string
+  default     = null
+  nullable    = true
 }
 
 variable "dns_zone_name" {
@@ -30,25 +37,6 @@ variable "dns_zone_name" {
 variable "project_id" {
   description = "GCP project ID"
   type        = string
-}
-
-variable "url_map_name" {
-  description = "Name of the URL map"
-  type        = string
-  default     = "dev01-static-sites"
-}
-variable "proxy_name" {
-  description = "Name of the target proxy"
-  type        = string
-  default     = "dev01-website"
-}
-variable "cert_name" {
-  description = "Name of the SSL certificate"
-  type        = string
-  default     = "dev01-website-cert"
-}
-variable "global_address_name_suffix" {
-  default = "-websites-ip"
 }
 
 variable "default_url_redirect" {
