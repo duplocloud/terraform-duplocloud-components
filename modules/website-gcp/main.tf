@@ -87,7 +87,7 @@ resource "google_compute_url_map" "this" {
     dynamic "path_rule" {
       for_each = local.site_map
       content {
-        service = "https://www.googleapis.com/compute/v1/projects/${var.project_id}/global/backendBuckets/gcs-bucket-${path_rule.value.bucket}"
+        service = google_compute_backend_bucket.this[path_rule.key].self_link
         paths   = [path_rule.value.path]
       }
     }
