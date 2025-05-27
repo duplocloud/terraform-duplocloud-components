@@ -2,12 +2,12 @@ variable "tenant_id" {
   type = string
 }
 variable "prefix" {
-  default = "apps-"
+  default = "apps"
   type    = string
 }
 variable "eks_version" {
   type    = string
-  default = "1.24"
+  default = "1.30"
 }
 variable "az_list" {
   default     = ["a", "b"]
@@ -74,13 +74,24 @@ variable "can_scale_from_zero" {
   default = false
   type    = bool
 }
-variable "pod_rollover" {
-  default     = false
-  description = "Enable/Disable kubectl drain option."
-  type        = bool
-}
-variable "rollover_timeout" {
-  default     = 120
-  description = "Time for the kubectl drain to run before timing out."
+# Used on jan_2025 portal release and newer only
+variable "min_healthy_percentage" {
+  default     = 90
+  description = "Minimum percentage of healthy hosts during Instance Refresh"
   type        = number
+}
+variable "max_healthy_percentage" {
+  default     = 100
+  description = "Maximum percentage of healthy hosts during Instance Refresh"
+  type        = number
+}
+variable "instance_warmup_seconds" {
+  default     = 300
+  description = "Time in seconds to wait for Instance after it becomes available"
+  type        = number
+}
+variable "use_auto_refresh" {
+  default     = true
+  description = "Automatically refresh instances on AMI/Capacity changes to ASG"
+  type        = bool
 }
