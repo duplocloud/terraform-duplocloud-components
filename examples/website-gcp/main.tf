@@ -33,9 +33,10 @@ module "ctx" {
 }
 
 module "website" {
-  source      = "../../modules/website-gcp"
-  tenant_name = local.tenant_name
-  project_id  = module.ctx.account_id
+  source        = "../../modules/website-gcp"
+  tenant_name   = local.tenant_name
+  name          = "mysite"
+  dns_zone_name = "myzone"
   sites = [
     {
       name     = "pmi-website"
@@ -56,9 +57,4 @@ module "website" {
       priority = "3"
     }
   ]
-  dns_name      = data.google_dns_managed_zone.cloud_dns.dns_name
-  dns_zone_name = "myzone"
-  domain        = "mywebsite.example.com"
-  url_map_name  = "${local.tenant_name}-static-sites"
-  proxy_name    = "${local.tenant_name}-website"
 }
