@@ -34,7 +34,11 @@ variable "admin" {
 }
 
 variable "jit" {
-  description = "Each key determines if the providers jit creds will be outputed."
+  description = <<EOT
+Each key determines if the providers jit creds will be outputed.
+When one of these are true, then the actual credentials are sent to the output under the same key. 
+So if aws here is true, then JIT AWS credentials will all be under the ouptut object `module.ctx.jit.aws`.
+EOT
   type = object({
     aws   = optional(bool, false)
     gcp   = optional(bool, false)
@@ -54,7 +58,14 @@ variable "jit" {
 }
 
 variable "workspaces" {
-  description = "A map of workspaces to reference. Each key will be in the outputs with the outputs of that workspace from the state."
+  description = <<EOT
+A map of workspaces to reference. Each key will be in the outputs of this module with the outputs of that workspace from the state as the value. See the same key in the outputs of this module for details on how to access outputs from these workspaces. 
+
+`name`: The name of the remote workspace. This will default to `terraform.workspace` if not set.
+`prefix`: The prefix to use for the remote workspace. This is only relevant for AWS S3 backends and is basically the folder for the module. This will default to the `key` if not set.
+`key`: The name of the key in the storage. This is basically the name of the TF State File. This value defaults to the actual key for this object in the map of workspaces.  
+`nameRef`: Use this when you can't know the `name` of the workspace until another workspaces first resolves and outputs the unknown name. For example, you know the tenant name but not the infra name but you know the tenant module outputs the infra name on the `infra_name` key in the ouptuts. In this case you can set the `nameRef.workpsace` to the value `tenant` because that is a key in the workspaces map. Then we can set the `nameRef.nameKey` to the value `infra_name` because that output is the actual name of the infra based on the outputs of the tenant. 
+EOT
   type = map(object({
     name   = optional(string, null)
     prefix = optional(string)
