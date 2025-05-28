@@ -112,7 +112,7 @@ module "ctx" {
 ```
 EOT
   sensitive   = true
-  ephemeral   = true
+  # ephemeral   = true # can't do this unless the data source is ephemeral
   value = {
     for key, cred in local.creds : key => cred
     if cred != null
