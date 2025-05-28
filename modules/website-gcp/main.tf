@@ -106,7 +106,7 @@ resource "google_compute_target_https_proxy" "this" {
 resource "google_compute_global_forwarding_rule" "default" {
   provider              = google
   name                  = local.base_name
-  load_balancing_scheme = "EXTERNAL"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
   ip_address            = google_compute_global_address.this.address
   ip_protocol           = "TCP"
   port_range            = "443"

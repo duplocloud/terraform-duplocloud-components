@@ -34,11 +34,6 @@ variable "dns_zone_name" {
   type        = string
 }
 
-variable "project_id" {
-  description = "GCP project ID"
-  type        = string
-}
-
 variable "default_url_redirect" {
   description = "redirect behavior for any unmatched requests"
   type = object({
