@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.40] - 2025-05-28
+
 ### Added 
 
 - new website module for gcp
