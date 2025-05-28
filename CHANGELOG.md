@@ -12,6 +12,11 @@ and this project adheres to
 
 - new website module for gcp
 
+### Fixed  
+
+- For the context module the jit is an input and output now so the names match up. So referencing jit creds will be like `module.ctx.jit.aws`.
+- node refreshing and templates for the eks node module. 
+
 ## [0.0.39] - 2025-05-07
 
 ### Fixed
