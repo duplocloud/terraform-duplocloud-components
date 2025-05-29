@@ -74,6 +74,12 @@ resource "time_sleep" "wait_3_minutes" {
   create_duration = "240s"
 }
 
+resource "time_sleep" "wait_3_minutes2" {
+  depends_on = [duplocloud_aws_launch_template.nodes]
+
+  create_duration = "240s"
+}
+
 resource "duplocloud_asg_profile" "nodes" {
   zones         = local.asg_zones
   friendly_name = var.prefix
@@ -131,7 +137,7 @@ resource "duplocloud_asg_instance_refresh" "name" {
   max_healthy_percentage = var.max_healthy_percentage
   min_healthy_percentage = var.min_healthy_percentage
 
-  depends_on = [time_sleep.wait_3_minutes]
+  depends_on = [time_sleep.wait_3_minutes2]
 }
 
 resource "random_integer" "identifier" {
