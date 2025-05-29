@@ -65,7 +65,7 @@ resource "duplocloud_aws_launch_template" "nodes" {
   version_description = data.aws_ami.ami.description
   ami                 = local.asg_ami
 
-  depends_on = [ time_sleep.wait_3_minutes ]
+  depends_on = [time_sleep.wait_3_minutes]
 }
 
 resource "time_sleep" "wait_3_minutes" {
