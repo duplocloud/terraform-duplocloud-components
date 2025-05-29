@@ -130,6 +130,8 @@ resource "duplocloud_asg_instance_refresh" "name" {
   instance_warmup        = var.instance_warmup_seconds
   max_healthy_percentage = var.max_healthy_percentage
   min_healthy_percentage = var.min_healthy_percentage
+
+  depends_on = [ time_sleep.wait_3_minutes ]
 }
 
 resource "random_integer" "identifier" {
