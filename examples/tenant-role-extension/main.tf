@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "example" {
 }
 
 module "tenant-role" {
-  source          = "../..//modules/tenant-role-extension"
+  source          = "../../modules/tenant-role-extension"
   tenant_name     = local.tenant_name
   iam_policy_json = data.aws_iam_policy_document.example.json
 }
