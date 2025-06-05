@@ -53,6 +53,14 @@ variable "class" {
   }
 }
 
+variable "external" {
+  description = <<EOT
+Set to true if the underlying configuration resource, like a configmap or secret, is managed outside of this module. This will not create the resource, but will still create the volume and volumeMounts.
+EOT
+  type        = bool
+  default     = false
+}
+
 variable "csi" {
   description = "Whether to use the csi driver and bind to a kubernetes secret. Only available for aws-secret and aws-ssm."
   type        = bool
@@ -85,10 +93,14 @@ variable "data" {
   nullable    = true
   validation {
     condition = (
-      (var.data != null || var.value != null) &&
-      !(var.data != null && var.value != null)
+      var.external ? (
+        var.data == null && var.value == null
+        ) : (
+        (var.data != null || var.value != null) &&
+        !(var.data != null && var.value != null)
+      )
     )
-    error_message = "Either data or value must be set, but not both."
+    error_message = "Data cannot be set when external is true."
   }
 }
 

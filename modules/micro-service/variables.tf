@@ -425,3 +425,55 @@ variable "termination_grace_period" {
   type        = number
   default     = null
 }
+
+variable "sidecars" {
+  description = <<EOT
+  Sidecars for the service. These are additional containers that run alongside the main container in the pod.
+
+  The `name` field is the name of the sidecar.
+
+  The `image` field is the image to use for the sidecar. If the field is not set, the image will be "duplocloud/sidecar:latest".
+
+  The `command` field is the command to run in the sidecar. If the field is not set, the command will be an empty list.
+
+  The `args` field is the arguments to pass to the command. If the field is not set, the args will be an empty list.
+
+  The `env` field is a map of environment variables to set on the sidecar. If the field is not set, the env will be an empty map.
+
+  The `resources` field is a map of resource requests and limits for the sidecar. If the field is not set, the resources will be an empty map.
+
+  The `security_context` field is an object with run_as_user, run_as_group, and fs_group fields. If the field is not set, it will be null.
+
+  The `ports` field is a list of ports to expose on the sidecar. If the field is not set, the ports will be an empty list.
+
+  The `volume_mounts` field is a list of volume mounts to add to the sidecar. If the field is not set, the volume mounts will be an empty list.
+  EOT
+  type = set(object({
+    name    = string
+    image   = string
+    command = optional(list(string), [])
+    args    = optional(list(string), [])
+    env     = optional(map(string), {})
+    resources = optional(object({
+      requests = optional(map(string))
+      limits   = optional(map(string))
+    }), null)
+    security_context = optional(object({
+      run_as_user  = optional(number, null)
+      run_as_group = optional(number, null)
+      fs_group     = optional(number, null)
+    }), null)
+    ports = optional(list(object({
+      name          = string
+      containerPort = number
+      protocol      = optional(string, "TCP")
+    })))
+    volume_mounts = optional(list(object({
+      name      = string
+      mountPath = string
+      readOnly  = optional(bool, false)
+      subPath   = optional(string, null)
+    })))
+  }))
+  default = []
+}
