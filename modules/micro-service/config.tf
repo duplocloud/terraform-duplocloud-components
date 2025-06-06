@@ -1,9 +1,13 @@
 module "configurations" {
-  for_each    = { for idx, config in var.configurations : config.name != null ? config.name : config.type == "environment" ? "env" : "config" => config }
+  for_each = {
+    for idx, config in var.configurations : (
+      config.name != null ? "${config.class}/${config.name}" : config.type == "environment" ? "${config.class}/env" : "${config.class}/config"
+    ) => config
+  }
   source      = "../configuration"
   tenant_id   = local.tenant.id
   prefix      = var.name # uses app name as prefix
-  name        = each.key
+  name        = each.value.name
   enabled     = each.value.enabled
   description = each.value.description
   type        = each.value.type
