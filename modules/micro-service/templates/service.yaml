@@ -69,5 +69,8 @@ additionalContainers:
 %{ for sidecar in sidecars ~}
   - name: ${sidecar.name}
     image: ${sidecar.image}
+%{ if length(lookup(sidecar, "command", [])) > 0 }
+    command: ${jsonencode(sidecar.command)}
+%{ endif }
 %{ endfor ~}
 %{ endif }

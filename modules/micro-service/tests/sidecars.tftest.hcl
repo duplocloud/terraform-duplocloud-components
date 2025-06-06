@@ -31,4 +31,10 @@ run "adds_sidecars" {
     error_message = "There should be one sidecar with the name 'cakes'."  
   }
 
+  # make sure there is no command key on the sidecar
+  assert {
+    condition = !contains(keys(local.other_docker_config.additionalContainers[0]), "command")
+    error_message = "There should not be a command key on the sidecar."
+  }
+
 }
