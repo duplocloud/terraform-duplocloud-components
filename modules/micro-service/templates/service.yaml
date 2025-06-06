@@ -63,4 +63,11 @@ ReadinessProbe:
     path: ${health_check.path}
     port: ${port}
 %{ endif }
-
+# add all the sidecars into the additionalContainers key but only add the key if there are sidecars
+%{ if length(sidecars) > 0 }
+additionalContainers: 
+%{ for sidecar in sidecars ~}
+  - name: ${sidecar.name}
+    image: ${sidecar.image}
+%{ endfor ~}
+%{ endif }

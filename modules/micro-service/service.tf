@@ -33,6 +33,7 @@ locals {
       for key, value in var.resources : key => value
       if value != null
     }
+    sidecars = var.sidecars
   }))
   hpa_metrics = lookup(var.scale, "metrics", null)
   hpa_specs = yamldecode(templatefile("${path.module}/templates/hpa-spec.yaml", {
