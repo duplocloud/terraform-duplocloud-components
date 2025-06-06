@@ -72,5 +72,27 @@ additionalContainers:
 %{ if length(lookup(sidecar, "command", [])) > 0 }
     command: ${jsonencode(sidecar.command)}
 %{ endif }
+%{ if length(lookup(sidecar, "args", [])) > 0 }
+    args: ${jsonencode(sidecar.args)}
+%{ endif }
+%{ if sidecar.resources != null }
+    resources: ${jsonencode(sidecar.resources)}
+%{ endif }
+%{ if sidecar.security_context != null }
+    securityContext: ${jsonencode(sidecar.security_context)}
+%{ endif }
+%{ if length(lookup(sidecar, "ports", [])) > 0 }
+    ports: ${jsonencode(sidecar.ports)}
+%{ endif }
+%{ if length(lookup(sidecar, "volume_mounts", [])) > 0 }
+    volumeMounts: ${jsonencode(sidecar.volume_mounts)}
+%{ endif }
+%{ if length(lookup(sidecar, "env", {})) > 0 }
+    env: 
+%{ for key, value in sidecar.env ~}
+      - name: ${key}
+        value: ${value}
+%{ endfor ~}
+%{ endif }
 %{ endfor ~}
 %{ endif }

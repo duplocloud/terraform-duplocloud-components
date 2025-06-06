@@ -56,6 +56,8 @@ variable "class" {
 variable "external" {
   description = <<EOT
 Set to true if the underlying configuration resource, like a configmap or secret, is managed outside of this module. This will not create the resource, but will still create the volume and volumeMounts.
+
+Warning: This is not implemented quite yet. 
 EOT
   type        = bool
   default     = false

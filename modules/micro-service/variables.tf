@@ -467,13 +467,13 @@ variable "sidecars" {
       name          = string
       containerPort = number
       protocol      = optional(string, "TCP")
-    })))
+    })), [])
     volume_mounts = optional(list(object({
       name      = string
       mountPath = string
       readOnly  = optional(bool, false)
       subPath   = optional(string, null)
-    })))
+    })), [])
   }))
   default = []
 }
