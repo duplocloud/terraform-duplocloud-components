@@ -1,3 +1,7 @@
+mock_provider "duplocloud" {
+  source = "../../mocks"
+}
+
 # only do plans here
 run "validate_job_defaults" {
   command = plan
