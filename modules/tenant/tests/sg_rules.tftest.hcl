@@ -1,5 +1,5 @@
 mock_provider "duplocloud" {
-  source = "./tests"
+  source = "../../mocks"
 }
 
 run "no_source_tenant_nor_address_nor_parent" {
