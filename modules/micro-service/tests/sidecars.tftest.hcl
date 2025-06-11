@@ -19,17 +19,17 @@ run "adds_sidecars" {
     }]
   }
 
-  # make sure the additionalContainers key is on the other_docker_config
+  # make sure the AdditionalContainers key is on the other_docker_config
   assert {
-    condition     = lookup(local.other_docker_config, "additionalContainers", null) != null
-    error_message = "There should be additionalContainers in the other_docker_config."
+    condition     = lookup(local.other_docker_config, "AdditionalContainers", null) != null
+    error_message = "There should be AdditionalContainers in the other_docker_config."
   }
 
   # make sure there is exactly one sidecar and it has the right name
   assert {
     condition = (
-      length(local.other_docker_config.additionalContainers) == 1 &&
-      local.other_docker_config.additionalContainers[0].name == "cakes"
+      length(local.other_docker_config.AdditionalContainers) == 1 &&
+      local.other_docker_config.AdditionalContainers[0].name == "cakes"
     )
     error_message = "There should be one sidecar with the name 'cakes'."
   }
@@ -37,16 +37,16 @@ run "adds_sidecars" {
   # make sure there is no command key on the sidecar but there is args, this proves the if statements in the template are working
   assert {
     condition = (
-      !contains(keys(local.other_docker_config.additionalContainers[0]), "command") &&
-    contains(keys(local.other_docker_config.additionalContainers[0]), "args"))
+      !contains(keys(local.other_docker_config.AdditionalContainers[0]), "command") &&
+    contains(keys(local.other_docker_config.AdditionalContainers[0]), "args"))
     error_message = "There should not be a command key on the sidecar and there should be args."
   }
 
-  # make sure the env key is on additionalContainers and it has the right value
+  # make sure the env key is on AdditionalContainers and it has the right value
   assert {
     condition = (
-      contains(keys(local.other_docker_config.additionalContainers[0]), "env") &&
-      local.other_docker_config.additionalContainers[0].env == [{
+      contains(keys(local.other_docker_config.AdditionalContainers[0]), "env") &&
+      local.other_docker_config.AdditionalContainers[0].env == [{
         name  = "FOO",
         value = "bar"
       }]

@@ -28,7 +28,7 @@ PodLabels: ${pod_labels}
 %{if security_context != "{}" }
 PodSecurityContext: ${security_context}
 %{ endif }
-%{if service_account_name != "" }
+%{if service_account_name != null }
 ServiceAccountName: ${service_account_name}
 %{ endif }
 %{if host_network != null }
@@ -65,7 +65,7 @@ ReadinessProbe:
 %{ endif }
 # add all the sidecars into the additionalContainers key but only add the key if there are sidecars
 %{ if length(sidecars) > 0 }
-additionalContainers: 
+AdditionalContainers: 
 %{ for sidecar in sidecars ~}
   - name: ${sidecar.name}
     image: ${sidecar.image}
