@@ -179,7 +179,8 @@ variable "security_context" {
 variable "service_account_name" {
   description = "The service account name for the service"
   type        = string
-  default     = ""
+  default     = null
+  nullable    = true
 }
 
 variable "nodes" {
