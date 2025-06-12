@@ -36,7 +36,7 @@ resource "aws_api_gateway_stage" "default" {
 }
 
 resource "aws_api_gateway_vpc_link" "this" {
-  count       = var.enable_private_link ? var.type == "rest" ? 1 : 0 : 0
+  count       = var.enable_private_link && var.type == "rest" ? 1 : 0
   name        = local.fullname
   description = "Private connections for ${var.name} in ${var.tenant_name}"
   target_arns = var.vpc_link_targets
