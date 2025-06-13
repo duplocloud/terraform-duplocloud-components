@@ -1,6 +1,6 @@
 resource "duplocloud_aws_lambda_permission" "permission" {
   for_each = {
-    for index, integration in local.integrations :
+    for index, integration in local.lambda_integrations :
     "${integration.path}/${integration.method}/${integration.name}" => integration
   }
   tenant_id     = local.tenant_id

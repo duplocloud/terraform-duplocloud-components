@@ -26,14 +26,14 @@ locals {
     var.openapi_file == null ? file("${path.module}/openapi.yaml") :
   templatefile(var.openapi_file, local.body_vars))
   body = yamldecode(local.body_text)
-  integrations = flatten([
+  lambda_integrations = flatten([
     for path, methods in local.body.paths : [
       for method, details in methods : {
         path        = path
         method      = upper(title(method))
         integration = details["x-amazon-apigateway-integration"]
         name        = regex("function:([^/]+)", details["x-amazon-apigateway-integration"].uri)[0]
-      }
+      } if details["x-amazon-apigateway-integration"].type == "aws_proxy"
     ]
   ])
 }
