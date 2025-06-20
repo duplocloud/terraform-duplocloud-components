@@ -1,10 +1,10 @@
 resource "duplocloud_aws_lambda_permission" "permission" {
   for_each = {
     for index, integration in local.integrations :
-    "${integration.path}/${integration.method}/${integration.name}" => integration
+    "${integration.path}/${integration.method}/${integration.name}-${index}" => merge(integration, { index = index })
   }
   tenant_id     = local.tenant_id
-  statement_id  = "AllowExecutionFromAPIGateway"
+  statement_id  = "AllowExecutionFromAPIGateway${each.value.index}"
   action        = "lambda:InvokeFunction"
   function_name = each.value.name
   principal     = "apigateway.amazonaws.com"
