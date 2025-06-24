@@ -7,9 +7,10 @@ locals {
   default_tfstate_bucket = "duplo-tfstate-${local.account_id}"
   # local.system.AppConfigs is a list of objects and we want to find the one where the key is 'TerraformBucket' and return the value
   tfstate_bucket = coalesce(
+    var.state_bucket,
     try(one([
       for config in local.system.AppConfigs : config.Value
-      if config.Key == "TerraformBucket"
+      if config.Key == "StateBucket"
     ]), null),
     local.default_tfstate_bucket
   )
