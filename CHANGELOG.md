@@ -8,16 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+API Gateway module fails on duplicate SID statements when allowing exec permissions on lambda endpoints
+
 ## [0.0.40] - 2025-05-28
 
-### Added 
+### Added
 
 - new website module for gcp
 
-### Fixed  
+### Fixed
 
 - For the context module the jit is an input and output now so the names match up. So referencing jit creds will be like `module.ctx.jit.aws`.
-- node refreshing and templates for the eks node module. 
+- node refreshing and templates for the eks node module.
 
 ## [0.0.39] - 2025-05-07
 
@@ -50,22 +53,22 @@ and this project adheres to
 
 - new mongodb module to create mongodb atlas resources.
 
-### Fixed  
+### Fixed
 
 - context module now supports gcp, it was very specific to aws before. It might work with azure too.
 
 ## [0.0.36] - 2025-03-28
 
-### Fixed  
+### Fixed
 
-- Default the health checks to http instead of just tcp so path is actually used. 
+- Default the health checks to http instead of just tcp so path is actually used.
 - the service template is yaml now
 
 ## [0.0.35] - 2025-03-27
 
 ### Added
 
-- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings. 
+- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings.
 - tenants can add grants from their parents or to their siblings
 - tenants now output the volumes, volumeMounts, and envFrom for the configurations
 - refactored configuration module a bit to make it easier to read
