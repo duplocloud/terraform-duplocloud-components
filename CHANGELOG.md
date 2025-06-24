@@ -9,7 +9,9 @@ and this project adheres to
 ## [Unreleased]
 
 ### Fixed
-API Gateway module fails on duplicate SID statements when allowing exec permissions on lambda endpoints
+- API Gateway module fails on duplicate SID statements when allowing exec permissions on lambda endpoints
+- API Gateway logic on vpc link creation resulted in opposite of desired behavior
+- API Gateway would fail on non-lambda integrations like 'mock'.
 
 ## [0.0.40] - 2025-05-28
 
