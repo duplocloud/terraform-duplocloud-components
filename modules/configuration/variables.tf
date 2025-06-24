@@ -25,15 +25,22 @@ variable "description" {
 }
 
 variable "type" {
-  description = "The type of the config. This is used to determine how the config will be used."
+  description = <<EOT
+Infers how this configuration will be used. Each type describes different ways the configuration will be mounted into the service and how the app expects to receive these values.
+
+Types:  
+`environment` - This means each key in the data is an anvironment variable name and the value is the value of the environment variable. This will be mounted as an envFrom on the container. This is the default type.
+`files` - This means each key in the data is a file name and the value is the content of the file. This will be mounted as a volume and volumeMount on the container. The mountPath can be used with this type.
+`reference` - This means your code is expecting the name of the configuration to be passed in as an environment variable and your code will look up the values on it's own. The default name of the environment variable is CONFIG_NAME, but you can override this with the `remap` variable like CONFIG_NAME = "MY_SECRET". 
+EOT
   type        = string
   default     = "environment" # or files
   # make sure the value is one of the accepted values
   validation {
     condition = contains([
-      "environment", "files"
+      "environment", "files", "reference"
     ], var.type)
-    error_message = "The type must be one of the following: environment, files."
+    error_message = "The type must be one of the following: environment, files, or reference."
   }
 }
 
@@ -47,7 +54,8 @@ variable "class" {
     condition = contains([
       "configmap", "secret",
       "aws-secret", "aws-ssm",
-      "aws-ssm-secure", "aws-ssm-list"
+      "aws-ssm-secure", "aws-ssm-list",
+      "gcp-secret"
     ], var.class)
     error_message = "The class must be one of the following: configmap, secret."
   }
@@ -109,6 +117,15 @@ variable "data" {
 variable "value" {
   description = "The string value of the configuration. Use either data or value, not both. This will take precedence over data if it is set."
   type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "remap" {
+  description = <<EOT
+
+EOT
+  type        = map(string)
   default     = null
   nullable    = true
 }
