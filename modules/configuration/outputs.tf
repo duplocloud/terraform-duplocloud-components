@@ -22,12 +22,16 @@ output "csi" {
 output "enabled" {
   description = "Whether or not the configuration is enabled."
   value       = var.enabled
-
 }
 
 output "class" {
   description = "The class of the configuration."
   value       = var.class
+}
+
+output "env" {
+  description = "The env var list if the configuration either remapped any key or is a reference type where the config name is a value of an environment variable."
+  value = []
 }
 
 output "envFrom" {

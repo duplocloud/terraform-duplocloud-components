@@ -3,6 +3,11 @@ output "name" {
   value       = local.name
 }
 
+output "fullname" {
+  description = "The full name with prefix used within the clouds console. Simply `duploinfra-<name>`."
+  value       = "duploinfra-${local.name}"
+}
+
 output "region" {
   description = "The region of the infrastructure."
   value       = var.region
