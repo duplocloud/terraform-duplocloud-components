@@ -31,7 +31,7 @@ output "class" {
 
 output "env" {
   description = "The env var list if the configuration either remapped any key or is a reference type where the config name is a value of an environment variable."
-  value = []
+  value       = []
 }
 
 output "envFrom" {
