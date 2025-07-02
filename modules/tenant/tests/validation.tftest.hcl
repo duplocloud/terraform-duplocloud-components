@@ -1,5 +1,5 @@
 mock_provider "duplocloud" {
-  source = "./tests"
+  source = "../../mocks"
 }
 
 run "not_infra_and_parent" {
