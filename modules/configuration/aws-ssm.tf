@@ -1,5 +1,9 @@
 resource "duplocloud_aws_ssm_parameter" "managed" {
-  count       = var.managed && local.is_ssm ? 1 : 0
+  count = (
+    local.is_ssm &&
+    var.managed &&
+    !var.external
+  ) ? 1 : 0
   tenant_id   = var.tenant_id
   name        = local.name
   description = var.description
@@ -8,7 +12,11 @@ resource "duplocloud_aws_ssm_parameter" "managed" {
 }
 
 resource "duplocloud_aws_ssm_parameter" "unmanaged" {
-  count       = !var.managed && local.is_ssm ? 1 : 0
+  count = (
+    local.is_ssm &&
+    !var.managed &&
+    !var.external
+  ) ? 1 : 0
   tenant_id   = var.tenant_id
   name        = local.name
   description = var.description

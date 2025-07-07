@@ -18,10 +18,13 @@ locals {
     ], [
     # TODO pvc volume
   ], jsondecode(var.volumes_json))
-  volume_mounts = concat([
-    for config in module.configurations : config.volumeMount
-    if config.volumeMount != null
-  ], var.volume_mounts)
+  volume_mounts = concat(
+    var.volume_mounts,
+    flatten([
+      for config in module.configurations : config.volumeMounts
+      if config.volumeMounts != null
+    ])
+  )
   # for each key value in var.env make a list of objects with name and value
   container_env = [
     for key, value in var.env : {

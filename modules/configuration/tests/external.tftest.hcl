@@ -1,5 +1,6 @@
 variables {
   tenant_id = "2cf9a5bd-311c-47d3-93be-df812e98e775"
+  external  = true
 }
 
 run "no_data_and_value_when_external" {
@@ -7,7 +8,7 @@ run "no_data_and_value_when_external" {
   variables {
     tenant_id = var.tenant_id
     name      = "no-data-and-value"
-    external  = true
+    external  = var.external
     data = {
       foo = "bar"
     }

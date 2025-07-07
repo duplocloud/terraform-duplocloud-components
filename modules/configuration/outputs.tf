@@ -9,6 +9,11 @@ output "name" {
   sensitive   = false
 }
 
+output "description" {
+  description = "The description of the configuration."
+  value       = var.description
+}
+
 output "type" {
   description = "The type configuration."
   value       = var.type
@@ -31,7 +36,7 @@ output "class" {
 
 output "env" {
   description = "The env var list if the configuration either remapped any key or is a reference type where the config name is a value of an environment variable."
-  value       = []
+  value       = length(local.env) > 0 ? local.env : null
 }
 
 output "envFrom" {
@@ -46,14 +51,7 @@ output "volume" {
   sensitive = false
 }
 
-output "volumeMount" {
+output "volumeMounts" {
   description = "The volume mount configuration if the configuration is of type files and enabled. Even when type is environment, if csi is enabled then a volume mount is also needed."
-  value = (
-    var.enabled && (var.type == "files" || local.csi)
-    ) ? {
-    name      = local.id
-    mountPath = local.mountPath
-    readOnly  = true
-    subPath   = null
-  } : null
+  value       = local.volumeMounts
 }

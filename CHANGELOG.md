@@ -8,6 +8,34 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Configuration Module 
+
+- new `external` variable that omits creating a resource and only outputs the configurations for a service. 
+- new `remapped` variabled to change what the names of the variables/files are when mounted to the pod. This causes configurations to output env vars instead of envFrom. 
+- new type named `reference` which means the configuration is only referenced by name in the code
+- new gcp secret which just makes a tenant secret
+
+### Micro Service Module 
+
+- ignore some generated values causing too many unneccessary chagnes to plan when GCP
+- new sidecars variable for adding more containers to run in your service.  
+- **BREAKING** The id of the configurations has changed from only the name to be like `<class>/<name>` format so that multiple configurations may be named the same. Use the following `moved` snippet to migrate the configurations to the new id model.  
+```hcl
+moved {
+  from = module.service.configurations["env"]
+  to   = module.service.configurations["configmap/env"]
+}
+```
+
+### Tenant Module 
+
+- output the namespace for convenience
+- properly copied missing vars in extended tenant modules
+
+### Context Module  
+
+- Can now override the Terraform state bucket name with the `StateBucket` AppConfig set on the portal. Otherwise it will continue to guess the standard bucket name which comes with a portal. 
+
 ## [0.0.40] - 2025-05-28
 
 ### Added 

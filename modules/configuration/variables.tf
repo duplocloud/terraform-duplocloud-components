@@ -103,14 +103,19 @@ variable "data" {
   nullable    = true
   validation {
     condition = (
+      # if it's external, then data and value must both be null
       var.external ? (
         var.data == null && var.value == null
         ) : (
+        # if it's not external, then either data or value may be set, but not both.
         (var.data != null || var.value != null) &&
         !(var.data != null && var.value != null)
       )
     )
-    error_message = "Data cannot be set when external is true."
+    error_message = <<EOT
+Data nor value can be set when external is true.
+When external is false, either data or value must be set, but not both.
+EOT
   }
 }
 
@@ -123,7 +128,10 @@ variable "value" {
 
 variable "remap" {
   description = <<EOT
+Renames the keys from a secret to specific names. If type env then use environment variable names, if type files then use file names. This is useful for remapping keys to more friendly names or to avoid conflicts with other configurations. Especially useful when the configuration is external and you don't have control over the keys. 
 
+The keys in this map are the new names and the values are the original names. For example, if you have a secret with keys
+`FOO` and `BAR`, but you want to use `BAZ` and `BUZ` in your application, you can set the remap to `{"BAZ" = "FOO", "BUZ" = "BAR"}`.
 EOT
   type        = map(string)
   default     = null
