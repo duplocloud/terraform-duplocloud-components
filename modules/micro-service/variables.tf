@@ -17,6 +17,12 @@ variable "release_id" {
   nullable    = true
 }
 
+variable "debug" {
+  description = "Set to true to enable debug mode. This will override the command and args and prevent the container from crashing. All the health probes will be disabled."
+  type        = bool
+  default     = false
+}
+
 variable "command" {
   description = "The command to run in the container. This is using kubernetes command syntax."
   type        = list(string)
@@ -271,6 +277,33 @@ variable "health_check" {
     periodSeconds       = optional(number, 20)
     successThreshold    = optional(number, 1)
     timeoutSeconds      = optional(number, 1)
+    liveliness = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
+    readiness = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
+    startup = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
   })
   default = {}
 }

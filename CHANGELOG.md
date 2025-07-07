@@ -17,8 +17,10 @@ and this project adheres to
 
 ### Micro Service Module 
 
-- ignore some generated values causing too many unneccessary chagnes to plan when GCP
+- ignore some generated values causing too many unneccessary chagnes to plan when GCP. 
 - new sidecars variable for adding more containers to run in your service.  
+- new `debug` variable to enable when a container is crashing and you need to investigate.  
+- All probes are now exposed under `health_check` variable. The top level values are the defaults for all of them, but you can override them individually.  
 - **BREAKING** The id of the configurations has changed from only the name to be like `<class>/<name>` format so that multiple configurations may be named the same. Use the following `moved` snippet to migrate the configurations to the new id model.  
 ```hcl
 moved {
@@ -30,7 +32,7 @@ moved {
 ### Tenant Module 
 
 - output the namespace for convenience
-- properly copied missing vars in extended tenant modules
+- properly copy missing vars into extended tenant modules
 
 ### Context Module  
 

@@ -10,12 +10,21 @@ EnvFrom: ${env_from}
 %{if env != "[]" }
 Env: ${env}
 %{ endif }
-%{if command != "[]" }
+
+# command and args when given 
+%{if command != "[]" && !debug }
 Command: ${command}
 %{ endif }
-%{if args != "[]" }
+%{if args != "[]" && !debug }
 Args: ${args}
 %{ endif }
+
+# if debug mode then tail to a black hole
+%{ if debug }
+Command: ["/bin/sh", "-c"]
+Args: ["tail -f /dev/null"]
+%{ endif }
+
 %{if nodes.selector != null }
 NodeSelector: ${jsonencode(nodes.selector)}
 %{ endif }
@@ -43,24 +52,33 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
-%{if health_check.enabled }
+%{if health_check.enabled && !debug }
 LivenessProbe: 
-  failureThreshold: ${health_check.failureThreshold}
-  initialDelaySeconds: ${health_check.initialDelaySeconds}
-  periodSeconds: ${health_check.periodSeconds}
-  successThreshold: ${health_check.successThreshold}
-  timeoutSeconds: ${health_check.timeoutSeconds}
+  failureThreshold: ${coalesce(health_check.liveliness.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.liveliness.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.liveliness.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.liveliness.successThreshold, health_check.successThreshold)}
+  timeoutSeconds: ${coalesce(health_check.liveliness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
-    path: ${health_check.path}
+    path: ${coalesce(health_check.liveliness.path, health_check.path)}
     port : ${port}
 ReadinessProbe: 
-  failureThreshold: ${health_check.failureThreshold}
-  initialDelaySeconds: ${health_check.initialDelaySeconds}
-  periodSeconds: ${health_check.periodSeconds}
-  successThreshold: ${health_check.successThreshold}
-  timeoutSeconds : ${health_check.timeoutSeconds}
+  failureThreshold: ${coalesce(health_check.readiness.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.readiness.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.readiness.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.readiness.successThreshold, health_check.successThreshold)}
+  timeoutSeconds : ${coalesce(health_check.readiness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
-    path: ${health_check.path}
+    path: ${coalesce(health_check.readiness.path, health_check.path)}
+    port: ${port}
+StartupProbe: 
+  failureThreshold: ${coalesce(health_check.startup.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.startup.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.startup.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.startup.successThreshold, health_check.successThreshold)}
+  timeoutSeconds : ${coalesce(health_check.startup.timeoutSeconds, health_check.timeoutSeconds)}
+  httpGet: 
+    path: ${coalesce(health_check.startup.path, health_check.path)}
     port: ${port}
 %{ endif }
 # add all the sidecars into the additionalContainers key but only add the key if there are sidecars
