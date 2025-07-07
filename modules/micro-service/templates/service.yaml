@@ -52,7 +52,10 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
+
+# health check configuration
 %{if health_check.enabled && !debug }
+%{if health_check.liveliness.enabled }
 LivenessProbe: 
   failureThreshold: ${coalesce(health_check.liveliness.failureThreshold, health_check.failureThreshold)}
   initialDelaySeconds: ${coalesce(health_check.liveliness.initialDelaySeconds, health_check.initialDelaySeconds)}
@@ -62,6 +65,8 @@ LivenessProbe:
   httpGet: 
     path: ${coalesce(health_check.liveliness.path, health_check.path)}
     port : ${coalesce(health_check.liveliness.port, health_check.port, port)}
+%{ endif }
+%{ if health_check.readiness.enabled }
 ReadinessProbe: 
   failureThreshold: ${coalesce(health_check.readiness.failureThreshold, health_check.failureThreshold)}
   initialDelaySeconds: ${coalesce(health_check.readiness.initialDelaySeconds, health_check.initialDelaySeconds)}
@@ -71,6 +76,8 @@ ReadinessProbe:
   httpGet: 
     path: ${coalesce(health_check.readiness.path, health_check.path)}
     port: ${coalesce(health_check.readiness.port, health_check.port, port)}
+%{ endif }
+%{ if health_check.startup.enabled }
 StartupProbe: 
   failureThreshold: ${coalesce(health_check.startup.failureThreshold, health_check.failureThreshold)}
   initialDelaySeconds: ${coalesce(health_check.startup.initialDelaySeconds, health_check.initialDelaySeconds)}
@@ -81,6 +88,8 @@ StartupProbe:
     path: ${coalesce(health_check.startup.path, health_check.path)}
     port: ${coalesce(health_check.startup.port, health_check.port, port)}
 %{ endif }
+%{ endif }
+
 # add all the sidecars into the additionalContainers key but only add the key if there are sidecars
 %{ if length(sidecars) > 0 }
 AdditionalContainers: 
