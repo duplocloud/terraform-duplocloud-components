@@ -272,6 +272,7 @@ variable "health_check" {
   type = object({
     enabled             = optional(bool, true)
     path                = optional(string, "/")
+    port                = optional(number, null) # If not set, the port will be the service port
     failureThreshold    = optional(number, 3)
     initialDelaySeconds = optional(number, 15)
     periodSeconds       = optional(number, 20)
@@ -280,6 +281,7 @@ variable "health_check" {
     liveliness = optional(object({
       enabled             = optional(bool, true)
       path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)
@@ -289,6 +291,7 @@ variable "health_check" {
     readiness = optional(object({
       enabled             = optional(bool, true)
       path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)
@@ -298,6 +301,7 @@ variable "health_check" {
     startup = optional(object({
       enabled             = optional(bool, true)
       path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)

@@ -61,7 +61,7 @@ LivenessProbe:
   timeoutSeconds: ${coalesce(health_check.liveliness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
     path: ${coalesce(health_check.liveliness.path, health_check.path)}
-    port : ${port}
+    port : ${coalesce(health_check.liveliness.port, health_check.port, port)}
 ReadinessProbe: 
   failureThreshold: ${coalesce(health_check.readiness.failureThreshold, health_check.failureThreshold)}
   initialDelaySeconds: ${coalesce(health_check.readiness.initialDelaySeconds, health_check.initialDelaySeconds)}
@@ -70,7 +70,7 @@ ReadinessProbe:
   timeoutSeconds : ${coalesce(health_check.readiness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
     path: ${coalesce(health_check.readiness.path, health_check.path)}
-    port: ${port}
+    port: ${coalesce(health_check.readiness.port, health_check.port, port)}
 StartupProbe: 
   failureThreshold: ${coalesce(health_check.startup.failureThreshold, health_check.failureThreshold)}
   initialDelaySeconds: ${coalesce(health_check.startup.initialDelaySeconds, health_check.initialDelaySeconds)}
@@ -79,7 +79,7 @@ StartupProbe:
   timeoutSeconds : ${coalesce(health_check.startup.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
     path: ${coalesce(health_check.startup.path, health_check.path)}
-    port: ${port}
+    port: ${coalesce(health_check.startup.port, health_check.port, port)}
 %{ endif }
 # add all the sidecars into the additionalContainers key but only add the key if there are sidecars
 %{ if length(sidecars) > 0 }
