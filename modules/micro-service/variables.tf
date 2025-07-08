@@ -278,7 +278,7 @@ variable "health_check" {
     periodSeconds       = optional(number, 20)
     successThreshold    = optional(number, 1)
     timeoutSeconds      = optional(number, 1)
-    liveliness = optional(object({
+    liveness = optional(object({
       enabled             = optional(bool, true)
       path                = optional(string, null)
       port                = optional(number, null) # If not set, the port will be the service port

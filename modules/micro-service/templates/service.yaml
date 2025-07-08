@@ -55,16 +55,16 @@ terminationGracePeriodSeconds: ${termination_grace_period}
 
 # health check configuration
 %{if health_check.enabled && !debug }
-%{if health_check.liveliness.enabled }
+%{if health_check.liveness.enabled }
 LivenessProbe: 
-  failureThreshold: ${coalesce(health_check.liveliness.failureThreshold, health_check.failureThreshold)}
-  initialDelaySeconds: ${coalesce(health_check.liveliness.initialDelaySeconds, health_check.initialDelaySeconds)}
-  periodSeconds: ${coalesce(health_check.liveliness.periodSeconds, health_check.periodSeconds)}
-  successThreshold: ${coalesce(health_check.liveliness.successThreshold, health_check.successThreshold)}
-  timeoutSeconds: ${coalesce(health_check.liveliness.timeoutSeconds, health_check.timeoutSeconds)}
+  failureThreshold: ${coalesce(health_check.liveness.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.liveness.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.liveness.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.liveness.successThreshold, health_check.successThreshold)}
+  timeoutSeconds: ${coalesce(health_check.liveness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
-    path: ${coalesce(health_check.liveliness.path, health_check.path)}
-    port : ${coalesce(health_check.liveliness.port, health_check.port, port)}
+    path: ${coalesce(health_check.liveness.path, health_check.path)}
+    port : ${coalesce(health_check.liveness.port, health_check.port, port)}
 %{ endif }
 %{ if health_check.readiness.enabled }
 ReadinessProbe: 

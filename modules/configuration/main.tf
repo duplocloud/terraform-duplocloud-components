@@ -62,12 +62,14 @@ locals {
     var.type == "environment" ? [
       for k, v in local.remap : {
         name = k
-        valueFrom = {
-          "${local.schema.envRef}" = {
+        # uses zipmap because tf lint says a key like "${local.schema.envRef}" is deprecated and using brackets did not work
+        valueFrom = zipmap(
+          [local.schema.envRef],
+          [{
             name = local.realName
             key  = v
-          }
-        }
+          }]
+        )
       }
     ] : [],
     var.type == "reference" ? [
