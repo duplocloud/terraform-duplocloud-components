@@ -20,6 +20,7 @@ and this project adheres to
 - ignore some generated values causing too many unneccessary chagnes to plan when GCP. 
 - new sidecars variable for adding more containers to run in your service.  
 - new `debug` variable to enable when a container is crashing and you need to investigate.  
+- new `container_lifecycle` variable to add lifecycle hooks to the container.
 - All probes are now exposed under `health_check` variable. The top level values are the defaults for all of them, but you can override them individually.  
 - **BREAKING** The id of the configurations has changed from only the name to be like `<class>/<name>` format so that multiple configurations may be named the same. Use the following `moved` snippet to migrate the configurations to the new id model.  
 ```hcl

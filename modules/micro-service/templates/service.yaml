@@ -123,3 +123,32 @@ AdditionalContainers:
 %{ endif }
 %{ endfor ~}
 %{ endif }
+
+# now handle the lifecycle hooks for the pod
+%{if lifecycle != null }
+Lifecycle: 
+  %{if lifecycle.preStop != null }
+  preStop: 
+    %{if lifecycle.preStop.exec != null }
+    exec: ${jsonencode(lifecycle.preStop.exec)}
+    %{ endif }
+    %{if lifecycle.preStop.httpGet != null }
+    httpGet: ${jsonencode(lifecycle.preStop.httpGet)}
+    %{ endif }
+    %{if lifecycle.preStop.tcpSocket != null }
+    tcpSocket: ${jsonencode(lifecycle.preStop.tcpSocket)}
+    %{ endif }
+  %{ endif } # end prestop
+  %{if lifecycle.postStart != null }
+  postStart: 
+    %{if lifecycle.postStart.exec != null }
+    exec: ${jsonencode(lifecycle.postStart.exec)}
+    %{ endif }
+    %{if lifecycle.postStart.httpGet != null }
+    httpGet: ${jsonencode(lifecycle.postStart.httpGet)}
+    %{ endif }
+    %{if lifecycle.postStart.tcpSocket != null }
+    tcpSocket: ${jsonencode(lifecycle.postStart.tcpSocket)}
+    %{ endif }
+  %{ endif } # end postStart
+%{ endif } # end lifecycle

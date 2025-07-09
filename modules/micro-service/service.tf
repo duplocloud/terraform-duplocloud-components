@@ -29,6 +29,7 @@ locals {
     command                  = jsonencode(var.command)
     args                     = jsonencode(var.args)
     env                      = jsonencode(local.container_env)
+    lifecycle                = var.container_lifecycle
     resources = {
       # don't actuall print the null values
       for key, value in var.resources : key => value

@@ -129,6 +129,44 @@ variable "scale" {
   default = {}
 }
 
+variable "container_lifecycle" {
+  description = "The Kubernetes container lifecycle hooks. These are used to run commands at different stages of the container lifecycle."
+  type = object({
+    preStop = optional(object({
+      exec = optional(object({
+        command = list(string)
+      }), null)
+      httpGet = optional(object({
+        path   = string
+        port   = number
+        scheme = optional(string, "HTTP")
+      }), null)
+      tcpSocket = optional(object({
+        port = number
+      }), null)
+    }), null)
+    postStart = optional(object({
+      exec = optional(object({
+        command = list(string)
+      }), null)
+      httpGet = optional(object({
+        path   = string
+        port   = number
+        scheme = optional(string, "HTTP")
+      }), null)
+      tcpSocket = optional(object({
+        port = number
+      }), null)
+    }), null)
+  })
+  nullable = true
+  default  = null
+  # validation {
+  #   condition     = can(regex("^(HTTP|HTTPS)$", var.container_lifecycle.preStop.httpGet.scheme)) && can(regex("^(HTTP|HTTPS)$", var.container_lifecycle.postStart.httpGet.scheme))
+  #   error_message = "The scheme for httpGet must be 'HTTP' or 'HTTPS'"
+  # }
+}
+
 variable "restart_policy" {
   type    = string
   default = "Always"
