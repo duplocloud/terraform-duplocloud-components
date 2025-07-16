@@ -4,7 +4,6 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
-examples/**/.terraform.lock.hcl
 
 # Crash log files
 crash.log
@@ -40,12 +39,13 @@ target/**
 *.log
 *.plan
 *.tfplan
+auto.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+examples/**/.terraform.lock.hcl
+modules/**/.terraform.lock.hcl
 
 # mac files
 .DS_Store
 temp-*
-auto.tfvars
-*.auto.tfvars
-*.auto.tfvars.json
-modules/**/.terraform.lock.hcl
 .qodo

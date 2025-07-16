@@ -8,6 +8,57 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Configuration Module 
+
+- new `external` variable that omits creating a resource and only outputs the configurations for a service. 
+- new `remapped` variabled to change what the names of the variables/files are when mounted to the pod. This causes configurations to output env vars instead of envFrom. 
+- new type named `reference` which means the configuration is only referenced by name in the code
+- new gcp secret which just makes a tenant secret
+
+### Micro Service Module 
+
+#### Added 
+
+- Added support for deployment strategy
+- ignore some generated values causing too many unneccessary chagnes to plan when GCP. 
+- new sidecars variable for adding more containers to run in your service.  
+- new `debug` variable to enable when a container is crashing and you need to investigate.  
+- new `container_lifecycle` variable to add lifecycle hooks to the container.
+- All probes are now exposed under `health_check` variable. The top level values are the defaults for all of them, but you can override them individually.  
+
+#### Fixed
+
+- API Gateway module fails on duplicate SID statements when allowing exec permissions on lambda endpoints
+- API Gateway logic on vpc link creation resulted in opposite of desired behavior
+- API Gateway would fail on non-lambda integrations like 'mock'.
+- **BREAKING** The id of the configurations has changed from only the name to be like `<class>/<name>` format so that multiple configurations may be named the same. Use the following `moved` snippet to migrate the configurations to the new id model.  
+```hcl
+moved {
+  from = module.service.configurations["env"]
+  to   = module.service.configurations["configmap/env"]
+}
+```
+
+### Tenant Module 
+
+- output the namespace for convenience
+- properly copy missing vars into extended tenant modules
+
+### Context Module  
+
+- Can now override the Terraform state bucket name with the `StateBucket` AppConfig set on the portal. Otherwise it will continue to guess the standard bucket name which comes with a portal. 
+
+## [0.0.40] - 2025-05-28
+
+### Added
+
+- new website module for gcp
+
+### Fixed
+
+- For the context module the jit is an input and output now so the names match up. So referencing jit creds will be like `module.ctx.jit.aws`.
+- node refreshing and templates for the eks node module.
+
 ## [0.0.39] - 2025-05-07
 
 ### Fixed
@@ -39,22 +90,22 @@ and this project adheres to
 
 - new mongodb module to create mongodb atlas resources.
 
-### Fixed  
+### Fixed
 
 - context module now supports gcp, it was very specific to aws before. It might work with azure too.
 
 ## [0.0.36] - 2025-03-28
 
-### Fixed  
+### Fixed
 
-- Default the health checks to http instead of just tcp so path is actually used. 
+- Default the health checks to http instead of just tcp so path is actually used.
 - the service template is yaml now
 
 ## [0.0.35] - 2025-03-27
 
 ### Added
 
-- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings. 
+- A new infrastructure module that blends the plan and infra into one along with a bunch of little subcomponents like certs and settings.
 - tenants can add grants from their parents or to their siblings
 - tenants now output the volumes, volumeMounts, and envFrom for the configurations
 - refactored configuration module a bit to make it easier to read
