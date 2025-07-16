@@ -74,6 +74,8 @@ jobs:
 
     - name: Summary 
       id: summary
+      env:
+        RELEASE_NOTES: ${{ steps.bump.outputs.release-notes }}
       run: |
         cat <<EOF > $GITHUB_STEP_SUMMARY
         ${{ steps.registry.outputs.badge }} [![Release](https://img.shields.io/badge/Github-Release-blue?style=flat-square&logo=github)](${{ steps.release.outputs.url || '' }})
@@ -82,5 +84,5 @@ jobs:
 
         ## Release Notes: 
         --------------
-        ${{ steps.bump.outputs.release-notes }}
+        ${RELEASE_NOTES}
         EOF
