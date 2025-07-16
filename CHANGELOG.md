@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.0.41] - 2025-07-16
+
 ### Configuration Module 
 
 - new `external` variable that omits creating a resource and only outputs the configurations for a service. 
