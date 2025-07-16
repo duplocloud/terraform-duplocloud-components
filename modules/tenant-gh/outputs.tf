@@ -8,6 +8,11 @@ output "name" {
   value       = module.tenant.name
 }
 
+output "namespace" {
+  description = "The namespace within kubernetes this tenant is in."
+  value       = module.tenant.namespace
+}
+
 output "infra_name" {
   description = "The tenants infra_name."
   value       = module.tenant.infra_name
