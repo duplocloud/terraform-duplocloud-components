@@ -52,6 +52,15 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
+%{if deployment_strategy != null }
+DeploymentStrategy:
+  type: ${deployment_strategy.type}
+  %{if deployment_strategy.type == "RollingUpdate" }
+  rollingUpdate:
+    maxUnavailable: ${deployment_strategy.maxUnavailable}
+    maxSurge: ${deployment_strategy.maxSurge}
+  %{ endif }
+%{ endif }
 
 # health check configuration
 %{if health_check.enabled && !debug }
