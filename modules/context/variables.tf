@@ -78,3 +78,14 @@ EOT
   default  = null
   nullable = true
 }
+
+variable "state_bucket" {
+  description = <<EOT
+The name of the state bucket if it's different than the default one which came with the portal.
+This is not needed if the System Setting 'StateBucket' is set.
+In most cases this value is null as the bucket name is predetermined.
+EOT
+  type        = string
+  nullable    = true
+  default     = null
+}

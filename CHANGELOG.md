@@ -12,6 +12,36 @@ and this project adheres to
 - API Gateway module fails on duplicate SID statements when allowing exec permissions on lambda endpoints
 - API Gateway logic on vpc link creation resulted in opposite of desired behavior
 - API Gateway would fail on non-lambda integrations like 'mock'.
+### Configuration Module 
+
+- new `external` variable that omits creating a resource and only outputs the configurations for a service. 
+- new `remapped` variabled to change what the names of the variables/files are when mounted to the pod. This causes configurations to output env vars instead of envFrom. 
+- new type named `reference` which means the configuration is only referenced by name in the code
+- new gcp secret which just makes a tenant secret
+
+### Micro Service Module 
+
+- ignore some generated values causing too many unneccessary chagnes to plan when GCP. 
+- new sidecars variable for adding more containers to run in your service.  
+- new `debug` variable to enable when a container is crashing and you need to investigate.  
+- new `container_lifecycle` variable to add lifecycle hooks to the container.
+- All probes are now exposed under `health_check` variable. The top level values are the defaults for all of them, but you can override them individually.  
+- **BREAKING** The id of the configurations has changed from only the name to be like `<class>/<name>` format so that multiple configurations may be named the same. Use the following `moved` snippet to migrate the configurations to the new id model.  
+```hcl
+moved {
+  from = module.service.configurations["env"]
+  to   = module.service.configurations["configmap/env"]
+}
+```
+
+### Tenant Module 
+
+- output the namespace for convenience
+- properly copy missing vars into extended tenant modules
+
+### Context Module  
+
+- Can now override the Terraform state bucket name with the `StateBucket` AppConfig set on the portal. Otherwise it will continue to guess the standard bucket name which comes with a portal. 
 
 ## [0.0.40] - 2025-05-28
 

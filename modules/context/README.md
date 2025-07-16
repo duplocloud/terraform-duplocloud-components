@@ -100,3 +100,15 @@ module "ctx" {
 ```
 
 The value of the object for each key on the outputs will be the outputs from another workspace originating from a [terraform_remote_state](https://developer.hashicorp.com/terraform/language/state/remote-state-data) data block. In the example above, you can access the outputs from the tenant workspace like this: `module.ctx.workspaces.tenant.id`, or the message from the configuration workspace like this: `module.ctx.workspaces.configuration.message`.
+
+## Terraform State Bucket Name 
+
+Normally every portal comes with it's own bucket for the terraform state. The name is easily guessable using the account id. Sometimes, the bucket is not the standard bucket and must be explicitly set using the `StateBucket` variable in the `AppConfig` for the portal. In your `portal` modules you can add the following to set the bucket name: 
+```terraform
+resource "duplocloud_admin_system_setting" "tf_bucket" {
+  key   = "StateBucket"
+  value = "my-tf-state-bucket-name"
+  type  = "AppConfig"
+}
+```
+This value corresponds with the `DUPLO_TF_BUCKET` environment variable and these two values should be the same. When this value is set, the module will use this to make references to other modules when using the `workspaces` variable. 
