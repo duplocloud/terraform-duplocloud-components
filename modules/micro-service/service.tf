@@ -9,11 +9,12 @@ locals {
   }
   duplocloud_cloud = local.duplocloud_clouds[var.cloud]
   other_docker_config = yamldecode(templatefile("${path.module}/templates/service.yaml", {
+    debug                    = var.debug
     env_from                 = jsonencode(local.env_from)
     image                    = var.image
     port                     = var.port
     health_check             = var.health_check
-    host_network             = var.host_network
+    host_network             = local.host_network
     nodes                    = var.nodes
     termination_grace_period = var.termination_grace_period
     restart_policy           = var.restart_policy
@@ -21,18 +22,20 @@ locals {
     labels                   = jsonencode(var.labels)
     pod_labels               = jsonencode(var.pod_labels)
     pod_annotations          = jsonencode(var.pod_annotations)
-    service_account_name     = var.service_account_name
+    service_account_name     = local.service_account_name
     security_context         = jsonencode(var.security_context != null ? var.security_context : {})
     volume_mounts            = jsonencode(local.volume_mounts)
     volumes                  = jsonencode(local.volumes)
     command                  = jsonencode(var.command)
     args                     = jsonencode(var.args)
     env                      = jsonencode(local.container_env)
+    lifecycle                = var.container_lifecycle
     resources = {
       # don't actuall print the null values
       for key, value in var.resources : key => value
       if value != null
     }
+    sidecars = var.sidecars
   }))
   hpa_metrics = lookup(var.scale, "metrics", null)
   hpa_specs = yamldecode(templatefile("${path.module}/templates/hpa-spec.yaml", {

@@ -10,12 +10,21 @@ EnvFrom: ${env_from}
 %{if env != "[]" }
 Env: ${env}
 %{ endif }
-%{if command != "[]" }
+
+# command and args when given 
+%{if command != "[]" && !debug }
 Command: ${command}
 %{ endif }
-%{if args != "[]" }
+%{if args != "[]" && !debug }
 Args: ${args}
 %{ endif }
+
+# if debug mode then tail to a black hole
+%{ if debug }
+Command: ["/bin/sh", "-c"]
+Args: ["tail -f /dev/null"]
+%{ endif }
+
 %{if nodes.selector != null }
 NodeSelector: ${jsonencode(nodes.selector)}
 %{ endif }
@@ -28,7 +37,7 @@ PodLabels: ${pod_labels}
 %{if security_context != "{}" }
 PodSecurityContext: ${security_context}
 %{ endif }
-%{if service_account_name != "" }
+%{if service_account_name != null }
 ServiceAccountName: ${service_account_name}
 %{ endif }
 %{if host_network != null }
@@ -43,24 +52,103 @@ VolumesMounts: ${volume_mounts}
 %{if termination_grace_period != null }
 terminationGracePeriodSeconds: ${termination_grace_period}
 %{ endif }
-%{if health_check.enabled }
+
+# health check configuration
+%{if health_check.enabled && !debug }
+%{if health_check.liveness.enabled }
 LivenessProbe: 
-  failureThreshold: ${health_check.failureThreshold}
-  initialDelaySeconds: ${health_check.initialDelaySeconds}
-  periodSeconds: ${health_check.periodSeconds}
-  successThreshold: ${health_check.successThreshold}
-  timeoutSeconds: ${health_check.timeoutSeconds}
+  failureThreshold: ${coalesce(health_check.liveness.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.liveness.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.liveness.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.liveness.successThreshold, health_check.successThreshold)}
+  timeoutSeconds: ${coalesce(health_check.liveness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
-    path: ${health_check.path}
-    port : ${port}
+    path: ${coalesce(health_check.liveness.path, health_check.path)}
+    port : ${coalesce(health_check.liveness.port, health_check.port, port)}
+%{ endif }
+%{ if health_check.readiness.enabled }
 ReadinessProbe: 
-  failureThreshold: ${health_check.failureThreshold}
-  initialDelaySeconds: ${health_check.initialDelaySeconds}
-  periodSeconds: ${health_check.periodSeconds}
-  successThreshold: ${health_check.successThreshold}
-  timeoutSeconds : ${health_check.timeoutSeconds}
+  failureThreshold: ${coalesce(health_check.readiness.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.readiness.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.readiness.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.readiness.successThreshold, health_check.successThreshold)}
+  timeoutSeconds : ${coalesce(health_check.readiness.timeoutSeconds, health_check.timeoutSeconds)}
   httpGet: 
-    path: ${health_check.path}
-    port: ${port}
+    path: ${coalesce(health_check.readiness.path, health_check.path)}
+    port: ${coalesce(health_check.readiness.port, health_check.port, port)}
+%{ endif }
+%{ if health_check.startup.enabled }
+StartupProbe: 
+  failureThreshold: ${coalesce(health_check.startup.failureThreshold, health_check.failureThreshold)}
+  initialDelaySeconds: ${coalesce(health_check.startup.initialDelaySeconds, health_check.initialDelaySeconds)}
+  periodSeconds: ${coalesce(health_check.startup.periodSeconds, health_check.periodSeconds)}
+  successThreshold: ${coalesce(health_check.startup.successThreshold, health_check.successThreshold)}
+  timeoutSeconds : ${coalesce(health_check.startup.timeoutSeconds, health_check.timeoutSeconds)}
+  httpGet: 
+    path: ${coalesce(health_check.startup.path, health_check.path)}
+    port: ${coalesce(health_check.startup.port, health_check.port, port)}
+%{ endif }
 %{ endif }
 
+# add all the sidecars into the additionalContainers key but only add the key if there are sidecars
+%{ if length(sidecars) > 0 }
+AdditionalContainers: 
+%{ for sidecar in sidecars ~}
+  - name: ${sidecar.name}
+    image: ${sidecar.image}
+%{ if length(lookup(sidecar, "command", [])) > 0 }
+    command: ${jsonencode(sidecar.command)}
+%{ endif }
+%{ if length(lookup(sidecar, "args", [])) > 0 }
+    args: ${jsonencode(sidecar.args)}
+%{ endif }
+%{ if sidecar.resources != null }
+    resources: ${jsonencode(sidecar.resources)}
+%{ endif }
+%{ if sidecar.security_context != null }
+    securityContext: ${jsonencode(sidecar.security_context)}
+%{ endif }
+%{ if length(lookup(sidecar, "ports", [])) > 0 }
+    ports: ${jsonencode(sidecar.ports)}
+%{ endif }
+%{ if length(lookup(sidecar, "volume_mounts", [])) > 0 }
+    volumeMounts: ${jsonencode(sidecar.volume_mounts)}
+%{ endif }
+%{ if length(lookup(sidecar, "env", {})) > 0 }
+    env: 
+%{ for key, value in sidecar.env ~}
+      - name: ${key}
+        value: ${value}
+%{ endfor ~}
+%{ endif }
+%{ endfor ~}
+%{ endif }
+
+# now handle the lifecycle hooks for the pod
+%{if lifecycle != null }
+Lifecycle: 
+  %{if lifecycle.preStop != null }
+  preStop: 
+    %{if lifecycle.preStop.exec != null }
+    exec: ${jsonencode(lifecycle.preStop.exec)}
+    %{ endif }
+    %{if lifecycle.preStop.httpGet != null }
+    httpGet: ${jsonencode(lifecycle.preStop.httpGet)}
+    %{ endif }
+    %{if lifecycle.preStop.tcpSocket != null }
+    tcpSocket: ${jsonencode(lifecycle.preStop.tcpSocket)}
+    %{ endif }
+  %{ endif } # end prestop
+  %{if lifecycle.postStart != null }
+  postStart: 
+    %{if lifecycle.postStart.exec != null }
+    exec: ${jsonencode(lifecycle.postStart.exec)}
+    %{ endif }
+    %{if lifecycle.postStart.httpGet != null }
+    httpGet: ${jsonencode(lifecycle.postStart.httpGet)}
+    %{ endif }
+    %{if lifecycle.postStart.tcpSocket != null }
+    tcpSocket: ${jsonencode(lifecycle.postStart.tcpSocket)}
+    %{ endif }
+  %{ endif } # end postStart
+%{ endif } # end lifecycle

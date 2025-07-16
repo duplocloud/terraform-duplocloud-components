@@ -1,8 +1,12 @@
+mock_provider "duplocloud" {
+  source = "../../mocks"
+}
+
 # only do plans here
 run "building_configurations" {
   command = plan
   variables {
-    tenant = "dev01"
+    tenant = "shared01"
     name   = "myapp"
     env = {
       FOO = "bar"

@@ -17,6 +17,12 @@ variable "release_id" {
   nullable    = true
 }
 
+variable "debug" {
+  description = "Set to true to enable debug mode. This will override the command and args and prevent the container from crashing. All the health probes will be disabled."
+  type        = bool
+  default     = false
+}
+
 variable "command" {
   description = "The command to run in the container. This is using kubernetes command syntax."
   type        = list(string)
@@ -48,9 +54,9 @@ variable "image" {
 
   If `uri` is set then this is used. Otherwise set the `repo`, `registry`, and `tag` to build the URI. If none of these values are set, then it's assumed the app name is the repo, the registry is docker.io, and the tag is latest, ie `docker.io/myapp:latest`.
 
-  The `pullPolicy` field determines how the image is pulled. It can be one of the following: `Always`, `IfNotPresent`, or `Never`.
+  The `pullPolicy` field determines how the image is pulled. It can be one of the following: `Always`, `IfNotPresent`, or `Never`. Default is `IfNotPresent`.
 
-  The `managed` field determines if the images is updated by Terraform or not. If it is not managed, the image will not be updated by Terraform and it's expected you are using the duploctl CLI to update the image.
+  The `managed` field determines if the images is updated by Terraform or not. If it is not managed, the image will not be updated by Terraform and it's expected you are using the duploctl CLI to update the image. Defaults to true.
   EOT
   type = object({
     uri        = optional(string, null)
@@ -123,6 +129,44 @@ variable "scale" {
   default = {}
 }
 
+variable "container_lifecycle" {
+  description = "The Kubernetes container lifecycle hooks. These are used to run commands at different stages of the container lifecycle."
+  type = object({
+    preStop = optional(object({
+      exec = optional(object({
+        command = list(string)
+      }), null)
+      httpGet = optional(object({
+        path   = string
+        port   = number
+        scheme = optional(string, "HTTP")
+      }), null)
+      tcpSocket = optional(object({
+        port = number
+      }), null)
+    }), null)
+    postStart = optional(object({
+      exec = optional(object({
+        command = list(string)
+      }), null)
+      httpGet = optional(object({
+        path   = string
+        port   = number
+        scheme = optional(string, "HTTP")
+      }), null)
+      tcpSocket = optional(object({
+        port = number
+      }), null)
+    }), null)
+  })
+  nullable = true
+  default  = null
+  # validation {
+  #   condition     = can(regex("^(HTTP|HTTPS)$", var.container_lifecycle.preStop.httpGet.scheme)) && can(regex("^(HTTP|HTTPS)$", var.container_lifecycle.postStart.httpGet.scheme))
+  #   error_message = "The scheme for httpGet must be 'HTTP' or 'HTTPS'"
+  # }
+}
+
 variable "restart_policy" {
   type    = string
   default = "Always"
@@ -179,7 +223,8 @@ variable "security_context" {
 variable "service_account_name" {
   description = "The service account name for the service"
   type        = string
-  default     = ""
+  default     = null
+  nullable    = true
 }
 
 variable "nodes" {
@@ -265,11 +310,42 @@ variable "health_check" {
   type = object({
     enabled             = optional(bool, true)
     path                = optional(string, "/")
+    port                = optional(number, null) # If not set, the port will be the service port
     failureThreshold    = optional(number, 3)
     initialDelaySeconds = optional(number, 15)
     periodSeconds       = optional(number, 20)
     successThreshold    = optional(number, 1)
     timeoutSeconds      = optional(number, 1)
+    liveness = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
+    readiness = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
+    startup = optional(object({
+      enabled             = optional(bool, true)
+      path                = optional(string, null)
+      port                = optional(number, null) # If not set, the port will be the service port
+      failureThreshold    = optional(number, null)
+      initialDelaySeconds = optional(number, null)
+      periodSeconds       = optional(number, null)
+      successThreshold    = optional(number, null)
+      timeoutSeconds      = optional(number, null)
+    }), {})
   })
   default = {}
 }
@@ -424,4 +500,56 @@ variable "termination_grace_period" {
   description = "The amount of time to wait, in seconds, for pod activity to terminate gracefully after shutdown signal"
   type        = number
   default     = null
+}
+
+variable "sidecars" {
+  description = <<EOT
+  Sidecars for the service. These are additional containers that run alongside the main container in the pod.
+
+  The `name` field is the name of the sidecar.
+
+  The `image` field is the image to use for the sidecar. If the field is not set, the image will be "duplocloud/sidecar:latest".
+
+  The `command` field is the command to run in the sidecar. If the field is not set, the command will be an empty list.
+
+  The `args` field is the arguments to pass to the command. If the field is not set, the args will be an empty list.
+
+  The `env` field is a map of environment variables to set on the sidecar. If the field is not set, the env will be an empty map.
+
+  The `resources` field is a map of resource requests and limits for the sidecar. If the field is not set, the resources will be an empty map.
+
+  The `security_context` field is an object with run_as_user, run_as_group, and fs_group fields. If the field is not set, it will be null.
+
+  The `ports` field is a list of ports to expose on the sidecar. If the field is not set, the ports will be an empty list.
+
+  The `volume_mounts` field is a list of volume mounts to add to the sidecar. If the field is not set, the volume mounts will be an empty list.
+  EOT
+  type = set(object({
+    name    = string
+    image   = string
+    command = optional(list(string), [])
+    args    = optional(list(string), [])
+    env     = optional(map(string), {})
+    resources = optional(object({
+      requests = optional(map(string))
+      limits   = optional(map(string))
+    }), null)
+    security_context = optional(object({
+      run_as_user  = optional(number, null)
+      run_as_group = optional(number, null)
+      fs_group     = optional(number, null)
+    }), null)
+    ports = optional(list(object({
+      name          = string
+      containerPort = number
+      protocol      = optional(string, "TCP")
+    })), [])
+    volume_mounts = optional(list(object({
+      name      = string
+      mountPath = string
+      readOnly  = optional(bool, false)
+      subPath   = optional(string, null)
+    })), [])
+  }))
+  default = []
 }

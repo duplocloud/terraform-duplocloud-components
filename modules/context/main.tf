@@ -1,11 +1,19 @@
 locals {
-  system         = jsondecode(data.http.duplo_system.response_body)
-  infra_name     = var.infra != null ? var.infra : local.tenant != null ? local.tenant.plan_id : null
-  tenant         = var.tenant != null ? data.duplocloud_tenant.this[0] : null
-  host           = data.external.duplo_creds.result.host
-  token          = sensitive(data.external.duplo_creds.result.token)
-  tfstate_bucket = "duplo-tfstate-${local.account_id}"
-
+  system                 = jsondecode(data.http.duplo_system.response_body)
+  infra_name             = var.infra != null ? var.infra : local.tenant != null ? local.tenant.plan_id : null
+  tenant                 = var.tenant != null ? data.duplocloud_tenant.this[0] : null
+  host                   = data.external.duplo_creds.result.host
+  token                  = sensitive(data.external.duplo_creds.result.token)
+  default_tfstate_bucket = "duplo-tfstate-${local.account_id}"
+  # local.system.AppConfigs is a list of objects and we want to find the one where the key is 'TerraformBucket' and return the value
+  tfstate_bucket = coalesce(
+    var.state_bucket,
+    try(one([
+      for config in local.system.AppConfigs : config.Value
+      if config.Key == "StateBucket"
+    ]), null),
+    local.default_tfstate_bucket
+  )
 
   ##
   # Discover the cloud we are on and try and get the id for this duplo instance

@@ -4,15 +4,27 @@ locals {
   release_id          = random_string.release_id.id
   image_uri           = var.image.uri != null ? var.image.uri : "${var.image.registry}/${coalesce(var.image.repo, var.name)}:${var.image.tag}"
   release_header_name = "X-Access-Control"
+  cloud               = lower(var.cloud)
+  host_network = var.host_network != null ? var.host_network : (
+    local.cloud == "gcp" ? false : null
+  )
+  service_account_name = (
+    var.service_account_name != null ? var.service_account_name : (
+      local.cloud == "gcp" ? "${local.namespace}-app-user" : null
+    )
+  )
   volumes = concat([
     for config in module.configurations : config.volume if config.volume != null
     ], [
     # TODO pvc volume
   ], jsondecode(var.volumes_json))
-  volume_mounts = concat([
-    for config in module.configurations : config.volumeMount
-    if config.volumeMount != null
-  ], var.volume_mounts)
+  volume_mounts = concat(
+    var.volume_mounts,
+    flatten([
+      for config in module.configurations : config.volumeMounts
+      if config.volumeMounts != null
+    ])
+  )
   # for each key value in var.env make a list of objects with name and value
   container_env = [
     for key, value in var.env : {
