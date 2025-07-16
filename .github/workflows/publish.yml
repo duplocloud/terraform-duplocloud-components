@@ -77,7 +77,7 @@ jobs:
       env:
         RELEASE_NOTES: ${{ steps.bump.outputs.release-notes }}
       run: |
-        cat <<EOF > $GITHUB_STEP_SUMMARY
+        cat <<"EOF" > $GITHUB_STEP_SUMMARY
         ${{ steps.registry.outputs.badge }} [![Release](https://img.shields.io/badge/Github-Release-blue?style=flat-square&logo=github)](${{ steps.release.outputs.url || '' }})
         New Version: ${{ steps.bump.outputs.version }}
         Previous Version: ${{ steps.bump.outputs.previous-version }}
