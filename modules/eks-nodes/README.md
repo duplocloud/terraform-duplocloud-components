@@ -22,7 +22,7 @@ module "nodegroup" {
 
 ## Notes on upgrading from v0.0.39 to v0.0.40+
 
-1) _*Requires*_ that a new resource be created. Updating the old resource will send TF into a dependency loop. To upgrade, create a new ASG side-by-side with the old one, just on the new version.
+1) _**Requires**_ that a new resource be created. Updating the old resource will send TF into a dependency loop. To upgrade, create a new ASG side-by-side with the old one, just on the new version.
 2) Node counts will change after upgrade if using multiple AZs. This is due to the ASGs being 1:1 with AZs. Previous versions could not be cross-AZ, thus leading to us making ASG-A, ASG-B, etc. This meant that setting min_instance_count to 2 would result in 4 minimum, 2 for each ASG. This will no longer be the case, because the new ASGs are cross-AZ. In the same example, min_instance_count as 2 would result in 2 minimum actual, instead of 4. If you still want ASG-A and ASG-B, just create 2 versions of the resource and name them as such.
 3) Initial ASG creation will take extra time to come up in full. With the way the `duplocloud_asg_instance_refresh` resource functions, it starts an instance refresh as soon as the ASG is created. This can be avoided by turning the feature off when creating, then flipping it on later, though flipping it on does trigger an instance refresh.
 4) Default instance warmup variable is set(currently) to a conservative 5 minutes. This is fairly app-specific, but some time is needed for clean rollovers.
