@@ -1,10 +1,15 @@
-variable "tenant_name" {
+variable "tenant" {
   type = string
 }
 
 variable "name" {
   description = "The name of the lambda"
   type        = string
+}
+
+variable "description" {
+  type    = string
+  default = "Duplocloud Rocks"
 }
 
 variable "package_type" {
@@ -30,11 +35,6 @@ variable "image" {
   })
 }
 
-variable "description" {
-  type    = string
-  default = "Duplocloud Rocks"
-}
-
 variable "timeout" {
   description = "The timeout for the lambda"
   default     = 600
@@ -57,7 +57,7 @@ variable "tracing_mode" {
   }
 }
 
-variable "environment" {
+variable "env" {
   description = "The environment variables for the lambda"
   type        = map(string)
   default     = {}
