@@ -9,7 +9,7 @@ Here is a simple example used often.
 ```hcl
 module "nodegroup" {
   source             = "duplocloud/components/duplocloud//modules/eks-nodes"
-  version            = "0.0.5"
+  version            = "0.0.41"
   tenant_id          = local.tenant_id
   capacity           = var.asg_capacity
   eks_version        = local.eks_version
@@ -19,6 +19,16 @@ module "nodegroup" {
   os_disk_size       = var.asg_os_disk_size
 }
 ```
+
+## Notes on upgrading from v0.0.39 to v0.0.40+
+
+1) _**Requires**_ that a new resource be created. Updating the old resource will send TF into a dependency loop. To upgrade, create a new ASG side-by-side with the old one, just on the new version.
+2) Node counts will change after upgrade if using multiple AZs. This is due to the ASGs being 1:1 with AZs. Previous versions could not be cross-AZ, thus leading to us making ASG-A, ASG-B, etc. This meant that setting min_instance_count to 2 would result in 4 minimum, 2 for each ASG. This will no longer be the case, because the new ASGs are cross-AZ. In the same example, min_instance_count as 2 would result in 2 minimum actual, instead of 4. If you still want ASG-A and ASG-B, just create 2 versions of the resource and name them as such.
+3) Initial ASG creation will take extra time to come up in full. With the way the `duplocloud_asg_instance_refresh` resource functions, it starts an instance refresh as soon as the ASG is created. This can be avoided by turning the feature off when creating, then flipping it on later, though flipping it on does trigger an instance refresh.
+4) Default instance warmup variable is set(currently) to a conservative 5 minutes. This is fairly app-specific, but some time is needed for clean rollovers.
+5) Prefix is now what the ASG ends in, field kept for compatibility's sake. If prefix is `apps-` the ASG will be named `duploservices-test-apps-` going forward. Users can take the - off to avoid making the name look weird. (as of duplo provider version 0.11.13+, ASG name ends in a timestamp, as `ddmmyyyyhhmmss`, so that same prefix will result in `duploservices-asg-test-apps-23072025092143` as an example)
+6) Rollover is on by default, set to 5 minutes warmup time. Can be turned off with use_auto_refresh variable.
+7) Use variables min_healthy_percentage, max_healthy_percentage, and instance_warmup_seconds to adjust the rollover.
 
 ## Testing  
 
