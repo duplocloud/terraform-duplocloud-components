@@ -3,14 +3,15 @@ resource "duplocloud_duplo_service_lbconfigs" "this" {
   tenant_id                   = local.tenant.id
   replication_controller_name = var.name
   lbconfigs {
-    lb_type          = local.duplo_type.id
-    is_native        = false
-    is_internal      = var.internal
-    port             = var.port
-    external_port    = local.is_ingress ? var.port : local.external_port
-    certificate_arn  = var.certificate
-    protocol         = local.protocol
-    health_check_url = var.health_check_url
+    lb_type                  = local.duplo_type.id
+    is_native                = false
+    is_internal              = var.internal
+    port                     = var.port
+    external_port            = local.is_ingress ? var.port : local.external_port
+    certificate_arn          = var.certificate
+    protocol                 = local.protocol
+    health_check_url         = var.health_check_url
+    set_ingress_health_check = var.set_ingress_health_check
     # backend_protocol_version = "HTTP1"
   }
   lifecycle {
