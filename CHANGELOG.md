@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.
+
 ## [0.0.41] - 2025-07-16
 
 ### Configuration Module 
