@@ -11,6 +11,17 @@ on:
     - modules/**
 
 jobs:
+
+  changelog_check:
+    name: Changelog Updated
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+    - name: Make sure changes are logged
+      uses: tarides/changelog-check-action@v3
+      with:
+        changelog: CHANGELOG.md
+
   tf_module_test:
     name: Test
     uses: duplocloud/actions/.github/workflows/test-tf-modules.yml@main
