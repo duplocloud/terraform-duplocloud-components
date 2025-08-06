@@ -14,7 +14,7 @@ module "loadbalancer" {
   dns_prfx                 = var.lb.dns_prfx
   internal                 = var.lb.internal
   health_check_url         = var.health_check.path
-  set_ingress_health_check = var.set_ingress_health_check
+  set_ingress_health_check = var.health_check.set_ingress_health_check
   annotations = merge(
     var.lb.annotations,
     var.lb.release_header ? {

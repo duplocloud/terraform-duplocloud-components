@@ -306,16 +306,19 @@ variable "health_check" {
 
   The `path` field will determine the path that the health check will use. If the field is not set, the path will be "/".
 
+  The `set_ingress_health_check` needs to be set to true if you have a single ingress fronting multiple clusterip services with healthchecks other than "/"
+  
   EOT
   type = object({
-    enabled             = optional(bool, true)
-    path                = optional(string, "/")
-    port                = optional(number, null) # If not set, the port will be the service port
-    failureThreshold    = optional(number, 3)
-    initialDelaySeconds = optional(number, 15)
-    periodSeconds       = optional(number, 20)
-    successThreshold    = optional(number, 1)
-    timeoutSeconds      = optional(number, 1)
+    enabled                  = optional(bool, true)
+    path                     = optional(string, "/")
+    set_ingress_health_check = optional(bool, false)
+    port                     = optional(number, null) # If not set, the port will be the service port
+    failureThreshold         = optional(number, 3)
+    initialDelaySeconds      = optional(number, 15)
+    periodSeconds            = optional(number, 20)
+    successThreshold         = optional(number, 1)
+    timeoutSeconds           = optional(number, 1)
     liveness = optional(object({
       enabled             = optional(bool, true)
       path                = optional(string, null)
@@ -571,10 +574,4 @@ variable "sidecars" {
     })), [])
   }))
   default = []
-}
-
-variable "set_ingress_health_check" {
-  description = "Enable the k8s service level health check annotation for multi-service ingress"
-  default     = false
-  type        = bool
 }
