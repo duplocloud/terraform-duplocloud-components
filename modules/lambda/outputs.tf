@@ -1,14 +1,14 @@
 output "name" {
   description = "The name of the Lambda function"
-  value       = aws_lambda_function.this.name
+  value       = duplocloud_aws_lambda_function.this.name
 }
 
 output "fullname" {
   description = "The full name of the Lambda function"
-  value       = aws_lambda_function.this.fullname
+  value       = duplocloud_aws_lambda_function.this.fullname
 }
 
 output "arn" {
   description = "The ARN of the Lambda function"
-  value       = aws_lambda_function.this.arn
+  value       = duplocloud_aws_lambda_function.this.arn
 }
