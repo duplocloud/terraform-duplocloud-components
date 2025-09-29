@@ -20,3 +20,28 @@ module "components" {
   version = "0.0.22"
 }
 ```
+
+## Terraform Modules Index
+
+| Module | Description |
+|--------|-------------|
+| [api-gateway](modules/api-gateway/README.md) | |
+| [compose](modules/compose/README.md) | |
+| [configuration](modules/configuration/README.md) | Builds configuration for an application in several ways (configmap, secret, aws-secret, aws-ssm). |
+| [context](modules/context/README.md) | Provides useful outputs and context variables to speed up DuploCloud development. |
+| [eks-nodes](modules/eks-nodes/README.md) | Creates DuploCloud EKS hosts for a tenant with HA setup and optional ASG refresh. |
+| [env-file](modules/env-file/README.md) | |
+| [gamelift-build](modules/gamelift-build/README.md) | Creates a Gamelift build from an S3 artifact and a fleet with the build. |
+| [infrastructure](modules/infrastructure/README.md) | |
+| [lambda](modules/lambda/README.md) | |
+| [loadbalancer](modules/loadbalancer/README.md) | |
+| [micro-service](modules/micro-service/README.md) | Creates a Duplo service with a single service and optional load balancer. |
+| [mongodb](modules/mongodb/README.md) | |
+| [retool-bastion](modules/retool-bastion/README.md) | Sets up a bastion server for Retool to access private resources like databases. |
+| [tenant](modules/tenant/README.md) | |
+| [tenant-gh](modules/tenant-gh/README.md) | |
+| [tenant-gh-aws](modules/tenant-gh-aws/README.md) | |
+| [tenant-role-extension](modules/tenant-role-extension/README.md) | |
+| [website-gcp](modules/website-gcp/README.md) | |
+
+
