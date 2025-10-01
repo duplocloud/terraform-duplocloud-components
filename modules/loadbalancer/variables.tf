@@ -99,6 +99,12 @@ variable "health_check_url" {
   default     = "/"
 }
 
+variable "set_ingress_health_check" {
+  description = "Enable the k8s service level health check annotation for multi-service ingress"
+  default     = false
+  type        = bool
+}
+
 variable "internal" {
   description = "If the load balancer is internal or not."
   type        = bool
