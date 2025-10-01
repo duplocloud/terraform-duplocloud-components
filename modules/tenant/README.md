@@ -1,7 +1,13 @@
 # Tenant Module 
 
-Creates a tenant within an infrastructure. You can set some settings too. Try one of the variants to use different providers integrated into it. 
+Creates a tenant within an infrastructure. You can set some settings too. Try one of the variants to use different providers integrated into it. This module can be viewed as a box for creating any resource that would happen on a once per tenant basis.
 
 ## Variants  
 
-- [AWS and Github Tenant](../tenant-gh-aws/)
+- [AWS and Github Tenant](../tenant-gh-aws/) - Integrates Github Action Environments and an AWS Policy on a per tenant basis. 
+
+## References
+
+- [Duplocloud Docs for Tenants](https://docs.duplocloud.com/docs/welcome-to-duplocloud/application-focused-interface-duplocloud-architecture/duplocloud-common-components/tenant)
+- [Duploctl CLI Command](https://cli.duplocloud.com/Tenant/)
+- [Duplocloud Terraform Provider Tenant Resource](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/tenant)
