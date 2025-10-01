@@ -56,6 +56,21 @@ variable "metadata" {
   description = "Metadata to apply to the Duplo Minions"
   default     = {}
 }
+variable "asg_taints" {
+  description = "List of taints to apply on the ASG nodes. Each taint requires a key, value, and effect (NoSchedule, PreferNoSchedule, or NoExecute)."
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  default = [
+    {
+      key    = "tk1"
+      value  = "tv2"
+      effect = "NoSchedule"
+    }
+  ]
+}
 variable "asg_ami" {
   default     = null
   description = "Set AMI to static value"
