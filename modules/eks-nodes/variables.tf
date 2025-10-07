@@ -63,13 +63,7 @@ variable "asg_taints" {
     value  = string
     effect = string
   }))
-  default = [
-    {
-      key    = "tk1"
-      value  = "tv2"
-      effect = "NoSchedule"
-    }
-  ]
+  default = []
 }
 variable "asg_ami" {
   default     = null
