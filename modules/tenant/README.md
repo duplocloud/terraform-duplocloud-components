@@ -14,17 +14,15 @@ Creates a tenant within an infrastructure. You can set some settings too. Try on
 
 
 
-## Import tenant to tenant-gh
+## Switching tenant module types
 
-If your tenant module is using regular `tenant` source, add the following import/move blocks while switching to `tenant-gh` OR you can do the other way around as well
+For example, If your tenant module is using regular `tenant` source, add the following import/move blocks while switching to `tenant-gh` OR you can do the other way around as well
 
 ```
 source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
 
+# NOTE: See examples folder for tenant-type
 ```
-
-
-See examples folder for tenant2tenant-gh 
 
 ```
 moved {
