@@ -19,7 +19,7 @@ Creates a tenant within an infrastructure. You can set some settings too. Try on
 If your tenant module is using regular tenant, add the following import/move blocks while switching to tenant-gh OR you can do the other way around as well
 
 ```
-duplocloud/components/duplocloud//modules/tenant-gh  >-->  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
+source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
 
 see: examples folder for tenant2tenant-gh
 ```
