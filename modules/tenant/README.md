@@ -21,7 +21,7 @@ If your tenant module is using regular `tenant` source, add the following import
 ```
 source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
 
-see: examples folder for tenant2tenant-gh
+NOTE: see examples folder for tenant2tenant-gh
 ```
 
 
