@@ -17,6 +17,6 @@ This module is a combination of the following submodules so that Github, AWS, an
 
 
 > [!IMPORTANT]  
-> See examples folder for tenant2tenant-gh 
+> See examples folder for tenant2tenant-gh   
 > [Import tenant to tenant-gh](https://github.com/duplocloud/terraform-duplocloud-components/blob/gcp-round2/modules/tenant/README.md#import-tenant-to-tenant-gh)  
 
