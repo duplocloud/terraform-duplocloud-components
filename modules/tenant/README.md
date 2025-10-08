@@ -39,5 +39,5 @@ moved {
 
 
 
-## [Import tenant to tenant-gh](https://github.com/duplocloud/terraform-duplocloud-components/blob/gcp-round2/modules/tenant/README.md#import-tenant-to-tenant-gh)
+
 
