@@ -24,7 +24,7 @@ source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocl
 ```
 
 
-
+See examples folder for tenant2tenant-gh 
 
 ```
 moved {

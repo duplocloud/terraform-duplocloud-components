@@ -9,14 +9,11 @@ As this is a mashup it requires the following fully authenticated providers.
 - [`duplocloud`](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs) - The Duplocloud provider.
 - [`github`](https://registry.terraform.io/providers/integrations/github/latest/docs) - The Github provider.
 
+
 ## Submodules 
 
-This module is a combination of the following submodules so that Github, AWS, and Duplocloud can all be synchronized together. The github integration is baked into this one. 
-
-- [tenant](../tenant/README.md)
-
+This module is a combination of the following submodules so that Github, AWS, and Duplocloud  [tenant](../tenant/README.md) can all be synchronized together. The github integration is baked into this one. 
 
 > [!IMPORTANT]  
-> See examples folder for tenant2tenant-gh   
-> [Import tenant to tenant-gh](https://github.com/duplocloud/terraform-duplocloud-components/blob/gcp-round2/modules/tenant/README.md#import-tenant-to-tenant-gh)  
+> [Import tenant to tenant-gh](../tenant/README.md#import-tenant-to-tenant-gh)  
 
