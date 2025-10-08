@@ -14,3 +14,28 @@ As this is a mashup it requires the following fully authenticated providers.
 This module is a combination of the following submodules so that Github, AWS, and Duplocloud can all be synchronized together. The github integration is baked into this one. 
 
 - [tenant](../tenant/README.md)
+
+
+## Import tenant to tenant-gh
+
+If you tenant module is using regular tenant below, add the following import/move blocks while switching to tenant-gh
+
+```
+duplocloud/components/duplocloud//modules/tenant-gh  >--> source  = "duplocloud/components/duplocloud//modules/tenant-gh"
+```
+
+
+```
+moved {
+  from = module.tenant.duplocloud_tenant.this
+  to   = module.tenant.module.tenant.duplocloud_tenant.this
+}
+
+moved {
+  from = module.tenant.duplocloud_tenant_config.this
+  to   = module.tenant.module.tenant.duplocloud_tenant_config.this
+}
+```
+
+
+
