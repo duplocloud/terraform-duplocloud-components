@@ -23,8 +23,7 @@ source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocl
 
 ```
 
-> [!IMPORTANT]  
-> See examples folder for tenant2tenant-gh 
+
 
 
 ```
