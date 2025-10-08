@@ -15,6 +15,6 @@ As this is a mashup it requires the following fully authenticated providers.
 This module is a combination of the following submodules so that Github, AWS, and Duplocloud  [tenant](../tenant/README.md) can all be synchronized together. The github integration is baked into this one. 
 
 > [!IMPORTANT]  
-> See this if need to migrate `tenant` to `tenant-gh`   
+> See this if need to migrate `tenant` to `tenant-gh`.   
 > [Move tenant to tenant-gh](../tenant/README.md#import-tenant-to-tenant-gh)  
 
