@@ -127,3 +127,11 @@ Default: `"custom-policy"`
 No outputs.
 <!-- END_TF_DOCS -->
 
+
+## Submodules
+
+This module is a combination of the following submodules so that Github, AWS, and Duplocloud  [tenant](../tenant/README.md) can all be synchronized together. The github integration is baked into this one. 
+
+> [!IMPORTANT]  
+> See this if need to migrate `tenant` to `tenant-role-extension`.   
+> [Move tenant to tenant-gh](../tenant/README.md#import-tenant-to-tenant-gh) 
