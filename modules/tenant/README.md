@@ -11,3 +11,26 @@ Creates a tenant within an infrastructure. You can set some settings too. Try on
 - [Duplocloud Docs for Tenants](https://docs.duplocloud.com/docs/welcome-to-duplocloud/application-focused-interface-duplocloud-architecture/duplocloud-common-components/tenant)
 - [Duploctl CLI Command](https://cli.duplocloud.com/Tenant/)
 - [Duplocloud Terraform Provider Tenant Resource](https://registry.terraform.io/providers/duplocloud/duplocloud/latest/docs/resources/tenant)
+
+
+
+## Import tenant to tenant-gh
+
+If your tenant module is using regular tenant add the following import/move blocks while switching to tenant-gh
+
+```
+duplocloud/components/duplocloud//modules/tenant-gh  >-->  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
+```
+
+
+```
+moved {
+  from = module.tenant.duplocloud_tenant.this
+  to   = module.tenant.module.tenant.duplocloud_tenant.this
+}
+
+moved {
+  from = module.tenant.duplocloud_tenant_config.this
+  to   = module.tenant.module.tenant.duplocloud_tenant_config.this
+}
+```
