@@ -38,7 +38,7 @@ moved {
 }
 
 
-# NOTE: these blocks can be removed if applied for all needed tenants 
+# NOTE: these blocks can be removed after applied for all needed tenants 
 ```
 
 
