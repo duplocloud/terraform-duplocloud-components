@@ -21,7 +21,7 @@ If your tenant module is using regular `tenant` source, add the following import
 ```
 source = duplocloud/components/duplocloud//modules/tenant  >  source  = "duplocloud/components/duplocloud//modules/tenant-gh"
 
-NOTE: see examples folder for tenant2tenant-gh
+# NOTE: see examples folder for tenant2tenant-gh
 ```
 
 
@@ -34,7 +34,11 @@ moved {
 moved {
   from = module.tenant.duplocloud_tenant_config.this
   to   = module.tenant.module.tenant.duplocloud_tenant_config.this
+
 }
+
+
+NOTE: these blocks can be removed if applied for all needed tenants 
 ```
 
 
