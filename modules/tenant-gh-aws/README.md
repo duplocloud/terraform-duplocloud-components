@@ -16,4 +16,4 @@ This module is a combination of the following submodules so that Github, AWS, an
 
 > [!IMPORTANT]  
 > See this if need to migrate `tenant` to `tenant-gh-aws`.   
-> [Move tenant to tenant-aws](../tenant/README.md#import-tenant-to-tenant-gh)  
+> [Move tenant to tenant-aws](../tenant/README.md#switching-tenant-module-type)  

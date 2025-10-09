@@ -14,7 +14,7 @@ Creates a tenant within an infrastructure. You can set some settings too. Try on
 
 
 
-## Switching tenant module types
+## Switching tenant module type
 
 For example, If your tenant module is using regular `tenant` source, add the following import/move blocks while switching to `tenant-gh` OR you can do the other way around as well
 
