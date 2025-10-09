@@ -1,3 +1,4 @@
+## this helps to move a tenant module to another
 module "tenant" {
   # source  = "duplocloud/components/duplocloud//modules/tenant"
   source  = "duplocloud/components/duplocloud//modules/tenant-gh"
