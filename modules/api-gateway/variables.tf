@@ -7,13 +7,13 @@ variable "name" {
   type        = string
 }
 
-variable "type" {
-  description = "The type of api gateway"
+variable "class" {
+  description = "The class of api gateway"
   type        = string
   default     = "http"
   validation {
-    condition     = contains(["http", "rest", "socket"], var.type)
-    error_message = "Allowed values for input_parameter are http, rest, socket"
+    condition     = contains(["http", "rest", "rest-private", "socket"], var.class)
+    error_message = "Allowed values for input_parameter are http, rest, rest-private, socket"
   }
 }
 
@@ -49,20 +49,27 @@ variable "enable_private_link" {
   default     = false
 }
 
-variable "cert_name" {
-  description = "The name of the certificate"
-  type        = string
-}
-
 variable "vpc_link_targets" {
   description = "The list of vpc link targets when type is not http, ie rest, private-rest, or socket"
   type        = list(string)
   default     = []
 }
 
-variable "subdomain" {
-  description = "The subdomain as the prefix on the base domain"
-  type        = string
-  nullable    = true
-  default     = null
+variable "mappings" {
+  description = <<EOT
+Defines a list of mapping objects for API Gateway configuration.
+
+Fields:
+  - domain (string, required): The domain name for the mapping. If a simple DNS-style name (without dots) is provided, the domain will be looked up automatically.
+  - external (bool, optional, default false): Indicates if the domain is pre-existing. If true, no new domain will be created for this mapping.
+  - cert (string, optional, default null): Certificate name or ARN to use when creating a new domain. Only applicable when external is false; if a name is provided, it will be looked up.
+  - path (string, optional, default null): Specifies the path for REST gateways or the mapping key for HTTP gateways.
+EOT
+  type = list(object({
+    external = optional(bool, false)
+    cert     = optional(string, null)
+    domain   = string
+    path     = optional(string, null)
+  }))
+  default = []
 }
