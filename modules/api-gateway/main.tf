@@ -2,9 +2,9 @@
 locals {
 
   # names 
-  shortname = "${var.tenant_name}-${var.name}"
+  shortname = "${var.tenant}-${var.name}"
   fullname  = "duplo-${local.shortname}"
-  namespace = "duploservices-${var.tenant_name}"
+  namespace = "duploservices-${var.tenant}"
 
   # context for placement so we know the region and security groups
   sg_infra = tolist(data.duplocloud_infrastructure.this.security_groups)
@@ -15,7 +15,7 @@ locals {
   managed_domains = {
     for mapping in var.mappings : mapping.domain => {
       # any dots at all means we have an FQDN, if none then we append the base domain
-      domain_name = contains(mapping.domain, ".") ? mapping.domain : "${mapping.domain}${local.base_domain}"
+      domain_name = strcontains(mapping.domain, ".") ? mapping.domain : "${mapping.domain}${local.base_domain}"
       cert        = mapping.cert
       do_cert_lookup = (
         !(length(
@@ -24,6 +24,9 @@ locals {
       )
     }
     if !mapping.external
+  }
+  mappings = {
+    for mapping in var.mappings : mapping.domain => mapping
   }
 
   # all of the IDs we need
@@ -38,7 +41,7 @@ locals {
   body_vars = merge(var.openapi_variables, {
     AWS_ACCOUNT_ID = local.account_id
     AWS_REGION     = local.region
-    DUPLO_TENANT   = var.tenant_name
+    DUPLO_TENANT   = var.tenant
   })
   body_text = (var.body != null ? var.body :
     var.openapi_file == null ? file("${path.module}/openapi.yaml") :
@@ -59,8 +62,8 @@ locals {
 
   # common duplocloud base tags
   base_tags = {
-    TENANT_NAME   = var.tenant_name
-    duplo-project = var.tenant_name
+    TENANT_NAME   = var.tenant
+    duplo-project = var.tenant
   }
 
   # make the classes for default values
@@ -88,7 +91,7 @@ locals {
 data "duplocloud_aws_account" "this" {}
 
 data "duplocloud_tenant" "this" {
-  name = var.tenant_name
+  name = var.tenant
 }
 
 data "duplocloud_infrastructure" "this" {

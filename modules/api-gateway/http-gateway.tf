@@ -1,7 +1,7 @@
 resource "aws_apigatewayv2_api" "this" {
   count         = local.class.version == "v2" ? 1 : 0
   name          = local.fullname
-  description   = "Gateway for ${var.name} within ${var.tenant_name}"
+  description   = "Gateway for ${var.name} within ${var.tenant}"
   protocol_type = "HTTP"
   body          = yamlencode(local.body)
   tags          = local.base_tags
@@ -22,7 +22,7 @@ resource "aws_apigatewayv2_api" "this" {
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
   count = local.class.version == "v2" ? 1 : 0
-  name  = "/${var.tenant_name}/gateway/${var.name}"
+  name  = "/${var.tenant}/gateway/${var.name}"
   tags  = local.base_tags
 }
 
@@ -54,7 +54,7 @@ resource "aws_apigatewayv2_vpc_link" "this" {
   count = local.class.version == "v2" && var.enable_private_link ? 1 : 0
   name  = local.fullname
   security_group_ids = [
-    local.sg_infra[index(local.sg_infra[*].name, "duplo-allhosts")].id,
+    local.sg_infra[index(local.sg_infra[*].name, "${local.plan_id}-duplo-allhosts")].id,
     data.aws_security_group.tenant.id
   ]
   subnet_ids = data.duplocloud_tenant_internal_subnets.this.subnet_ids
@@ -74,7 +74,7 @@ resource "aws_apigatewayv2_domain_name" "this" {
 }
 
 resource "aws_apigatewayv2_api_mapping" "this" {
-  for_each        = local.class.version == "v2" ? var.mappings : {}
+  for_each        = local.class.version == "v2" ? local.mappings : {}
   api_id          = aws_apigatewayv2_api.this[0].id
   domain_name     = each.value.external ? each.value.domain_name : aws_apigatewayv2_domain_name.this[each.key].id
   stage           = aws_apigatewayv2_stage.default[0].id
@@ -87,9 +87,9 @@ resource "aws_apigatewayv2_api_mapping" "this" {
 ##
 resource "aws_route53_record" "http_gateway" {
   for_each = aws_apigatewayv2_domain_name.this
-  name    = each.value.domain_name
-  type    = "A"
-  zone_id = local.zone_id
+  name     = each.value.domain_name
+  type     = "A"
+  zone_id  = local.zone_id
   alias {
     name                   = each.value.domain_name_configuration[0].target_domain_name
     zone_id                = each.value.domain_name_configuration[0].hosted_zone_id

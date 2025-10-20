@@ -1,5 +1,6 @@
-variable "tenant_name" {
-  type = string
+variable "tenant" {
+  description = "The Duplo tenant name."
+  type        = string
 }
 
 variable "name" {
@@ -65,7 +66,7 @@ Fields:
   - cert (string, optional, default null): Certificate name or ARN to use when creating a new domain. Only applicable when external is false; if a name is provided, it will be looked up.
   - path (string, optional, default null): Specifies the path for REST gateways or the mapping key for HTTP gateways.
 EOT
-  type = list(object({
+  type = set(object({
     external = optional(bool, false)
     cert     = optional(string, null)
     domain   = string

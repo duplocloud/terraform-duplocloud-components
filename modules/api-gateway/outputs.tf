@@ -5,7 +5,7 @@ output "id" {
 
 output "arn" {
   description = "The ARN of the API Gateway"
-  value = local.api.arn
+  value       = local.api.arn
 }
 
 output "domains" {
