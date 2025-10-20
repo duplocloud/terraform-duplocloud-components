@@ -1,9 +1,8 @@
 resource "aws_api_gateway_rest_api" "this" {
   count = local.class.version == "v1" ? 1 : 0
   name  = local.fullname
-
   endpoint_configuration {
-    types = ["REGIONAL"]
+    types = [local.class.type]
   }
   body = yamlencode(local.body)
   lifecycle {

@@ -72,18 +72,22 @@ locals {
     http = {
       version = "v2"
       private = false
+      type    = "HTTP"
     }
     rest = {
       version = "v1"
-      private = false
+      type = "REGIONAL"
     }
     rest-private = {
       version = "v1"
-      private = true
+      type = "PRIVATE"
+    }
+    rest-edge = {
+      version = "v1"
+      type = "EDGE"
     }
     websocket = {
       version = "v1"
-      private = false
     }
   }
 }
