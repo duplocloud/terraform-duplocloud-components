@@ -51,7 +51,7 @@ resource "aws_api_gateway_base_path_mapping" "this" {
   for_each    = local.class.version == "v1" ? local.mappings : {}
   api_id      = aws_api_gateway_rest_api.this[0].id
   stage_name  = aws_api_gateway_stage.default[0].stage_name
-  domain_name = each.value.external ? each.value.domain_name : aws_api_gateway_domain_name.this[each.key].domain_name
+  domain_name = each.value.external ? each.value.domain : aws_api_gateway_domain_name.this[each.key].domain_name
   base_path   = each.value.path
 }
 
