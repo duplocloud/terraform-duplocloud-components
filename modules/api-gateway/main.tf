@@ -53,7 +53,7 @@ locals {
     for path, methods in local.body.paths : [
       for method, details in methods : {
         path        = path
-        method      = upper(method)
+        method      = method == "x-amazon-apigateway-any-method" ? "*" : upper(method)
         integration = details["x-amazon-apigateway-integration"]
         name        = regex("function:([^/]+)", details["x-amazon-apigateway-integration"].uri)[0]
       } if can(regex("arn:aws:lambda", details["x-amazon-apigateway-integration"].uri))
