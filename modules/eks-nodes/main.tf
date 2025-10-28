@@ -111,6 +111,14 @@ resource "duplocloud_asg_profile" "nodes" {
   lifecycle {
     ignore_changes = [instance_count, image_id, capacity]
   }
+  dynamic "taints" {
+    for_each = var.taints
+    content {
+      key    = taints.value.key
+      value  = taints.value.value
+      effect = taints.value.effect
+    }
+  }
 }
 
 # Refreshes upon changes to asg_ami and capacity, or upon changing associated variables
