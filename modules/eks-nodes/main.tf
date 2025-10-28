@@ -112,7 +112,7 @@ resource "duplocloud_asg_profile" "nodes" {
     ignore_changes = [instance_count, image_id, capacity]
   }
   dynamic "taints" {
-    for_each = var.asg_taints
+    for_each = var.taints
     content {
       key    = taints.value.key
       value  = taints.value.value

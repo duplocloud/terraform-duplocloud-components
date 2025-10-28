@@ -56,7 +56,7 @@ variable "metadata" {
   description = "Metadata to apply to the Duplo Minions"
   default     = {}
 }
-variable "asg_taints" {
+variable "taints" {
   description = "List of taints to apply on the ASG nodes. Each taint requires a key, value, and effect (NoSchedule, PreferNoSchedule, or NoExecute)."
   type = list(object({
     key    = string
