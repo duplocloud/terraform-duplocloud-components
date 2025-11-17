@@ -17,6 +17,14 @@ module "nodegroup" {
   min_instance_count = var.asg_min_instance_count
   max_instance_count = var.asg_max_instance_count
   os_disk_size       = var.asg_os_disk_size
+  dynamic "taints" {
+  for_each = var.taints
+  content {
+    key    = taints.value.key
+    value  = taints.value.value
+    effect = taints.value.effect
+  }
+}
 }
 ```
 
@@ -29,7 +37,7 @@ module "nodegroup" {
 5) Prefix is now what the ASG ends in, field kept for compatibility's sake. If prefix is `apps-` the ASG will be named `duploservices-test-apps-` going forward. Users can take the - off to avoid making the name look weird. (as of duplo provider version 0.11.13+, ASG name ends in a timestamp, as `ddmmyyyyhhmmss`, so that same prefix will result in `duploservices-asg-test-apps-23072025092143` as an example)
 6) Rollover is on by default, set to 5 minutes warmup time. Can be turned off with use_auto_refresh variable.
 7) Use variables min_healthy_percentage, max_healthy_percentage, and instance_warmup_seconds to adjust the rollover.
-
+8) List of taints to apply on the ASG nodes. Each taint requires a key, value, and effect (NoSchedule, PreferNoSchedule, or NoExecute).
 ## Testing  
 
 Run the unit tests with: 
