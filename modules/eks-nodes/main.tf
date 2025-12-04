@@ -54,6 +54,9 @@ resource "duplocloud_aws_launch_template_default_version" "name" {
   tenant_id       = var.tenant_id
   name            = duplocloud_aws_launch_template.nodes.name
   default_version = duplocloud_aws_launch_template.nodes.latest_version
+  lifecycle {
+    ignore_changes = [ block_device_mapping ]
+  }
 }
 
 # Uses version 1 as base, though all inputs are changed in this resource, thus making the exact version irrelevant.
