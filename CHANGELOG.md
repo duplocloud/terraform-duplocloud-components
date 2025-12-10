@@ -8,6 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add a data-only module for data accessible in an AWS tenant.
 - Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.
 
 ### Added
