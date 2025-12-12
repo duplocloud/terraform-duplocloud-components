@@ -1,5 +1,5 @@
 output "nat_ips" {
-  description = "NAT gateway IPs. Use these for whitelisting traffic that comes from tenant resources."
+  description = "NAT gateway IPs. These IPs are the source addresses for any external firewalls to allow access from the tenant's workload."
   value       = data.duplocloud_infrastructure.this.nat_ips
 }
 
