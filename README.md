@@ -39,9 +39,8 @@ module "components" {
 | [mongodb](modules/mongodb/README.md) | |
 | [retool-bastion](modules/retool-bastion/README.md) | Sets up a bastion server for Retool to access private resources like databases. |
 | [tenant](modules/tenant/README.md) | |
+| [tenant-data-aws](modules/tenant-data-aws/README.md) | Aggregate data that's available through the DuploCloud tenant. |
 | [tenant-gh](modules/tenant-gh/README.md) | |
 | [tenant-gh-aws](modules/tenant-gh-aws/README.md) | |
 | [tenant-role-extension](modules/tenant-role-extension/README.md) | |
 | [website-gcp](modules/website-gcp/README.md) | |
-
-
