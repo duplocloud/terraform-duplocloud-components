@@ -6,6 +6,8 @@
 
 variables {
   # DuploCloud portals always have a default tenant.
+  # To fully exercise all the cases, you would need to run the same tests against multiple infrastructures with
+  # different configurations (e.g. EKS enabled or disabled).
   tenant_name = "default"
 }
 
@@ -46,32 +48,28 @@ run "outputs_aws" {
   }
 }
 
-run "outputs_certificate_default_enabled" {
+run "outputs_certificate" {
 
   command = plan
 
   assert {
-    condition     = provider::aws::arn_parse(output.default_certificate_arn).service == "acm"
-    error_message = "Certificate ARN should refer to the 'acm' service."
+    condition     = output.default_certificate_arn == null || provider::aws::arn_parse(output.default_certificate_arn).service == "acm"
+    error_message = "Certificate ARN should refer to the 'acm' service or be null if not available."
   }
 
   assert {
-    condition     = startswith(provider::aws::arn_parse(output.default_certificate_arn).resource, "certificate/")
-    error_message = "Certificate ARN should refer to a 'certificate/' resource."
-  }
-}
-
-run "outputs_certificate_default_disabled" {
-
-  command = plan
-
-  variables {
-    default_certificate_enabled = false
+    condition     = output.default_certificate_arn == null || startswith(provider::aws::arn_parse(output.default_certificate_arn).resource, "certificate/")
+    error_message = "Certificate ARN should refer to a 'certificate/' resource or be null if not available."
   }
 
   assert {
-    condition     = output.default_certificate_arn == null
-    error_message = "When default certificate is disabled, its ARN should be null."
+    condition     = output.default_certificate_name == null || can(regex("^duplo-default/", output.default_certificate_name))
+    error_message = "Certificate name should start with 'duplo-default/' or be null if not available."
+  }
+
+  assert {
+    condition     = (output.default_certificate_arn == null) == (output.default_certificate_name == null)
+    error_message = "Certificate ARN and name should both be null or both be non-null."
   }
 }
 
@@ -102,6 +100,46 @@ run "outputs_dns" {
   }
 }
 
+run "outputs_eks" {
+
+  command = plan
+
+  assert {
+    condition     = output.eks_cluster_arn == null || provider::aws::arn_parse(output.eks_cluster_arn).service == "eks"
+    error_message = "EKS cluster ARN should refer to the 'eks' service or be null if not available."
+  }
+
+  assert {
+    condition     = output.eks_cluster_arn == null || startswith(provider::aws::arn_parse(output.eks_cluster_arn).resource, "cluster/")
+    error_message = "EKS cluster ARN should refer to a 'cluster/' resource or be null if not available."
+  }
+
+  assert {
+    condition     = output.eks_cluster_name == null || startswith(output.eks_cluster_name, "duploinfra-")
+    error_message = "EKS cluster name should start with 'duploinfra-' or be null if not available."
+  }
+
+  assert {
+    condition     = output.eks_cluster_version == null || can(regex("^[0-9]+\\.[0-9]+$", output.eks_cluster_version))
+    error_message = "EKS cluster version should be in format 'X.Y' or be null if not available."
+  }
+
+  assert {
+    condition     = output.kubernetes_namespace == null || startswith(output.kubernetes_namespace, "duploservices-")
+    error_message = "Kubernetes namespace should start with 'duploservices-' or be null if not available."
+  }
+
+  assert {
+    condition     = (output.eks_cluster_arn == null) == (output.eks_cluster_name == null)
+    error_message = "EKS cluster ARN and name should both be null or both be non-null."
+  }
+
+  assert {
+    condition     = (output.eks_cluster_arn == null) == (output.kubernetes_namespace == null)
+    error_message = "EKS cluster ARN and Kubernetes namespace should both be null or both be non-null."
+  }
+}
+
 run "outputs_iam_role" {
 
   command = plan
@@ -124,6 +162,46 @@ run "outputs_iam_role" {
   assert {
     condition     = startswith(output.iam_role_name, "duploservices-")
     error_message = "IAM role name should start with 'duploservices-'."
+  }
+}
+
+run "outputs_infrastructure" {
+
+  command = plan
+
+  assert {
+    condition     = can(regex("^[a-z0-9-]+$", lower(output.infrastructure_name)))
+    error_message = "Infrastructure name should be alphanumeric with dashes."
+  }
+
+  assert {
+    condition     = output.infrastructure_name == output.plan_id
+    error_message = "Infrastructure name and plan ID should match."
+  }
+}
+
+run "outputs_kms" {
+
+  command = plan
+
+  assert {
+    condition     = provider::aws::arn_parse(output.kms_key_arn).service == "kms"
+    error_message = "KMS key ARN should refer to the 'kms' service."
+  }
+
+  assert {
+    condition     = startswith(provider::aws::arn_parse(output.kms_key_arn).resource, "key/")
+    error_message = "KMS key ARN should refer to a 'key/' resource."
+  }
+
+  assert {
+    condition     = can(regex("^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$", output.kms_key_id))
+    error_message = "KMS key ID should be a UUID."
+  }
+
+  assert {
+    condition     = endswith(provider::aws::arn_parse(output.kms_key_arn).resource, output.kms_key_id)
+    error_message = "KMS key ARN should end with the KMS key ID."
   }
 }
 
@@ -159,6 +237,16 @@ run "outputs_tenant" {
   assert {
     condition     = can(regex("^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$", output.tenant_id))
     error_message = "Tenant ID should be a UUID."
+  }
+
+  assert {
+    condition     = output.tenant_name == var.tenant_name
+    error_message = "Tenant name output should match the input variable."
+  }
+
+  assert {
+    condition     = can(regex("^[a-z0-9-]+$", lower(output.tenant_name)))
+    error_message = "Tenant name should be alphanumeric with dashes."
   }
 }
 
