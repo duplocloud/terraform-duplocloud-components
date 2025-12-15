@@ -20,7 +20,7 @@ locals {
 
 # Plans can have many certificates. Most plans create a default one automatically.
 data "duplocloud_plan_certificate" "default" {
-  count = var.default_certificate_enabled ? 1 : 0
+  count = local.default_certificate_enabled ? 1 : 0
 
   name    = "duplo-default/.${local.dns_domain}"
   plan_id = data.duplocloud_tenant.this.plan_id
@@ -35,9 +35,19 @@ data "duplocloud_tenant_aws_region" "this" {
 }
 
 data "aws_iam_role" "this" {
-  name = "duploservices-${var.tenant_name}"
+  name = "duploservices-${data.duplocloud_tenant.this.name}"
 }
 
 data "aws_security_group" "this" {
-  name = "duploservices-${var.tenant_name}"
+  name = "duploservices-${data.duplocloud_tenant.this.name}"
+}
+
+data "duplocloud_tenant_aws_kms_key" "this" {
+  tenant_id = data.duplocloud_tenant.this.id
+}
+
+data "aws_eks_cluster" "this" {
+  count = data.duplocloud_infrastructure.this.enable_k8_cluster ? 1 : 0
+
+  name = "duploinfra-${data.duplocloud_infrastructure.this.infra_name}"
 }

@@ -3,8 +3,9 @@ variable "tenant_name" {
   type        = string
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "default_certificate_enabled" {
-  description = "Is the default certficiate enabled in the portal? Usually true."
+  description = "DEPRECATED"
   default     = true
   type        = bool
 }
