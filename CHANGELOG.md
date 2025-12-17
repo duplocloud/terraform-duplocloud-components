@@ -8,6 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Allow a broader range of provider versions in tenant-data-aws.
 - Expand tenant-data-aws with new outputs and better handling of conditions.
 - Add a data-only module for data accessible in an AWS tenant.
 - Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.

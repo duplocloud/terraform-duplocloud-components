@@ -7,7 +7,7 @@ terraform {
     }
     duplocloud = {
       source  = "duplocloud/duplocloud"
-      version = ">= 0.11.30"
+      version = ">= 0.11.27"
     }
   }
 }
