@@ -18,6 +18,7 @@ This module only outputs values that are uniquely determined by a DuploCloud ten
 
 | Name | Description |
 |------|-------------|
+| <a name="output_availability_zones"></a> [availability\_zones](#output\_availability\_zones) | Availability zones in the tenant's infrastructure. |
 | <a name="output_aws_account_id"></a> [aws\_account\_id](#output\_aws\_account\_id) | ID of the AWS account where the tenant's DuploCloud portal runs. |
 | <a name="output_aws_region"></a> [aws\_region](#output\_aws\_region) | AWS region where the tenant's resources will be deployed. |
 | <a name="output_default_certificate_arn"></a> [default\_certificate\_arn](#output\_default\_certificate\_arn) | ARN of the `duplo-default/.domain.example.com` ACM certificate created automatically by the DuploCloud portal (if it exists). |

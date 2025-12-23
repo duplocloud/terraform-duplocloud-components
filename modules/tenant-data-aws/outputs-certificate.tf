@@ -1,5 +1,6 @@
 locals {
-  default_certificate_enabled = anytrue([
+  # data.duplocloud_plan.this.certificates returns null when there are no certificates in the plan.
+  default_certificate_enabled = data.duplocloud_plan.this.certificates == null ? false : anytrue([
     for cert in data.duplocloud_plan.this.certificates :
     startswith(cert.name, "duplo-default/")
   ])
