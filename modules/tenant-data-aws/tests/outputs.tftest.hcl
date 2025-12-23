@@ -170,6 +170,11 @@ run "outputs_infrastructure" {
   command = plan
 
   assert {
+    condition     = output.availability_zones == null ? true : alltrue([for az in output.availability_zones : can(regex("^[a-z0-9-]+$", az))])
+    error_message = "Availability zones should be null or a list of strings that are alphanumeric with dashes."
+  }
+
+  assert {
     condition     = can(regex("^[a-z0-9-]+$", lower(output.infrastructure_name)))
     error_message = "Infrastructure name should be alphanumeric with dashes."
   }
