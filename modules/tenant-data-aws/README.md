@@ -4,7 +4,7 @@ Being inside a DuploCloud tenant gives you a lot of information. It can tell you
 
 This is a [data-only module](https://developer.hashicorp.com/terraform/language/modules/develop/composition#data-only-modules) that condenses the available data into values structured for DuploCloud Terraform on AWS.
 
-This module only outputs values that are uniquely determined by a DuploCloud tenant. It doesn't include the VPN IP. The VPN may be in a different region than the tenant where this module is run and can't be looked up without provider config that goes beyond the boundary of the tenant.
+This module only outputs values that are uniquely determined by a DuploCloud tenant. It doesn't include the VPN IP. The VPN may be in a different region than the tenant where this module is run and can't be looked up without provider config that goes beyond the boundary of the tenant. Check out the [vpn-data-aws](../vpn-data-aws) module if you need the VPN IP.
 
 <!-- BEGIN_TF_DOCS -->
 ## Inputs

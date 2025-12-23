@@ -43,4 +43,5 @@ module "components" {
 | [tenant-gh](modules/tenant-gh/README.md) | |
 | [tenant-gh-aws](modules/tenant-gh-aws/README.md) | |
 | [tenant-role-extension](modules/tenant-role-extension/README.md) | |
+| [vpn-data-aws](modules/vpn-data-aws/README.md) | Get IP addresses of the DuploCloud VPN. |
 | [website-gcp](modules/website-gcp/README.md) | |
