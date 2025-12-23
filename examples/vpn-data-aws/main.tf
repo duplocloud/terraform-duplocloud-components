@@ -16,6 +16,8 @@ provider "duplocloud" {}
 
 data "duplocloud_admin_aws_credentials" "current" {}
 
+# This example assumes that the portal you're getting credentials from has the VPN enabled in the
+# portal's default region.
 provider "aws" {
   access_key = data.duplocloud_admin_aws_credentials.current.access_key_id
   region     = data.duplocloud_admin_aws_credentials.current.region
@@ -25,10 +27,6 @@ provider "aws" {
 
 module "vpn_data_aws" {
   source = "../../modules/vpn-data-aws"
-
-  providers = {
-    aws.vpn_region = aws
-  }
 }
 
 output "vpn_data_aws" {

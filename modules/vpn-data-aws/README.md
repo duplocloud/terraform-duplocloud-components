@@ -2,7 +2,7 @@
 
 This is a [data-only module](https://developer.hashicorp.com/terraform/language/modules/develop/composition#data-only-modules) that checks if the DuploCloud VPN is enabled and outputs its IP addresses if it is.
 
-To use this module, [pass](https://developer.hashicorp.com/terraform/language/modules/develop/providers#passing-providers-explicitly) it a `vpn_region` AWS provider configuration for the region where the VPN is deployed (almost always the default region of the DuploCloud portal):
+To use this module, [pass](https://developer.hashicorp.com/terraform/language/modules/develop/providers#passing-providers-explicitly) it an AWS provider configuration for the region where the VPN is deployed (almost always the default region of the DuploCloud portal):
 ```
 data "duplocloud_admin_aws_credentials" "current" {}
 
@@ -19,7 +19,7 @@ module "vpn_data" {
   source = "../../modules/vpn-data-aws"
 
   providers = {
-    aws.vpn_region = aws.portal_default_region
+    aws = aws.portal_default_region
   }
 }
 ```
@@ -41,7 +41,7 @@ module "vpn_data" {
   source = "../../modules/vpn-data-aws"
 
   providers = {
-    aws.vpn_region = aws.vpn_region
+    aws = aws.vpn_region
   }
 }
 ```

@@ -2,9 +2,8 @@ terraform {
   required_version = ">= 1.12.2"
   required_providers {
     aws = {
-      source                = "hashicorp/aws"
-      version               = ">= 6.26.0"
-      configuration_aliases = [aws.vpn_region]
+      source  = "hashicorp/aws"
+      version = ">= 6.26.0"
     }
     duplocloud = {
       source  = "duplocloud/duplocloud"
@@ -29,8 +28,6 @@ data "duplocloud_system_features" "this" {}
 
 data "aws_cloudformation_stack" "openvpn" {
   count = local.enabled ? 1 : 0
-
-  provider = aws.vpn_region
 
   name = var.stack_name
 }
