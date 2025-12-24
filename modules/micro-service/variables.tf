@@ -491,6 +491,15 @@ variable "cloud" {
   description = "Set to GCP to enable gcp capability"
   type        = string
   default     = "AWS"
+
+  validation {
+    condition = contains([
+      "AWS",
+      "GCP",
+      "AZURE"
+    ], var.cloud)
+    error_message = "The cloud must be one of the following: AWS, GCP."
+  }
 }
 
 variable "host_network" {
