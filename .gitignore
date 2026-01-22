@@ -55,10 +55,7 @@ temp-*
 .vscode/settings.json
 
 # codex from openai
-.codex/skills/.system
-.codex/tmp/
-.codex/auth.json
-.codex/sessions
+.codex/
 
 # random things 
 stuff/
