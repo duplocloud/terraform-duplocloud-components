@@ -358,7 +358,11 @@ variable "secrets" {
   type        = list(string)
   default     = []
 }
-
+variable "config_maps" {
+  description = "The list of external configmap names to be mounted as envFrom."
+  type        = list(string)
+  default     = []
+}
 variable "configurations" {
   description = <<EOT
   A list of configurations for an application. These can be configmaps or secrets.

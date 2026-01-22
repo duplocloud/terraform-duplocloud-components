@@ -42,6 +42,12 @@ locals {
         name = secret
       }
     }
+    ], [
+    for configmap in var.config_maps : {
+      configMapRef : {
+        name = configmap
+      }
+    }
   ])
 }
 
