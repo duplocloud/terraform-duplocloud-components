@@ -4,9 +4,9 @@ module "configurations" {
       config.name != null ? "${config.class}/${config.name}" : config.type == "environment" ? "${config.class}/env" : "${config.class}/config"
     ) => config
   }
-  source      = "../configuration"
-  tenant_id   = local.tenant.id
-  prefix      = var.name # uses app name as prefix
+  source    = "../configuration"
+  tenant_id = local.tenant.id
+  #prefix      = var.name # uses app name as prefix
   name        = each.value.name
   enabled     = each.value.enabled
   description = each.value.description
