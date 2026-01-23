@@ -36,6 +36,7 @@ override.tf.json
 terraform.rc
 target/**
 .envrc
+.env
 *.log
 *.plan
 *.tfplan
@@ -49,3 +50,14 @@ modules/**/.terraform.lock.hcl
 .DS_Store
 temp-*
 .qodo
+
+# vscode 
+.vscode/settings.json
+
+# codex from openai
+.codex/
+
+# random things 
+stuff/
+config/
+foo.*
