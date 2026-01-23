@@ -8,6 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Fix external configmap/secret reference in micro-service module to use actual resource name instead of prefixed name.
 - Add a data-only module for DuploCloud VPNs in AWS.
 - Add a data-only module for data accessible in an AWS tenant.
 - Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.

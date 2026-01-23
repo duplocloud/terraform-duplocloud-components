@@ -1,6 +1,6 @@
 locals {
   id               = var.name != null ? var.name : var.type == "environment" ? "env" : "configs"
-  name             = nonsensitive(var.prefix != null ? "${var.prefix}-${local.id}" : local.id)
+  name             = nonsensitive(var.external ? local.id : var.prefix != null ? "${var.prefix}-${local.id}" : local.id)
   realName         = nonsensitive(local.resource != null ? local.resource[local.schema.name_key] : local.name)
   data             = var.data != null ? var.data : {}
   value            = var.value != null ? var.value : jsonencode(local.data)
