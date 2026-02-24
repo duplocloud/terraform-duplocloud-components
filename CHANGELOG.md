@@ -15,7 +15,14 @@ and this project adheres to
 
 ### Added
 - Added usage example of taints for asg profile node group
-- Added taints for asg profile node group 
+- Added taints for asg profile node group
+
+### Maintenance
+- Bump `duplocloud` provider minimum to `>= 0.11.0` in `retool-bastion`, `tenant-role-extension`, `lambda`, and `api-gateway`
+- Fix overly strict Terraform version constraint (`~> 1.10.5` → `>= 1.9.0`) in `mongodb` module and example
+- Fix overly strict Terraform version constraints (`~> 1.12.2`) in test setup modules for `tenant-data-aws` and `vpn-data-aws`, which were blocking Terraform 1.13+
+- Extract `terraform {}` block from `vpn-data-aws/main.tf` into its own `versions.tf`
+- Update lock files in `api-gateway`, `eks-nodes`, and `tenant-role-extension` to latest provider versions (`duplocloud` 0.11.33, `aws` 6.33.0, `random` 3.8.1)
 
 ## [0.0.41] - 2025-07-16
 
