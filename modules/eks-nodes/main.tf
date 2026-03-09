@@ -54,6 +54,9 @@ resource "duplocloud_aws_launch_template_default_version" "name" {
   tenant_id       = var.tenant_id
   name            = duplocloud_aws_launch_template.nodes.name
   default_version = duplocloud_aws_launch_template.nodes.latest_version
+  lifecycle {
+    ignore_changes = [default_version]
+  }
 }
 
 # Uses version 1 as base, though all inputs are changed in this resource, thus making the exact version irrelevant.
@@ -64,6 +67,9 @@ resource "duplocloud_aws_launch_template" "nodes" {
   version             = 1
   version_description = data.aws_ami.ami.description
   ami                 = local.asg_ami
+  lifecycle {
+    ignore_changes = [version_metadata, default_version, latest_version]
+  }
 }
 
 resource "duplocloud_asg_profile" "nodes" {
