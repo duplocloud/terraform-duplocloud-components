@@ -14,7 +14,8 @@ module "configurations" {
   class       = each.value.class
   csi         = each.value.csi
   managed     = each.value.managed
+  external    = each.value.external
   mountPath   = each.value.mountPath
-  data        = each.value.data
+  data        = each.value.external ? null : each.value.data
   value       = each.value.value
 }

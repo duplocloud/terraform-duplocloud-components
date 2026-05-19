@@ -1,0 +1,55 @@
+{
+	"name": "Duplocloud TF Component Workspace",
+	"image": "mcr.microsoft.com/vscode/devcontainers/python:3.12",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": "false"
+		},
+		"ghcr.io/duplocloud/devcontainers/duploctl:latest": {},
+		"ghcr.io/duplocloud/devcontainers/onepassword-cli:1": {
+			"autoSsh": "${localEnv:OP_AUTO_SSH}",
+			"sshSecretNames": "${localEnv:OP_SSH_SECRET}",
+			"vault": "${localEnv:OP_VAULT_NAME}",
+			"account": "${localEnv:OP_ACCOUNT}",
+			"userEmail": "${localEnv:USER_EMAIL}"
+		},
+		"ghcr.io/duplocloud/devcontainers/terraform:1": {},
+		// "ghcr.io/duplocloud/devcontainers/github:latest": {},
+		"ghcr.io/duplocloud/devcontainers/ai-codex:1.0.2": {}
+	},
+	"runArgs": [
+		"--env-file=${localWorkspaceFolder}/.env"
+	],
+	"initializeCommand": ".devcontainer/init.sh",
+	"postStartCommand": ".devcontainer/post-start.sh",
+	"containerEnv": {
+		"WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
+		"XDG_CONFIG_HOME": "${containerWorkspaceFolder}/config",
+		"CONF_DIR": "${containerWorkspaceFolder}/config",
+		"CODEX_HOME": "${containerWorkspaceFolder}/.codex",
+		"DUPLO_CONFIG": "${containerWorkspaceFolder}/config/duplo.yaml",
+		"GIT_USER": "${localEnv:GIT_USERNAME}",
+		"GIT_EMAIL": "${localEnv:GIT_EMAIL}",
+		"EDITOR": "code --wait",
+		"SIGNINGKEY": "${localEnv:OP_SSH_SECRET}"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"cweijan.vscode-database-client2",
+				"redhat.vscode-yaml",
+				"GitHub.copilot-chat",
+				"github.vscode-github-actions",
+				"hashicorp.terraform",
+				"ms-python.python"
+			],
+			"settings": {
+				"[terraform]": {
+					"editor.defaultFormatter": "hashicorp.terraform",
+					"editor.formatOnSave": true
+				}
+			}
+		}
+	}
+}
