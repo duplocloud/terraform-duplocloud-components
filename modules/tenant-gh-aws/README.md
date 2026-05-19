@@ -10,9 +10,10 @@ As this is a mashup it requires the following fully authenticated providers.
 - [`aws`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs) - The AWS provider.
 - [`github`](https://registry.terraform.io/providers/integrations/github/latest/docs) - The Github provider.
 
-## Submodules 
+## Submodules
 
-This module is a combination of the following submodules so that Github, AWS, and Duplocloud can all be synchronized together. The github integration is baked into this one. 
+This module is a combination of the following submodules so that Github, AWS, and Duplocloud  [tenant](../tenant/README.md) and [tenant-role-extension](../tenant-role-extension/README.md) can all be synchronized together. The github integration is baked into this one. 
 
-- [tenant](../tenant/README.md)
-- [tenant-role-extension](../tenant-role-extension/README.md)
+> [!IMPORTANT]  
+> See this if need to migrate `tenant` to `tenant-gh-aws`.   
+> [Move tenant to tenant-aws](../tenant/README.md#switching-tenant-module-type)  
