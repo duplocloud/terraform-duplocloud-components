@@ -81,3 +81,15 @@ EOT
     error_message = "Each non-external mapping must include a non-empty cert (name or ARN)."
   }
 }
+
+
+
+# variable "type" {
+#   description = "The type of api gateway"
+#   type        = string
+#   default     = "http"
+#   validation {
+#     condition     = contains(["http", "rest", "socket"], var.type)
+#     error_message = "Allowed values for input_parameter are http, rest, socket"
+#   }
+# }
