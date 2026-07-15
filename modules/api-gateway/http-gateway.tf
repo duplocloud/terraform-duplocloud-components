@@ -76,7 +76,7 @@ resource "aws_apigatewayv2_domain_name" "this" {
 resource "aws_apigatewayv2_api_mapping" "this" {
   for_each        = local.class.version == "v2" ? local.mappings : {}
   api_id          = aws_apigatewayv2_api.this[0].id
-  domain_name     = each.value.external ? each.value.domain_name : aws_apigatewayv2_domain_name.this[each.key].id
+  domain_name     = each.value.external ? each.value.domain : aws_apigatewayv2_domain_name.this[each.key].id
   stage           = aws_apigatewayv2_stage.default[0].id
   api_mapping_key = each.value.path
 }
