@@ -13,8 +13,8 @@ variable "class" {
   type        = string
   default     = "http"
   validation {
-    condition     = contains(["http", "rest", "rest-private", "socket"], var.class)
-    error_message = "Allowed values for input_parameter are http, rest, rest-private, socket"
+    condition     = contains(["http", "rest", "rest-private", "rest-edge", "socket", "websocket"], var.class)
+    error_message = "Allowed values for input_parameter are http, rest, rest-private, rest-edge, socket, websocket"
   }
 }
 
@@ -73,4 +73,11 @@ EOT
     path     = optional(string, null)
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for mapping in var.mappings : mapping.external || try(mapping.cert != null && trim(mapping.cert) != "", false)
+    ])
+    error_message = "Each non-external mapping must include a non-empty cert (name or ARN)."
+  }
 }

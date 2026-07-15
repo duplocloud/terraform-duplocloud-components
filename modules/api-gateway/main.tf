@@ -76,16 +76,21 @@ locals {
     }
     rest = {
       version = "v1"
-      type = "REGIONAL"
+      type    = "REGIONAL"
     }
     rest-private = {
       version = "v1"
-      type = "PRIVATE"
+      type    = "PRIVATE"
     }
     rest-edge = {
       version = "v1"
-      type = "EDGE"
+      type    = "EDGE"
     }
+    # Keep socket as the public class name to match input validation.
+    socket = {
+      version = "v1"
+    }
+    # Backwards-compatible alias.
     websocket = {
       version = "v1"
     }
