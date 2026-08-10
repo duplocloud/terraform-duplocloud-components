@@ -43,6 +43,7 @@ locals {
     minReplicas = var.scale.min
     maxReplicas = var.scale.max
     metrics     = local.hpa_metrics
+    behavior    = lookup(var.scale, "behavior", null)
   }))
 }
 

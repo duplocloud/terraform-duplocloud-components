@@ -47,3 +47,25 @@ metrics:
 %{ endif }
 %{ endfor ~}
 %{ endif }
+%{ if behavior != null }
+behavior:
+%{ for direction, rules in behavior }
+%{ if rules != null }
+  ${direction}:
+    %{ if rules.stabilizationWindowSeconds != null }
+    stabilizationWindowSeconds: ${rules.stabilizationWindowSeconds}
+    %{ endif ~}
+    %{ if rules.selectPolicy != null }
+    selectPolicy: ${rules.selectPolicy}
+    %{ endif ~}
+    %{ if rules.policies != null }
+    policies:
+    %{ for policy in rules.policies }
+    - type: ${policy.type}
+      value: ${policy.value}
+      periodSeconds: ${policy.periodSeconds}
+    %{ endfor ~}
+    %{ endif ~}
+%{ endif }
+%{ endfor ~}
+%{ endif }

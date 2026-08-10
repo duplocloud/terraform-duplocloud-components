@@ -7,6 +7,7 @@
 		},
 		"ghcr.io/duplocloud/devcontainers/duploctl:latest": {},
 		"ghcr.io/duplocloud/devcontainers/onepassword-cli:1": {
+			"enabled": "${localEnv:OP_CLI_ENABLED}",
 			"autoSsh": "${localEnv:OP_AUTO_SSH}",
 			"sshSecretNames": "${localEnv:OP_SSH_SECRET}",
 			"vault": "${localEnv:OP_VAULT_NAME}",
@@ -15,7 +16,9 @@
 		},
 		"ghcr.io/duplocloud/devcontainers/terraform:1": {},
 		// "ghcr.io/duplocloud/devcontainers/github:latest": {},
-		"ghcr.io/duplocloud/devcontainers/ai-codex:1.0.2": {}
+		"ghcr.io/duplocloud/devcontainers/ai-codex:latest": {
+			"skills": "devcontainers,tf-module"
+		}
 	},
 	"runArgs": [
 		"--env-file=${localWorkspaceFolder}/.env"
