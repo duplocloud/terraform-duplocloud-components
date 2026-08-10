@@ -79,6 +79,8 @@ variable "scale" {
   This includes the replicas, min, max, and the metrics for determining how to auto scale.
 
   The metrics field is a list of metrics to use for autoscaling. Auto scaling is considered `enabled` when there are metrics, if there are none then the service will only use the replica count. See [Kubernetes Horizontal Pod Autoscale Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) for more information.
+
+  The behavior field tunes how quickly the autoscaler reacts, using the scaleUp and scaleDown blocks of the HPA behavior spec. It only takes effect when metrics are set. See [Configurable scaling behavior](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior).
   EOT
   type = object({
     replicas = optional(number, null)
@@ -125,6 +127,26 @@ variable "scale" {
         })
       }))
     })))
+    behavior = optional(object({
+      scaleUp = optional(object({
+        stabilizationWindowSeconds = optional(number)
+        selectPolicy               = optional(string)
+        policies = optional(list(object({
+          type          = string
+          value         = number
+          periodSeconds = number
+        })), [])
+      }), {})
+      scaleDown = optional(object({
+        stabilizationWindowSeconds = optional(number)
+        selectPolicy               = optional(string)
+        policies = optional(list(object({
+          type          = string
+          value         = number
+          periodSeconds = number
+        })), [])
+      }), {})
+    }), {})
   })
   default = {}
 }

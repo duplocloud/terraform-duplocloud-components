@@ -20,6 +20,7 @@ and this project adheres to
 - Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.
 - Added usage example of taints for asg profile node group
 - Added taints for asg profile node group
+- Added `behavior` to the micro service `scale` variable to tune HPA scale up and scale down rates.
 
 ## [0.0.41] - 2025-07-16
 
