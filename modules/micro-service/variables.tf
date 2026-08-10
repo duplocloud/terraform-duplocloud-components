@@ -135,8 +135,8 @@ variable "scale" {
           type          = string
           value         = number
           periodSeconds = number
-        })))
-      }))
+        })), [])
+      }), {})
       scaleDown = optional(object({
         stabilizationWindowSeconds = optional(number)
         selectPolicy               = optional(string)
@@ -144,9 +144,9 @@ variable "scale" {
           type          = string
           value         = number
           periodSeconds = number
-        })))
-      }))
-    }))
+        })), [])
+      }), {})
+    }), {})
   })
   default = {}
 }
