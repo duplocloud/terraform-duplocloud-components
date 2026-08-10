@@ -64,6 +64,9 @@ resource "duplocloud_aws_launch_template" "nodes" {
   version             = 1
   version_description = data.aws_ami.ami.description
   ami                 = local.asg_ami
+  lifecycle {
+    ignore_changes = [block_device_mapping]
+  }
 }
 
 resource "duplocloud_asg_profile" "nodes" {
