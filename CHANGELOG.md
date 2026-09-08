@@ -8,14 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Fix external configmap/secret reference in micro-service module to use actual resource name instead of prefixed name.
+### Fixed  
+
+- Fix external configmap/secret reference in micro-service module to use actual resource name instead of prefixed name.  
+- Fix rest contidtion for the type when api gateway created
+
+### Added  
+
 - Add a data-only module for DuploCloud VPNs in AWS.
 - Add a data-only module for data accessible in an AWS tenant.
 - Add support for set_ingress_health_check option so that an ingress with multiple clusterip services can have health check routes that aren't always "/" for each service.
-
-### Added
 - Added usage example of taints for asg profile node group
 - Added taints for asg profile node group
+- Added `behavior` to the micro service `scale` variable to tune HPA scale up and scale down rates.
 
 ### Maintenance
 - Bump `duplocloud` provider minimum to `>= 0.11.0` in `retool-bastion`, `tenant-role-extension`, `lambda`, and `api-gateway`

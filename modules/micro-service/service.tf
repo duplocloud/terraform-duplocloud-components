@@ -39,10 +39,16 @@ locals {
     sidecars = var.sidecars
   }))
   hpa_metrics = lookup(var.scale, "metrics", null)
+  # only keep the directions actually configured, an empty one renders a bare yaml key which decodes to null
+  hpa_behavior = {
+    for direction, rules in var.scale.behavior : direction => rules
+    if rules.stabilizationWindowSeconds != null || rules.selectPolicy != null || length(rules.policies) > 0
+  }
   hpa_specs = yamldecode(templatefile("${path.module}/templates/hpa-spec.yaml", {
     minReplicas = var.scale.min
     maxReplicas = var.scale.max
     metrics     = local.hpa_metrics
+    behavior    = local.hpa_behavior
   }))
 }
 
