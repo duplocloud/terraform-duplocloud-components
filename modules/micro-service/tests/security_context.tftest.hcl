@@ -146,8 +146,8 @@ run "localhost_seccomp_profile_with_path_accepted" {
 
   assert {
     condition = local.other_docker_config.PodSecurityContext.seccompProfile == {
-      type              = "Localhost"
-      localhostProfile  = "profiles/my-profile.json"
+      type             = "Localhost"
+      localhostProfile = "profiles/my-profile.json"
     }
     error_message = "PodSecurityContext.seccompProfile should include the localhostProfile path."
   }
