@@ -76,3 +76,121 @@ run "debug_mode_health_checks" {
   }
 
 }
+
+run "tcp_socket_health_checks" {
+  command = plan
+  variables {
+    port = 8080
+    health_check = {
+      enabled = true
+      type    = "tcp"
+    }
+  }
+
+  # all three probes should use tcpSocket with the service port, not httpGet
+  assert {
+    condition     = local.other_docker_config.LivenessProbe.tcpSocket == { port = 8080 }
+    error_message = "The LivenessProbe should use tcpSocket on the service port."
+  }
+  assert {
+    condition     = !contains(keys(local.other_docker_config.LivenessProbe), "httpGet")
+    error_message = "The LivenessProbe should not have httpGet when type is tcp."
+  }
+  assert {
+    condition     = local.other_docker_config.ReadinessProbe.tcpSocket == { port = 8080 }
+    error_message = "The ReadinessProbe should use tcpSocket on the service port."
+  }
+  assert {
+    condition     = local.other_docker_config.StartupProbe.tcpSocket == { port = 8080 }
+    error_message = "The StartupProbe should use tcpSocket on the service port."
+  }
+}
+
+run "tcp_socket_override_per_probe" {
+  command = plan
+  variables {
+    port = 8080
+    health_check = {
+      enabled = true
+      type    = "http"
+      readiness = {
+        type = "tcp"
+        port = 9090
+      }
+    }
+  }
+
+  # liveness/startup should stay httpGet (inherit top-level type), readiness overrides to tcpSocket
+  assert {
+    condition     = contains(keys(local.other_docker_config.LivenessProbe), "httpGet")
+    error_message = "The LivenessProbe should use httpGet when the top-level type is http."
+  }
+  assert {
+    condition     = local.other_docker_config.ReadinessProbe.tcpSocket == { port = 9090 }
+    error_message = "The ReadinessProbe should override to tcpSocket on its own port."
+  }
+  assert {
+    condition     = contains(keys(local.other_docker_config.StartupProbe), "httpGet")
+    error_message = "The StartupProbe should use httpGet when the top-level type is http."
+  }
+}
+
+run "invalid_health_check_type_rejected" {
+  command         = plan
+  expect_failures = [var.health_check]
+  variables {
+    health_check = {
+      type = "udp"
+    }
+  }
+}
+
+run "grpc_health_checks_default_service" {
+  command = plan
+  variables {
+    port = 9000
+    health_check = {
+      enabled = true
+      type    = "grpc"
+    }
+  }
+
+  # grpc probes with no grpc_service set should omit the service key (checks the default gRPC service)
+  assert {
+    condition     = local.other_docker_config.LivenessProbe.grpc == { port = 9000 }
+    error_message = "The LivenessProbe should use a grpc probe on the service port with no service key."
+  }
+  assert {
+    condition     = local.other_docker_config.ReadinessProbe.grpc == { port = 9000 }
+    error_message = "The ReadinessProbe should use a grpc probe on the service port with no service key."
+  }
+  assert {
+    condition     = local.other_docker_config.StartupProbe.grpc == { port = 9000 }
+    error_message = "The StartupProbe should use a grpc probe on the service port with no service key."
+  }
+}
+
+run "grpc_health_checks_with_service_override" {
+  command = plan
+  variables {
+    port = 9000
+    health_check = {
+      enabled      = true
+      type         = "grpc"
+      grpc_service = "myapp.Health"
+      readiness = {
+        port         = 9001
+        grpc_service = "myapp.Readiness"
+      }
+    }
+  }
+
+  assert {
+    condition     = local.other_docker_config.LivenessProbe.grpc == { port = 9000, service = "myapp.Health" }
+    error_message = "The LivenessProbe should use the top-level grpc_service."
+  }
+  assert {
+    condition     = local.other_docker_config.ReadinessProbe.grpc == { port = 9001, service = "myapp.Readiness" }
+    error_message = "The ReadinessProbe should override port and grpc_service independently."
+  }
+}

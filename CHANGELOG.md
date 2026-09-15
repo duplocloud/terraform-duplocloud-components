@@ -12,6 +12,7 @@ and this project adheres to
 
 - Fix external configmap/secret reference in micro-service module to use actual resource name instead of prefixed name.  
 - Fix rest contidtion for the type when api gateway created
+- Fix micro-service `security_context` (`PodSecurityContext`) and sidecar `security_context` being JSON-encoded with snake_case keys, which Kubernetes silently ignored instead of applying.
 
 ### Added  
 
@@ -21,6 +22,9 @@ and this project adheres to
 - Added usage example of taints for asg profile node group
 - Added taints for asg profile node group
 - Added `behavior` to the micro service `scale` variable to tune HPA scale up and scale down rates.
+- Added `run_as_non_root` and `seccomp_profile` fields to the micro-service `security_context` variable.
+- Added new `container_security_context` variable to the micro-service module to set the main container's Kubernetes `securityContext` (`allowPrivilegeEscalation`, `capabilities`, `readOnlyRootFilesystem`, etc.), which was previously unsupported.
+- Added `type` field ("http", "tcp", or "grpc") to the micro-service `health_check` variable (and its `liveness`/`readiness`/`startup` overrides) to support `tcpSocket` and `grpc` probes in addition to `httpGet`. Added `grpc_service` field for the gRPC health-checking protocol's service name.
 
 ## [0.0.41] - 2025-07-16
 
