@@ -37,6 +37,9 @@ PodLabels: ${pod_labels}
 %{if security_context != "{}" }
 PodSecurityContext: ${security_context}
 %{ endif }
+%{if container_security_context != "{}" }
+SecurityContext: ${container_security_context}
+%{ endif }
 %{if service_account_name != null }
 ServiceAccountName: ${service_account_name}
 %{ endif }
@@ -71,9 +74,22 @@ LivenessProbe:
   periodSeconds: ${coalesce(health_check.liveness.periodSeconds, health_check.periodSeconds)}
   successThreshold: ${coalesce(health_check.liveness.successThreshold, health_check.successThreshold)}
   timeoutSeconds: ${coalesce(health_check.liveness.timeoutSeconds, health_check.timeoutSeconds)}
-  httpGet: 
+%{ if coalesce(health_check.liveness.type, health_check.type) == "tcp" }
+  tcpSocket:
+    port: ${coalesce(health_check.liveness.port, health_check.port, port)}
+%{ else }
+%{ if coalesce(health_check.liveness.type, health_check.type) == "grpc" }
+  grpc:
+    port: ${coalesce(health_check.liveness.port, health_check.port, port)}
+%{ if health_check.liveness.grpc_service != null || health_check.grpc_service != null }
+    service: ${jsonencode(health_check.liveness.grpc_service != null ? health_check.liveness.grpc_service : health_check.grpc_service)}
+%{ endif }
+%{ else }
+  httpGet:
     path: ${coalesce(health_check.liveness.path, health_check.path)}
     port : ${coalesce(health_check.liveness.port, health_check.port, port)}
+%{ endif }
+%{ endif }
 %{ endif }
 %{ if health_check.readiness.enabled }
 ReadinessProbe: 
@@ -82,9 +98,22 @@ ReadinessProbe:
   periodSeconds: ${coalesce(health_check.readiness.periodSeconds, health_check.periodSeconds)}
   successThreshold: ${coalesce(health_check.readiness.successThreshold, health_check.successThreshold)}
   timeoutSeconds : ${coalesce(health_check.readiness.timeoutSeconds, health_check.timeoutSeconds)}
-  httpGet: 
+%{ if coalesce(health_check.readiness.type, health_check.type) == "tcp" }
+  tcpSocket:
+    port: ${coalesce(health_check.readiness.port, health_check.port, port)}
+%{ else }
+%{ if coalesce(health_check.readiness.type, health_check.type) == "grpc" }
+  grpc:
+    port: ${coalesce(health_check.readiness.port, health_check.port, port)}
+%{ if health_check.readiness.grpc_service != null || health_check.grpc_service != null }
+    service: ${jsonencode(health_check.readiness.grpc_service != null ? health_check.readiness.grpc_service : health_check.grpc_service)}
+%{ endif }
+%{ else }
+  httpGet:
     path: ${coalesce(health_check.readiness.path, health_check.path)}
     port: ${coalesce(health_check.readiness.port, health_check.port, port)}
+%{ endif }
+%{ endif }
 %{ endif }
 %{ if health_check.startup.enabled }
 StartupProbe: 
@@ -93,9 +122,22 @@ StartupProbe:
   periodSeconds: ${coalesce(health_check.startup.periodSeconds, health_check.periodSeconds)}
   successThreshold: ${coalesce(health_check.startup.successThreshold, health_check.successThreshold)}
   timeoutSeconds : ${coalesce(health_check.startup.timeoutSeconds, health_check.timeoutSeconds)}
-  httpGet: 
+%{ if coalesce(health_check.startup.type, health_check.type) == "tcp" }
+  tcpSocket:
+    port: ${coalesce(health_check.startup.port, health_check.port, port)}
+%{ else }
+%{ if coalesce(health_check.startup.type, health_check.type) == "grpc" }
+  grpc:
+    port: ${coalesce(health_check.startup.port, health_check.port, port)}
+%{ if health_check.startup.grpc_service != null || health_check.grpc_service != null }
+    service: ${jsonencode(health_check.startup.grpc_service != null ? health_check.startup.grpc_service : health_check.grpc_service)}
+%{ endif }
+%{ else }
+  httpGet:
     path: ${coalesce(health_check.startup.path, health_check.path)}
     port: ${coalesce(health_check.startup.port, health_check.port, port)}
+%{ endif }
+%{ endif }
 %{ endif }
 %{ endif }
 

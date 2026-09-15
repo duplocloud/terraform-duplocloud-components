@@ -31,3 +31,35 @@ run "validate_job_defaults" {
   }
 
 }
+
+run "job_security_context_includes_run_as_non_root_and_seccomp" {
+  command = plan
+  variables {
+    tenant  = "dev01"
+    name    = "myapp"
+    command = ["npm"]
+    jobs = [{
+      name    = "prerelease"
+      event   = "before-update"
+      args    = ["run", "db:migrate"]
+      wait    = true
+      enabled = true
+    }]
+    security_context = {
+      run_as_user     = 1000
+      run_as_non_root = true
+      seccomp_profile = {
+        type = "RuntimeDefault"
+      }
+    }
+  }
+
+  assert {
+    condition     = duplocloud_k8s_job.before_update["prerelease"].spec[0].template[0].spec[0].security_context[0].run_as_non_root == true
+    error_message = "The before-update job's security_context should propagate run_as_non_root."
+  }
+  assert {
+    condition     = duplocloud_k8s_job.before_update["prerelease"].spec[0].template[0].spec[0].security_context[0].seccomp_profile[0].type == "RuntimeDefault"
+    error_message = "The before-update job's security_context should propagate the seccomp_profile type."
+  }
+}

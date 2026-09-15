@@ -232,11 +232,65 @@ variable "resources" {
 }
 
 variable "security_context" {
-  description = "The security context for the service."
+  description = <<EOT
+  The pod-level security context (Kubernetes `PodSecurityContext`) for the service.
+
+  The `run_as_user`, `run_as_group`, and `fs_group` fields map to the Kubernetes
+  `runAsUser`, `runAsGroup`, and `fsGroup` fields respectively.
+
+  The `run_as_non_root` field maps to `runAsNonRoot`.
+
+  The `seccomp_profile` field maps to `seccompProfile`, with `type` being one of
+  `RuntimeDefault`, `Localhost`, or `Unconfined`. `localhost_profile` is only used when
+  `type` is `Localhost` and is the path to the profile on the node, relative to the
+  kubelet's configured seccomp profile location.
+  EOT
   type = object({
-    run_as_user  = optional(number, null)
-    run_as_group = optional(number, null)
-    fs_group     = optional(number, null)
+    run_as_user     = optional(number, null)
+    run_as_group    = optional(number, null)
+    fs_group        = optional(number, null)
+    run_as_non_root = optional(bool, null)
+    seccomp_profile = optional(object({
+      type              = string
+      localhost_profile = optional(string, null)
+    }), null)
+  })
+  default  = null
+  nullable = true
+
+  validation {
+    condition = (
+      var.security_context == null ||
+      var.security_context.seccomp_profile == null || (
+        contains(["RuntimeDefault", "Localhost", "Unconfined"], var.security_context.seccomp_profile.type) &&
+        (var.security_context.seccomp_profile.type == "Localhost") == (var.security_context.seccomp_profile.localhost_profile != null)
+      )
+    )
+    error_message = "security_context.seccomp_profile.type must be one of 'RuntimeDefault', 'Localhost', or 'Unconfined', and localhost_profile must be set if and only if type is 'Localhost'."
+  }
+}
+
+variable "container_security_context" {
+  description = <<EOT
+  The main container's security context (Kubernetes container `securityContext`) for the service.
+
+  The `allow_privilege_escalation`, `read_only_root_filesystem`, `run_as_non_root`, `run_as_user`,
+  `run_as_group`, and `privileged` fields map directly to their Kubernetes camelCase equivalents.
+
+  The `capabilities` field is an object with `add` and `drop` lists of capability names, mapping
+  to Kubernetes `capabilities.add` and `capabilities.drop`.
+  EOT
+  type = object({
+    allow_privilege_escalation = optional(bool, null)
+    read_only_root_filesystem  = optional(bool, null)
+    run_as_non_root            = optional(bool, null)
+    run_as_user                = optional(number, null)
+    run_as_group               = optional(number, null)
+    privileged                 = optional(bool, null)
+    capabilities = optional(object({
+      add  = optional(list(string), null)
+      drop = optional(list(string), null)
+    }), null)
   })
   default  = null
   nullable = true
@@ -329,13 +383,21 @@ variable "health_check" {
   The `path` field will determine the path that the health check will use. If the field is not set, the path will be "/".
 
   The `set_ingress_health_check` needs to be set to true if you have a single ingress fronting multiple clusterip services with healthchecks other than "/"
-  
+
+  The `type` field determines the probe mechanism: "http" (default) uses an `httpGet` probe against `path`/`port`;
+  "tcp" uses a `tcpSocket` probe against `port` only (`path` is ignored); "grpc" uses a `grpc` probe against `port`
+  and, optionally, `grpc_service` (the gRPC health-checking protocol's service name; if not set, the default service
+  is checked). Each of `liveness`, `readiness`, and `startup` may override `type`, `port`, and `grpc_service`
+  individually; if not set, they inherit the top-level values.
+
   EOT
   type = object({
     enabled                  = optional(bool, true)
     path                     = optional(string, "/")
     set_ingress_health_check = optional(bool, false)
-    port                     = optional(number, null) # If not set, the port will be the service port
+    port                     = optional(number, null)   # If not set, the port will be the service port
+    type                     = optional(string, "http") # "http", "tcp", or "grpc"
+    grpc_service             = optional(string, null)   # only used when type is "grpc"
     failureThreshold         = optional(number, 3)
     initialDelaySeconds      = optional(number, 15)
     periodSeconds            = optional(number, 20)
@@ -345,6 +407,8 @@ variable "health_check" {
       enabled             = optional(bool, true)
       path                = optional(string, null)
       port                = optional(number, null) # If not set, the port will be the service port
+      type                = optional(string, null) # "http", "tcp", or "grpc"; defaults to the top-level type
+      grpc_service        = optional(string, null) # only used when type is "grpc"; defaults to the top-level value
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)
@@ -355,6 +419,8 @@ variable "health_check" {
       enabled             = optional(bool, true)
       path                = optional(string, null)
       port                = optional(number, null) # If not set, the port will be the service port
+      type                = optional(string, null) # "http", "tcp", or "grpc"; defaults to the top-level type
+      grpc_service        = optional(string, null) # only used when type is "grpc"; defaults to the top-level value
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)
@@ -365,6 +431,8 @@ variable "health_check" {
       enabled             = optional(bool, true)
       path                = optional(string, null)
       port                = optional(number, null) # If not set, the port will be the service port
+      type                = optional(string, null) # "http", "tcp", or "grpc"; defaults to the top-level type
+      grpc_service        = optional(string, null) # only used when type is "grpc"; defaults to the top-level value
       failureThreshold    = optional(number, null)
       initialDelaySeconds = optional(number, null)
       periodSeconds       = optional(number, null)
@@ -373,6 +441,30 @@ variable "health_check" {
     }), {})
   })
   default = {}
+
+  validation {
+    condition = alltrue([
+      for t in [
+        var.health_check.type,
+        var.health_check.liveness.type,
+        var.health_check.readiness.type,
+        var.health_check.startup.type,
+      ] : t == null || contains(["http", "tcp", "grpc"], t)
+    ])
+    error_message = "The health_check type (and liveness/readiness/startup type overrides) must be one of 'http', 'tcp', or 'grpc'."
+  }
+
+  validation {
+    condition = alltrue([
+      for p in [
+        var.health_check.port,
+        var.health_check.liveness.port,
+        var.health_check.readiness.port,
+        var.health_check.startup.port,
+      ] : p == null || (p >= 1 && p <= 65535)
+    ])
+    error_message = "The health_check port (and liveness/readiness/startup port overrides) must be between 1 and 65535."
+  }
 }
 
 variable "secrets" {
@@ -562,7 +654,11 @@ variable "sidecars" {
 
   The `resources` field is a map of resource requests and limits for the sidecar. If the field is not set, the resources will be an empty map.
 
-  The `security_context` field is an object with run_as_user, run_as_group, and fs_group fields. If the field is not set, it will be null.
+  The `security_context` field is an object with run_as_user, run_as_group, and run_as_non_root
+  fields, mapping to the Kubernetes container `securityContext`'s `runAsUser`, `runAsGroup`, and
+  `runAsNonRoot` fields. If the field is not set, it will be null. `fs_group` is not supported here
+  since `fsGroup` is only valid on the pod-level `securityContext` — use the top-level
+  `security_context` variable's `fs_group` instead, which applies to every container in the pod.
 
   The `ports` field is a list of ports to expose on the sidecar. If the field is not set, the ports will be an empty list.
 
@@ -579,9 +675,9 @@ variable "sidecars" {
       limits   = optional(map(string))
     }), null)
     security_context = optional(object({
-      run_as_user  = optional(number, null)
-      run_as_group = optional(number, null)
-      fs_group     = optional(number, null)
+      run_as_user     = optional(number, null)
+      run_as_group    = optional(number, null)
+      run_as_non_root = optional(bool, null)
     }), null)
     ports = optional(list(object({
       name          = string

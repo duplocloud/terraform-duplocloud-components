@@ -8,35 +8,96 @@ locals {
     "BYOH" : 4
   }
   duplocloud_cloud = local.duplocloud_clouds[var.cloud]
+  # kubernetes expects camelCase keys, so the snake_case variables are remapped here before
+  # being json-encoded into the raw pod/container spec fragments below
+  pod_security_context = {
+    for k, v in {
+      runAsUser    = try(var.security_context.run_as_user, null)
+      runAsGroup   = try(var.security_context.run_as_group, null)
+      fsGroup      = try(var.security_context.fs_group, null)
+      runAsNonRoot = try(var.security_context.run_as_non_root, null)
+      seccompProfile = try(var.security_context.seccomp_profile, null) == null ? null : {
+        for k2, v2 in {
+          type             = var.security_context.seccomp_profile.type
+          localhostProfile = try(var.security_context.seccomp_profile.localhost_profile, null)
+        } : k2 => v2 if v2 != null
+      }
+    } : k => v if v != null
+  }
+  container_security_context = {
+    for k, v in {
+      allowPrivilegeEscalation = try(var.container_security_context.allow_privilege_escalation, null)
+      readOnlyRootFilesystem   = try(var.container_security_context.read_only_root_filesystem, null)
+      runAsNonRoot             = try(var.container_security_context.run_as_non_root, null)
+      runAsUser                = try(var.container_security_context.run_as_user, null)
+      runAsGroup               = try(var.container_security_context.run_as_group, null)
+      privileged               = try(var.container_security_context.privileged, null)
+      # collapse to null (rather than {}) when add/drop are both unset, so an otherwise-empty
+      # capabilities block doesn't force the whole SecurityContext key to render
+      capabilities = (
+        try(var.container_security_context.capabilities, null) == null ||
+        !anytrue([
+          try(var.container_security_context.capabilities.add, null) != null,
+          try(var.container_security_context.capabilities.drop, null) != null,
+        ])
+        ) ? null : {
+        for k2, v2 in {
+          add  = var.container_security_context.capabilities.add
+          drop = var.container_security_context.capabilities.drop
+        } : k2 => v2 if v2 != null
+      }
+    } : k => v if v != null
+  }
+  sidecars = [
+    for s in var.sidecars : merge(s, {
+      # collapse to null (rather than {}) when every field is unset, so an otherwise-empty
+      # security_context doesn't force securityContext: {} to render for that container
+      security_context = (
+        s.security_context == null ||
+        !anytrue([
+          try(s.security_context.run_as_user, null) != null,
+          try(s.security_context.run_as_group, null) != null,
+          try(s.security_context.run_as_non_root, null) != null,
+        ])
+        ) ? null : {
+        for k, v in {
+          runAsUser    = try(s.security_context.run_as_user, null)
+          runAsGroup   = try(s.security_context.run_as_group, null)
+          runAsNonRoot = try(s.security_context.run_as_non_root, null)
+        } : k => v if v != null
+      }
+    })
+  ]
   other_docker_config = yamldecode(templatefile("${path.module}/templates/service.yaml", {
-    debug                    = var.debug
-    env_from                 = jsonencode(local.env_from)
-    image                    = var.image
-    port                     = var.port
-    health_check             = var.health_check
-    host_network             = local.host_network
-    nodes                    = var.nodes
-    termination_grace_period = var.termination_grace_period
-    deployment_strategy      = var.deployment_strategy
-    restart_policy           = var.restart_policy
-    annotations              = jsonencode(var.annotations)
-    labels                   = jsonencode(var.labels)
-    pod_labels               = jsonencode(var.pod_labels)
-    pod_annotations          = jsonencode(var.pod_annotations)
-    service_account_name     = local.service_account_name
-    security_context         = jsonencode(var.security_context != null ? var.security_context : {})
-    volume_mounts            = jsonencode(local.volume_mounts)
-    volumes                  = jsonencode(local.volumes)
-    command                  = jsonencode(var.command)
-    args                     = jsonencode(var.args)
-    env                      = jsonencode(local.container_env)
-    lifecycle                = var.container_lifecycle
+    debug                      = var.debug
+    env_from                   = jsonencode(local.env_from)
+    image                      = var.image
+    port                       = var.port
+    health_check               = var.health_check
+    host_network               = local.host_network
+    nodes                      = var.nodes
+    termination_grace_period   = var.termination_grace_period
+    deployment_strategy        = var.deployment_strategy
+    restart_policy             = var.restart_policy
+    annotations                = jsonencode(var.annotations)
+    labels                     = jsonencode(var.labels)
+    pod_labels                 = jsonencode(var.pod_labels)
+    pod_annotations            = jsonencode(var.pod_annotations)
+    service_account_name       = local.service_account_name
+    security_context           = jsonencode(local.pod_security_context)
+    container_security_context = jsonencode(local.container_security_context)
+    volume_mounts              = jsonencode(local.volume_mounts)
+    volumes                    = jsonencode(local.volumes)
+    command                    = jsonencode(var.command)
+    args                       = jsonencode(var.args)
+    env                        = jsonencode(local.container_env)
+    lifecycle                  = var.container_lifecycle
     resources = {
       # don't actuall print the null values
       for key, value in var.resources : key => value
       if value != null
     }
-    sidecars = var.sidecars
+    sidecars = local.sidecars
   }))
   hpa_metrics = lookup(var.scale, "metrics", null)
   # only keep the directions actually configured, an empty one renders a bare yaml key which decodes to null
