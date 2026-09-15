@@ -1,0 +1,38 @@
+name: 🆕 Update Service
+
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: The environment to deploy to
+        type: environment
+        default: dev01
+        required: true
+      image:
+        description: The full image
+        type: string
+        required: true
+
+jobs:
+  update_service:
+    name: Update Service
+    runs-on: ubuntu-latest
+    environment: 
+      name: $${{ inputs.environment }}
+    env:
+      DUPLO_TOKEN: $${{ secrets.DUPLO_TOKEN }}
+      DUPLO_HOST: $${{ vars.DUPLO_HOST  }}
+      DUPLO_TENANT: $${{ vars.DUPLO_TENANT || inputs.environment }}
+    steps: 
+    
+    # install and login to the cloud
+    - name: Duplo Setup
+      uses: duplocloud/actions/setup@${ref}
+
+    # uses duploctl from above
+    - name: Update Service
+      uses: duplocloud/actions/update-image@${ref}
+      with:
+        name: ${name}
+        image: $${{ inputs.image }}
+        type: service
