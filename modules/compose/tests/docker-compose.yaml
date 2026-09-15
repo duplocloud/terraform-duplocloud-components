@@ -1,0 +1,72 @@
+services:
+  myapp: 
+    image: &img ${REGISTRY}/${APP}:latest
+    container_name: some-container
+    mem_limit: 512m
+    cpu_count: 1
+    annotations: &annotations
+      duplo.lambda.timeout: "10"
+    labels: &labels
+      my.group: cool-kids
+      duplo.class: lambda
+      duplo.description: |
+        Some cool lambda for the cool kids. 
+    # ports:
+    # - 8080:${PORT}
+    environment: &environment
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+      AWS_REGION: ${AWS_REGION}
+      TENANT_NAME: ${DUPLO_TENANT}
+    command: 
+    - app.Handler
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args: 
+        MSG: Yes please
+      tags:
+      - *img
+      - ${REGISTRY}/${APP}:${GIT_SHA}
+      - ${REGISTRY}/${APP}:${GIT_REF}
+  myapp-admin: 
+    image: nginx:latest
+    container_name: administrator
+    labels:
+      duplo.class: service
+    ports:
+    - 8080:${PORT}
+    configs:
+    - app_config
+    secrets:
+    - db_password
+    - db_user
+    # - some_api_key
+  not-duplo-service:
+    image: nginx:latest
+
+configs:
+  app_config:
+    labels:
+      duplo.class: aws-ssm
+    content: |
+      debug=true
+      log_level=info
+
+secrets:
+  db_password:
+    name: db-connection
+    labels:
+      duplo.class: aws-secret
+      foo: bar
+    environment: "DB_PASSWORD"
+  db_user:
+    name: db-connection
+    labels:
+      duplo.class: aws-secret
+      baz: qux
+    environment: "DB_USER"
+  some_api_key:
+    labels:
+      duplo.class: aws-ssm
