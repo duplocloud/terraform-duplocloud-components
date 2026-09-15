@@ -32,6 +32,13 @@ and this project adheres to
 - Added validation to `security_context.seccomp_profile` restricting `type` to `RuntimeDefault`/`Localhost`/`Unconfined` and requiring `localhost_profile` if and only if `type` is `Localhost`.
 - Added validation to `health_check` (and its `liveness`/`readiness`/`startup` overrides) rejecting `port` values outside the valid 1-65535 range, matching the DuploCloud API's own probe port validation.
 
+### Maintenance
+- Bump `duplocloud` provider minimum to `>= 0.11.0` in `retool-bastion`, `tenant-role-extension`, `lambda`, and `api-gateway`
+- Fix overly strict Terraform version constraint (`~> 1.10.5` → `>= 1.9.0`) in `mongodb` module and example
+- Fix overly strict Terraform version constraints (`~> 1.12.2`) in test setup modules for `tenant-data-aws` and `vpn-data-aws`, which were blocking Terraform 1.13+
+- Extract `terraform {}` block from `vpn-data-aws/main.tf` into its own `versions.tf`
+- Update lock files in `api-gateway`, `eks-nodes`, and `tenant-role-extension` to latest provider versions (`duplocloud` 0.11.33, `aws` 6.33.0, `random` 3.8.1)
+
 ## [0.0.41] - 2025-07-16
 
 ### Configuration Module 

@@ -1,6 +1,5 @@
-# Specify the required Terraform version for compatibility
 terraform {
-  required_version = "~> 1.10.5"
+  required_version = ">= 1.9.0"
 
   # Specify required providers and their versions
   required_providers {
