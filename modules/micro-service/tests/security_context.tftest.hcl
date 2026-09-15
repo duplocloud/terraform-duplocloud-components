@@ -95,3 +95,60 @@ run "sidecar_security_context_uses_k8s_camel_case" {
     error_message = "Sidecar securityContext should use Kubernetes camelCase keys."
   }
 }
+
+run "invalid_seccomp_profile_type_rejected" {
+  command         = plan
+  expect_failures = [var.security_context]
+  variables {
+    security_context = {
+      seccomp_profile = {
+        type = "NotARealType"
+      }
+    }
+  }
+}
+
+run "localhost_seccomp_profile_without_path_rejected" {
+  command         = plan
+  expect_failures = [var.security_context]
+  variables {
+    security_context = {
+      seccomp_profile = {
+        type = "Localhost"
+      }
+    }
+  }
+}
+
+run "non_localhost_seccomp_profile_with_path_rejected" {
+  command         = plan
+  expect_failures = [var.security_context]
+  variables {
+    security_context = {
+      seccomp_profile = {
+        type              = "RuntimeDefault"
+        localhost_profile = "profiles/my-profile.json"
+      }
+    }
+  }
+}
+
+run "localhost_seccomp_profile_with_path_accepted" {
+  command = plan
+  variables {
+    security_context = {
+      seccomp_profile = {
+        type              = "Localhost"
+        localhost_profile = "profiles/my-profile.json"
+      }
+    }
+  }
+
+  assert {
+    condition = local.other_docker_config.PodSecurityContext.seccompProfile == {
+      type              = "Localhost"
+      localhostProfile  = "profiles/my-profile.json"
+    }
+    error_message = "PodSecurityContext.seccompProfile should include the localhostProfile path."
+  }
+}

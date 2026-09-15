@@ -257,6 +257,17 @@ variable "security_context" {
   })
   default  = null
   nullable = true
+
+  validation {
+    condition = (
+      var.security_context == null ||
+      var.security_context.seccomp_profile == null || (
+        contains(["RuntimeDefault", "Localhost", "Unconfined"], var.security_context.seccomp_profile.type) &&
+        (var.security_context.seccomp_profile.type == "Localhost") == (var.security_context.seccomp_profile.localhost_profile != null)
+      )
+    )
+    error_message = "security_context.seccomp_profile.type must be one of 'RuntimeDefault', 'Localhost', or 'Unconfined', and localhost_profile must be set if and only if type is 'Localhost'."
+  }
 }
 
 variable "container_security_context" {
@@ -441,6 +452,18 @@ variable "health_check" {
       ] : t == null || contains(["http", "tcp", "grpc"], t)
     ])
     error_message = "The health_check type (and liveness/readiness/startup type overrides) must be one of 'http', 'tcp', or 'grpc'."
+  }
+
+  validation {
+    condition = alltrue([
+      for p in [
+        var.health_check.port,
+        var.health_check.liveness.port,
+        var.health_check.readiness.port,
+        var.health_check.startup.port,
+      ] : p == null || (p >= 1 && p <= 65535)
+    ])
+    error_message = "The health_check port (and liveness/readiness/startup port overrides) must be between 1 and 65535."
   }
 }
 
@@ -631,9 +654,11 @@ variable "sidecars" {
 
   The `resources` field is a map of resource requests and limits for the sidecar. If the field is not set, the resources will be an empty map.
 
-  The `security_context` field is an object with run_as_user, run_as_group, fs_group, and
-  run_as_non_root fields, mapping to the Kubernetes container `securityContext`'s `runAsUser`,
-  `runAsGroup`, `fsGroup`, and `runAsNonRoot` fields. If the field is not set, it will be null.
+  The `security_context` field is an object with run_as_user, run_as_group, and run_as_non_root
+  fields, mapping to the Kubernetes container `securityContext`'s `runAsUser`, `runAsGroup`, and
+  `runAsNonRoot` fields. If the field is not set, it will be null. `fs_group` is not supported here
+  since `fsGroup` is only valid on the pod-level `securityContext` — use the top-level
+  `security_context` variable's `fs_group` instead, which applies to every container in the pod.
 
   The `ports` field is a list of ports to expose on the sidecar. If the field is not set, the ports will be an empty list.
 
@@ -652,7 +677,6 @@ variable "sidecars" {
     security_context = optional(object({
       run_as_user     = optional(number, null)
       run_as_group    = optional(number, null)
-      fs_group        = optional(number, null)
       run_as_non_root = optional(bool, null)
     }), null)
     ports = optional(list(object({

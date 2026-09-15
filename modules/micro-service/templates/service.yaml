@@ -82,7 +82,7 @@ LivenessProbe:
   grpc:
     port: ${coalesce(health_check.liveness.port, health_check.port, port)}
 %{ if health_check.liveness.grpc_service != null || health_check.grpc_service != null }
-    service: ${health_check.liveness.grpc_service != null ? health_check.liveness.grpc_service : health_check.grpc_service}
+    service: ${jsonencode(health_check.liveness.grpc_service != null ? health_check.liveness.grpc_service : health_check.grpc_service)}
 %{ endif }
 %{ else }
   httpGet:
@@ -106,7 +106,7 @@ ReadinessProbe:
   grpc:
     port: ${coalesce(health_check.readiness.port, health_check.port, port)}
 %{ if health_check.readiness.grpc_service != null || health_check.grpc_service != null }
-    service: ${health_check.readiness.grpc_service != null ? health_check.readiness.grpc_service : health_check.grpc_service}
+    service: ${jsonencode(health_check.readiness.grpc_service != null ? health_check.readiness.grpc_service : health_check.grpc_service)}
 %{ endif }
 %{ else }
   httpGet:
@@ -130,7 +130,7 @@ StartupProbe:
   grpc:
     port: ${coalesce(health_check.startup.port, health_check.port, port)}
 %{ if health_check.startup.grpc_service != null || health_check.grpc_service != null }
-    service: ${health_check.startup.grpc_service != null ? health_check.startup.grpc_service : health_check.grpc_service}
+    service: ${jsonencode(health_check.startup.grpc_service != null ? health_check.startup.grpc_service : health_check.grpc_service)}
 %{ endif }
 %{ else }
   httpGet:

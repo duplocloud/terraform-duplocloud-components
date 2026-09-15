@@ -145,6 +145,29 @@ run "invalid_health_check_type_rejected" {
   }
 }
 
+run "invalid_health_check_port_rejected" {
+  command         = plan
+  expect_failures = [var.health_check]
+  variables {
+    health_check = {
+      type = "grpc"
+      port = 70000 # out of the valid 1-65535 range
+    }
+  }
+}
+
+run "invalid_health_check_probe_override_port_rejected" {
+  command         = plan
+  expect_failures = [var.health_check]
+  variables {
+    health_check = {
+      readiness = {
+        port = 0 # out of the valid 1-65535 range
+      }
+    }
+  }
+}
+
 run "grpc_health_checks_default_service" {
   command = plan
   variables {
@@ -192,5 +215,29 @@ run "grpc_health_checks_with_service_override" {
   assert {
     condition     = local.other_docker_config.ReadinessProbe.grpc == { port = 9001, service = "myapp.Readiness" }
     error_message = "The ReadinessProbe should override port and grpc_service independently."
+  }
+}
+
+run "grpc_service_values_are_yaml_escaped" {
+  command = plan
+  variables {
+    port = 9000
+    health_check = {
+      enabled      = true
+      type         = "grpc"
+      grpc_service = "true" # a bare YAML scalar that would decode as a boolean if not escaped
+      readiness = {
+        grpc_service = "svc: with: colons" # contains YAML syntax that would break an unescaped scalar
+      }
+    }
+  }
+
+  assert {
+    condition     = local.other_docker_config.LivenessProbe.grpc.service == "true"
+    error_message = "The grpc service name 'true' should remain a string, not decode as a boolean."
+  }
+  assert {
+    condition     = local.other_docker_config.ReadinessProbe.grpc.service == "svc: with: colons"
+    error_message = "A grpc service name containing YAML syntax should be preserved verbatim."
   }
 }

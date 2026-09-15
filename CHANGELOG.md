@@ -13,6 +13,8 @@ and this project adheres to
 - Fix external configmap/secret reference in micro-service module to use actual resource name instead of prefixed name.  
 - Fix rest contidtion for the type when api gateway created
 - Fix micro-service `security_context` (`PodSecurityContext`) and sidecar `security_context` being JSON-encoded with snake_case keys, which Kubernetes silently ignored instead of applying.
+- Fix sidecar `security_context.fs_group` being emitted as container-level `securityContext.fsGroup`, an invalid field at container scope; removed `fs_group` from the sidecar schema (use the pod-level `security_context.fs_group` instead).
+- Fix `health_check` `grpc_service` values being interpolated into YAML unescaped, which could change type (e.g. `"true"` decoding as a boolean) or break YAML parsing for values containing YAML syntax.
 
 ### Added  
 
@@ -25,6 +27,8 @@ and this project adheres to
 - Added `run_as_non_root` and `seccomp_profile` fields to the micro-service `security_context` variable.
 - Added new `container_security_context` variable to the micro-service module to set the main container's Kubernetes `securityContext` (`allowPrivilegeEscalation`, `capabilities`, `readOnlyRootFilesystem`, etc.), which was previously unsupported.
 - Added `type` field ("http", "tcp", or "grpc") to the micro-service `health_check` variable (and its `liveness`/`readiness`/`startup` overrides) to support `tcpSocket` and `grpc` probes in addition to `httpGet`. Added `grpc_service` field for the gRPC health-checking protocol's service name.
+- Added validation to `security_context.seccomp_profile` restricting `type` to `RuntimeDefault`/`Localhost`/`Unconfined` and requiring `localhost_profile` if and only if `type` is `Localhost`.
+- Added validation to `health_check` (and its `liveness`/`readiness`/`startup` overrides) rejecting `port` values outside the valid 1-65535 range, matching the DuploCloud API's own probe port validation.
 
 ## [0.0.41] - 2025-07-16
 

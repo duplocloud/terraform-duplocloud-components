@@ -46,7 +46,6 @@ locals {
         for k, v in {
           runAsUser    = try(s.security_context.run_as_user, null)
           runAsGroup   = try(s.security_context.run_as_group, null)
-          fsGroup      = try(s.security_context.fs_group, null)
           runAsNonRoot = try(s.security_context.run_as_non_root, null)
         } : k => v if v != null
       }
