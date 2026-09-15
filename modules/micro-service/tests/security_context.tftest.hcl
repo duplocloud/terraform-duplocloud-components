@@ -74,6 +74,20 @@ run "container_security_context_omitted_when_unset" {
   }
 }
 
+run "container_security_context_empty_capabilities_omitted" {
+  command = plan
+  variables {
+    container_security_context = {
+      capabilities = {}
+    }
+  }
+
+  assert {
+    condition     = lookup(local.other_docker_config, "SecurityContext", null) == null
+    error_message = "SecurityContext should be omitted entirely when every field, including an empty capabilities block, is unset."
+  }
+}
+
 run "sidecar_security_context_uses_k8s_camel_case" {
   command = plan
   variables {
@@ -93,6 +107,22 @@ run "sidecar_security_context_uses_k8s_camel_case" {
       runAsNonRoot = true
     }
     error_message = "Sidecar securityContext should use Kubernetes camelCase keys."
+  }
+}
+
+run "sidecar_empty_security_context_omitted" {
+  command = plan
+  variables {
+    sidecars = [{
+      name             = "cakes"
+      image            = "docker.io/myapp:latest"
+      security_context = {}
+    }]
+  }
+
+  assert {
+    condition     = !contains(keys(local.other_docker_config.AdditionalContainers[0]), "securityContext")
+    error_message = "Sidecar securityContext should be omitted entirely when every field is unset."
   }
 }
 

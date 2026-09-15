@@ -15,6 +15,8 @@ and this project adheres to
 - Fix micro-service `security_context` (`PodSecurityContext`) and sidecar `security_context` being JSON-encoded with snake_case keys, which Kubernetes silently ignored instead of applying.
 - Fix sidecar `security_context.fs_group` being emitted as container-level `securityContext.fsGroup`, an invalid field at container scope; removed `fs_group` from the sidecar schema (use the pod-level `security_context.fs_group` instead).
 - Fix `health_check` `grpc_service` values being interpolated into YAML unescaped, which could change type (e.g. `"true"` decoding as a boolean) or break YAML parsing for values containing YAML syntax.
+- Fix `container_security_context.capabilities` and sidecar `security_context` rendering as an empty `{}` object (instead of being omitted) when every sub-field was left unset.
+- Fix micro-service `jobs` (before/after-update Kubernetes Jobs) not propagating `security_context.run_as_non_root` and `security_context.seccomp_profile` to the job pod, unlike the main service deployment.
 
 ### Added  
 

@@ -43,9 +43,17 @@ resource "duplocloud_k8s_job" "before_update" {
         dynamic "security_context" {
           for_each = var.security_context == null ? [] : [var.security_context]
           content {
-            run_as_user  = security_context.value.run_as_user
-            run_as_group = security_context.value.run_as_group
-            fs_group     = security_context.value.fs_group
+            run_as_user     = security_context.value.run_as_user
+            run_as_group    = security_context.value.run_as_group
+            fs_group        = security_context.value.fs_group
+            run_as_non_root = security_context.value.run_as_non_root
+            dynamic "seccomp_profile" {
+              for_each = security_context.value.seccomp_profile == null ? [] : [security_context.value.seccomp_profile]
+              content {
+                type              = seccomp_profile.value.type
+                localhost_profile = seccomp_profile.value.localhost_profile
+              }
+            }
           }
         }
         container {

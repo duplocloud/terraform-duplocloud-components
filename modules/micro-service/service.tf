@@ -32,7 +32,15 @@ locals {
       runAsUser                = try(var.container_security_context.run_as_user, null)
       runAsGroup               = try(var.container_security_context.run_as_group, null)
       privileged               = try(var.container_security_context.privileged, null)
-      capabilities = try(var.container_security_context.capabilities, null) == null ? null : {
+      # collapse to null (rather than {}) when add/drop are both unset, so an otherwise-empty
+      # capabilities block doesn't force the whole SecurityContext key to render
+      capabilities = (
+        try(var.container_security_context.capabilities, null) == null ||
+        !anytrue([
+          try(var.container_security_context.capabilities.add, null) != null,
+          try(var.container_security_context.capabilities.drop, null) != null,
+        ])
+        ) ? null : {
         for k2, v2 in {
           add  = var.container_security_context.capabilities.add
           drop = var.container_security_context.capabilities.drop
@@ -42,7 +50,16 @@ locals {
   }
   sidecars = [
     for s in var.sidecars : merge(s, {
-      security_context = s.security_context == null ? null : {
+      # collapse to null (rather than {}) when every field is unset, so an otherwise-empty
+      # security_context doesn't force securityContext: {} to render for that container
+      security_context = (
+        s.security_context == null ||
+        !anytrue([
+          try(s.security_context.run_as_user, null) != null,
+          try(s.security_context.run_as_group, null) != null,
+          try(s.security_context.run_as_non_root, null) != null,
+        ])
+        ) ? null : {
         for k, v in {
           runAsUser    = try(s.security_context.run_as_user, null)
           runAsGroup   = try(s.security_context.run_as_group, null)
