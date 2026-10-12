@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix micro-service `jobs` not setting DuploCloud `allocation_tags` from `nodes.allocation_tags`; the line was left commented out, so jobs only got the `allocationtags` nodeSelector.
+
 ## [0.0.39] - 2025-05-07
 
 ### Fixed
