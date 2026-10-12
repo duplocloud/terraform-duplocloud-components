@@ -17,6 +17,7 @@ and this project adheres to
 - Fix `health_check` `grpc_service` values being interpolated into YAML unescaped, which could change type (e.g. `"true"` decoding as a boolean) or break YAML parsing for values containing YAML syntax.
 - Fix `container_security_context.capabilities` and sidecar `security_context` rendering as an empty `{}` object (instead of being omitted) when every sub-field was left unset.
 - Fix micro-service `jobs` (before/after-update Kubernetes Jobs) not propagating `security_context.run_as_non_root` and `security_context.seccomp_profile` to the job pod, unlike the main service deployment.
+- Fix micro-service `jobs` not setting DuploCloud `allocation_tags` from `nodes.allocation_tags`; the line was left commented out, so jobs only got the `allocationtags` nodeSelector.
 
 ### Added  
 

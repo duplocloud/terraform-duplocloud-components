@@ -7,7 +7,7 @@ resource "duplocloud_k8s_job" "before_update" {
   tenant_id           = local.tenant.id
   is_any_host_allowed = var.nodes.shared
   wait_for_completion = each.value.wait
-  # allocation_tags     = var.nodes.allocation_tags
+  allocation_tags     = var.nodes.allocation_tags
   timeouts {
     create = each.value.timeout
     update = "1m"
