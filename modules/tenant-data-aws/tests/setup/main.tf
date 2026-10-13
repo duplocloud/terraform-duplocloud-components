@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.12.2"
+  required_version = ">= 1.12.2"
   required_providers {
     duplocloud = {
       source  = "duplocloud/duplocloud"
-      version = "~> 0.11.30"
+      version = ">= 0.11.30"
     }
   }
 }
